@@ -1,0 +1,221 @@
+# .htaccess - Apache 伺服器設定檔
+# 提升網站效能、安全性和 SEO
+
+# ========================================
+# 1. 啟用 Gzip 壓縮（減少 70% 傳輸大小）
+# ========================================
+<IfModule mod_deflate.c>
+    # HTML, CSS, JavaScript 壓縮
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+    
+    # XML, JSON 壓縮
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/json
+    
+    # 字體壓縮
+    AddOutputFilterByType DEFLATE application/x-font-ttf
+    AddOutputFilterByType DEFLATE application/x-font-opentype
+    AddOutputFilterByType DEFLATE application/vnd.ms-fontobject
+    AddOutputFilterByType DEFLATE image/svg+xml
+    
+    # 排除舊版瀏覽器
+    BrowserMatch ^Mozilla/4 gzip-only-text/html
+    BrowserMatch ^Mozilla/4\.0[678] no-gzip
+    BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+</IfModule>
+
+# ========================================
+# 2. 瀏覽器快取設定（提升重複訪問速度）
+# ========================================
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault "access plus 1 month"
+    
+    # HTML（短快取）
+    ExpiresByType text/html "access plus 1 hour"
+    
+    # CSS 和 JavaScript
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType text/javascript "access plus 1 year"
+    
+    # 圖片
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/x-icon "access plus 1 year"
+    
+    # 字體
+    ExpiresByType font/ttf "access plus 1 year"
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType application/x-font-woff "access plus 1 year"
+    
+    # 媒體
+    ExpiresByType video/mp4 "access plus 1 year"
+    ExpiresByType audio/mpeg "access plus 1 year"
+    
+    # 資料文件
+    ExpiresByType application/pdf "access plus 1 month"
+    ExpiresByType application/json "access plus 1 hour"
+</IfModule>
+
+# Cache-Control headers
+<IfModule mod_headers.c>
+    # 靜態資源永久快取
+    <FilesMatch "\.(jpg|jpeg|png|gif|webp|svg|ico|css|js|woff|woff2|ttf|eot)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+    
+    # HTML 不快取（確保最新內容）
+    <FilesMatch "\.(html|htm)$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires 0
+    </FilesMatch>
+</IfModule>
+
+# ========================================
+# 3. 安全性標頭
+# ========================================
+<IfModule mod_headers.c>
+    # 防止點擊劫持
+    Header always set X-Frame-Options "SAMEORIGIN"
+    
+    # 防止 MIME 類型嗅探
+    Header always set X-Content-Type-Options "nosniff"
+    
+    # XSS 保護
+    Header always set X-XSS-Protection "1; mode=block"
+    
+    # Referrer 政策
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # 權限政策
+    Header always set Permissions-Policy "geolocation=(self), microphone=(), camera=()"
+    
+    # 嚴格傳輸安全（HTTPS）
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+</IfModule>
+
+# ========================================
+# 4. HTTPS 強制轉向
+# ========================================
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # 強制 HTTPS
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+    
+    # 強制 www（或去除 www，根據需求選擇）
+    # 選項 A：強制使用 www
+    # RewriteCond %{HTTP_HOST} !^www\. [NC]
+    # RewriteRule ^(.*)$ https://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+    
+    # 選項 B：去除 www
+    # RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+    # RewriteRule ^(.*)$ https://%1%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# ========================================
+# 5. 移除 .html 副檔名（美化 URL）
+# ========================================
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # 移除 .html
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME}.html -f
+    RewriteRule ^(.+)$ $1.html [L,QSA]
+    
+    # 如果 URL 包含 .html，重定向到無副檔名版本
+    RewriteCond %{THE_REQUEST} ^GET\ /[^?\s]+\.html
+    RewriteRule (.*)\.html$ /$1 [L,R=301]
+</IfModule>
+
+# ========================================
+# 6. 自訂 404 錯誤頁面
+# ========================================
+ErrorDocument 404 /404.html
+ErrorDocument 403 /404.html
+ErrorDocument 500 /404.html
+
+# ========================================
+# 7. 檔案類型對應
+# ========================================
+<IfModule mod_mime.c>
+    # JavaScript
+    AddType application/javascript js
+    
+    # 字體
+    AddType font/woff woff
+    AddType font/woff2 woff2
+    AddType application/vnd.ms-fontobject eot
+    AddType font/ttf ttf
+    AddType font/otf otf
+    
+    # 圖片
+    AddType image/webp webp
+    AddType image/svg+xml svg svgz
+    
+    # 資料格式
+    AddType application/json json
+    AddType application/ld+json jsonld
+    AddType application/xml xml
+    
+    # PWA
+    AddType application/manifest+json webmanifest
+</IfModule>
+
+# ========================================
+# 8. 防止目錄瀏覽
+# ========================================
+Options -Indexes
+
+# ========================================
+# 9. 保護敏感文件
+# ========================================
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+<FilesMatch "(^#.*#|\.(bak|conf|dist|fla|in[ci]|log|orig|psd|sh|sql|sw[op])|~)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# ========================================
+# 10. 編碼設定
+# ========================================
+AddDefaultCharset UTF-8
+<IfModule mod_mime.c>
+    AddCharset UTF-8 .html .css .js .xml .json .webmanifest
+</IfModule>
+
+# ========================================
+# 11. ETag 移除（優化快取）
+# ========================================
+<IfModule mod_headers.c>
+    Header unset ETag
+</IfModule>
+FileETag None
+
+# ========================================
+# 12. 圖片優化建議（在 HTTP headers 中提示）
+# ========================================
+<IfModule mod_headers.c>
+    <FilesMatch "\.(jpg|jpeg|png|gif)$">
+        Header set X-Content-Type-Options "nosniff"
+        Header set Cache-Control "public, max-age=31536000"
+    </FilesMatch>
+</IfModule>

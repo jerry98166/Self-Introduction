@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎤 語音對話助理</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .assistant {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .avatar {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 100px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .avatar.listening {
+            animation: pulse 1s infinite;
+            transform: scale(1.1);
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3); }
+            50% { box-shadow: 0 10px 50px rgba(102, 126, 234, 0.6); }
+        }
+
+        .status {
+            font-size: 1.3em;
+            color: #667eea;
+            margin-bottom: 20px;
+            min-height: 30px;
+            font-weight: 600;
+        }
+
+        .transcript {
+            background: #f8f9ff;
+            border-radius: 15px;
+            padding: 20px;
+            min-height: 100px;
+            margin: 20px 0;
+            font-size: 1.1em;
+            color: #333;
+            border: 2px solid #667eea;
+        }
+
+        .transcript.empty {
+            color: #999;
+            font-style: italic;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .chat-history {
+            margin-top: 30px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9ff;
+            border-radius: 15px;
+        }
+
+        .chat-message {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 15px;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chat-message.user {
+            background: #667eea;
+            color: white;
+            margin-left: 50px;
+            text-align: right;
+        }
+
+        .chat-message.assistant {
+            background: white;
+            color: #333;
+            margin-right: 50px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .message-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        .language-selector {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .language-selector select {
+            padding: 10px 20px;
+            font-size: 1em;
+            border: 2px solid #667eea;
+            border-radius: 25px;
+            background: white;
+            color: #667eea;
+            cursor: pointer;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: white;
+            color: #667eea;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-info {
+            background: linear-gradient(135deg, #e0e7ff, #fde7e7);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .feature-info h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .feature-info ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .feature-info li {
+            padding: 8px 0;
+            color: #555;
+        }
+
+        .feature-info li::before {
+            content: "✓ ";
+            color: #667eea;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .avatar {
+                width: 150px;
+                height: 150px;
+                font-size: 70px;
+            }
+            
+            .chat-message.user {
+                margin-left: 20px;
+            }
+            
+            .chat-message.assistant {
+                margin-right: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="../lab.html" class="back-button">
+        <i class="fas fa-arrow-left"></i> 返回實驗室
+    </a>
+
+    <div class="container">
+        <h1>🎤 語音對話助理</h1>
+        <p class="subtitle">使用 Web Speech API 進行語音互動</p>
+
+        <div class="language-selector">
+            <label for="language">選擇語言：</label>
+            <select id="language">
+                <option value="zh-TW">繁體中文</option>
+                <option value="zh-CN">简体中文</option>
+                <option value="en-US">English</option>
+                <option value="ja-JP">日本語</option>
+                <option value="ko-KR">한국어</option>
+            </select>
+        </div>
+
+        <div class="assistant">
+            <div class="avatar" id="avatar">
+                <i class="fas fa-microphone-alt"></i>
+            </div>
+            <div class="status" id="status">準備就緒</div>
+        </div>
+
+        <div class="transcript empty" id="transcript">
+            點擊「開始說話」按鈕開始對話...
+        </div>
+
+        <div class="controls">
+            <button class="btn-primary" id="startBtn">
+                <i class="fas fa-microphone"></i> 開始說話
+            </button>
+            <button class="btn-secondary" id="stopBtn" disabled>
+                <i class="fas fa-stop"></i> 停止
+            </button>
+            <button class="btn-secondary" id="clearBtn">
+                <i class="fas fa-trash"></i> 清除對話
+            </button>
+        </div>
+
+        <div class="chat-history" id="chatHistory"></div>
+
+        <div class="feature-info">
+            <h3>✨ 功能說明</h3>
+            <ul>
+                <li>使用瀏覽器內建的 Web Speech API</li>
+                <li>支援多種語言的語音識別</li>
+                <li>即時語音轉文字</li>
+                <li>AI 助理語音回應（Text-to-Speech）</li>
+                <li>完整的對話歷史記錄</li>
+                <li>可切換不同語言進行對話</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const SpeechSynthesis = window.speechSynthesis;
+        
+        let recognition;
+        let isListening = false;
+
+        const avatar = document.getElementById('avatar');
+        const status = document.getElementById('status');
+        const transcript = document.getElementById('transcript');
+        const chatHistory = document.getElementById('chatHistory');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const languageSelect = document.getElementById('language');
+
+        // 檢查瀏覽器支援
+        if (!SpeechRecognition) {
+            status.textContent = '❌ 您的瀏覽器不支援語音識別';
+            startBtn.disabled = true;
+            transcript.textContent = '請使用 Chrome、Edge 或 Safari 瀏覽器';
+        } else {
+            initSpeechRecognition();
+        }
+
+        function initSpeechRecognition() {
+            recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = languageSelect.value;
+
+            recognition.onstart = () => {
+                isListening = true;
+                avatar.classList.add('listening');
+                status.textContent = '🎤 正在聆聽...';
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+            };
+
+            recognition.onresult = (event) => {
+                let interimTranscript = '';
+                let finalTranscript = '';
+
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const transcriptPiece = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) {
+                        finalTranscript += transcriptPiece;
+                    } else {
+                        interimTranscript += transcriptPiece;
+                    }
+                }
+
+                transcript.textContent = finalTranscript || interimTranscript;
+                transcript.classList.remove('empty');
+
+                if (finalTranscript) {
+                    addMessage('user', finalTranscript);
+                    processCommand(finalTranscript);
+                }
+            };
+
+            recognition.onerror = (event) => {
+                console.error('語音識別錯誤：', event.error);
+                status.textContent = '❌ 發生錯誤：' + event.error;
+                stopListening();
+            };
+
+            recognition.onend = () => {
+                if (isListening) {
+                    recognition.start(); // 自動重啟
+                } else {
+                    stopListening();
+                }
+            };
+        }
+
+        function startListening() {
+            if (recognition) {
+                recognition.lang = languageSelect.value;
+                recognition.start();
+            }
+        }
+
+        function stopListening() {
+            isListening = false;
+            if (recognition) {
+                recognition.stop();
+            }
+            avatar.classList.remove('listening');
+            status.textContent = '準備就緒';
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+        }
+
+        function addMessage(type, text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${type}`;
+            
+            const label = document.createElement('div');
+            label.className = 'message-label';
+            label.textContent = type === 'user' ? '你說：' : 'AI 助理：';
+            
+            const content = document.createElement('div');
+            content.textContent = text;
+            
+            messageDiv.appendChild(label);
+            messageDiv.appendChild(content);
+            chatHistory.appendChild(messageDiv);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        function speak(text) {
+            if (SpeechSynthesis) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = languageSelect.value;
+                utterance.rate = 0.9;
+                utterance.pitch = 1;
+                SpeechSynthesis.speak(utterance);
+            }
+        }
+
+        function processCommand(text) {
+            const lowerText = text.toLowerCase();
+            let response = '';
+
+            // AI 助理回應邏輯
+            if (lowerText.includes('你好') || lowerText.includes('哈囉') || lowerText.includes('hello')) {
+                response = '你好！我是語音助理，很高興為你服務！';
+            } else if (lowerText.includes('名字') || lowerText.includes('你是誰')) {
+                response = '我是由高孟麟開發的智慧語音助理，使用瀏覽器的 Web Speech API 技術。';
+            } else if (lowerText.includes('時間') || lowerText.includes('現在幾點')) {
+                const now = new Date();
+                response = `現在是 ${now.toLocaleTimeString('zh-TW')}`;
+            } else if (lowerText.includes('日期') || lowerText.includes('今天')) {
+                const now = new Date();
+                response = `今天是 ${now.toLocaleDateString('zh-TW')}`;
+            } else if (lowerText.includes('天氣')) {
+                response = '抱歉，我還沒有連接氣象 API，但你可以在功能實驗室找到天氣主題功能！';
+            } else if (lowerText.includes('技能') || lowerText.includes('專長')) {
+                response = '高孟麟擅長前端開發、後端開發和 AI 技術，精通 JavaScript、Python 和 React 等技術！';
+            } else if (lowerText.includes('笑話') || lowerText.includes('講個')) {
+                const jokes = [
+                    '為什麼程式設計師不喜歡戶外活動？因為外面沒有 Wi-Fi！',
+                    '程式設計師去酒吧，酒保問：「要來一杯 Java 嗎？」程式設計師說：「不，給我一杯 C sharp！」',
+                    '有 10 種人，懂二進制的和不懂二進制的。'
+                ];
+                response = jokes[Math.floor(Math.random() * jokes.length)];
+            } else if (lowerText.includes('謝謝') || lowerText.includes('感謝')) {
+                response = '不客氣！隨時為你服務！';
+            } else if (lowerText.includes('再見') || lowerText.includes('拜拜')) {
+                response = '再見！期待下次與你對話！';
+            } else {
+                response = '我收到你的訊息了！我是一個簡單的語音助理，可以回答時間、日期和一些基本問題。未來會加入更多 AI 功能！';
+            }
+
+            setTimeout(() => {
+                addMessage('assistant', response);
+                speak(response);
+            }, 500);
+        }
+
+        // 事件監聽
+        startBtn.addEventListener('click', startListening);
+        stopBtn.addEventListener('click', stopListening);
+        clearBtn.addEventListener('click', () => {
+            chatHistory.innerHTML = '';
+            transcript.textContent = '對話已清除';
+            transcript.classList.add('empty');
+        });
+
+        languageSelect.addEventListener('change', () => {
+            if (isListening) {
+                stopListening();
+                setTimeout(startListening, 100);
+            }
+        });
+    </script>
+</body>
+</html>

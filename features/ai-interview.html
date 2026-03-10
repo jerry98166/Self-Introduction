@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 AI 面試模擬器 - Interview Simulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        .panel {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+
+        .panel h2 {
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .setup-screen, .interview-screen, .results-screen {
+            display: none;
+        }
+
+        .setup-screen.active, .interview-screen.active, .results-screen.active {
+            display: block;
+        }
+
+        .role-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .role-card {
+            padding: 20px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+
+        .role-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.2);
+        }
+
+        .role-card.selected {
+            border-color: #667eea;
+            background: rgba(102,126,234,0.3);
+        }
+
+        .role-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .role-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .role-desc {
+            font-size: 0.85em;
+            opacity: 0.8;
+        }
+
+        .difficulty-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .diff-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .diff-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .diff-btn.selected {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .start-btn {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-size: 1.2em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102,126,234,0.5);
+        }
+
+        .start-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .interviewer-section {
+            background: rgba(0,0,0,0.3);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .interviewer-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            margin: 0 auto 15px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .speech-bubble {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            border-radius: 15px;
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .speech-bubble::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 10px solid transparent;
+            border-bottom-color: rgba(255,255,255,0.2);
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .question-number {
+            font-size: 0.9em;
+            opacity: 0.7;
+        }
+
+        .answer-section {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .answer-input {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            background: rgba(0,0,0,0.3);
+            color: white;
+            font-size: 1em;
+            font-family: inherit;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .answer-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .control-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .control-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .control-btn.primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .timer-display {
+            text-align: center;
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .stat-box {
+            background: rgba(255,255,255,0.15);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .stat-value {
+            font-size: 3em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1em;
+            opacity: 0.8;
+        }
+
+        .tips-list {
+            list-style: none;
+        }
+
+        .tips-list li {
+            padding: 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            padding-left: 40px;
+            position: relative;
+        }
+
+        .tips-list li::before {
+            content: '💡';
+            position: absolute;
+            left: 12px;
+        }
+
+        .score-breakdown {
+            margin-top: 25px;
+        }
+
+        .score-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .score-bar {
+            flex: 1;
+            height: 10px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 5px;
+            margin: 0 15px;
+            overflow: hidden;
+        }
+
+        .score-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 5px;
+            transition: width 0.5s;
+        }
+
+        .feedback-section {
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+
+        .feedback-item {
+            margin-bottom: 15px;
+        }
+
+        .feedback-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #667eea;
+        }
+
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .role-selection {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 AI 面試模擬器</h1>
+            <p class="subtitle">專業的面試練習平台，提升你的面試技巧</p>
+        </header>
+
+        <div class="main-layout">
+            <!-- 主要內容區 -->
+            <div class="panel">
+                <!-- 設定畫面 -->
+                <div class="setup-screen active" id="setupScreen">
+                    <h2>📋 選擇面試設定</h2>
+                    
+                    <h3 style="margin-bottom: 15px;">職位類型</h3>
+                    <div class="role-selection">
+                        <div class="role-card" onclick="selectRole('frontend')">
+                            <div class="role-icon">💻</div>
+                            <div class="role-title">前端工程師</div>
+                            <div class="role-desc">React, Vue, JavaScript</div>
+                        </div>
+                        <div class="role-card" onclick="selectRole('backend')">
+                            <div class="role-icon">⚙️</div>
+                            <div class="role-title">後端工程師</div>
+                            <div class="role-desc">Node.js, Python, Java</div>
+                        </div>
+                        <div class="role-card" onclick="selectRole('fullstack')">
+                            <div class="role-icon">🔧</div>
+                            <div class="role-title">全端工程師</div>
+                            <div class="role-desc">前後端整合開發</div>
+                        </div>
+                        <div class="role-card" onclick="selectRole('devops')">
+                            <div class="role-icon">🚀</div>
+                            <div class="role-title">DevOps 工程師</div>
+                            <div class="role-desc">CI/CD, Docker, K8s</div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-bottom: 15px;">難度等級</h3>
+                    <div class="difficulty-selector">
+                        <button class="diff-btn" onclick="selectDifficulty('easy')">😊 簡單<br><small>3-5 題</small></button>
+                        <button class="diff-btn" onclick="selectDifficulty('medium')">🤔 中等<br><small>5-7 題</small></button>
+                        <button class="diff-btn" onclick="selectDifficulty('hard')">😰 困難<br><small>7-10 題</small></button>
+                    </div>
+
+                    <button class="start-btn" id="startBtn" onclick="startInterview()" disabled>
+                        🚀 開始面試
+                    </button>
+                </div>
+
+                <!-- 面試進行畫面 -->
+                <div class="interview-screen" id="interviewScreen">
+                    <div class="timer-display" id="timer">00:00</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+
+                    <div class="interviewer-section">
+                        <div class="interviewer-avatar">👨‍💼</div>
+                        <div class="speech-bubble">
+                            <div class="question-text" id="questionText">準備中...</div>
+                            <div class="question-number" id="questionNumber">問題 1 / 5</div>
+                        </div>
+                    </div>
+
+                    <div class="answer-section">
+                        <h3 style="margin-bottom: 15px;">✍️ 你的回答</h3>
+                        <textarea 
+                            class="answer-input" 
+                            id="answerInput" 
+                            placeholder="在此輸入你的答案..."
+                        ></textarea>
+                        <div class="answer-controls">
+                            <button class="control-btn" onclick="skipQuestion()">⏭️ 跳過</button>
+                            <button class="control-btn primary" onclick="submitAnswer()">✅ 提交答案</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 結果畫面 -->
+                <div class="results-screen" id="resultsScreen">
+                    <h2>🎉 面試完成！</h2>
+                    
+                    <div class="stat-box">
+                        <div class="stat-value" id="totalScore">85</div>
+                        <div class="stat-label">綜合評分</div>
+                    </div>
+
+                    <div class="score-breakdown">
+                        <h3 style="margin-bottom: 15px;">📊 詳細評分</h3>
+                        <div class="score-item">
+                            <span>技術能力</span>
+                            <div class="score-bar">
+                                <div class="score-bar-fill" style="width: 85%"></div>
+                            </div>
+                            <strong>85%</strong>
+                        </div>
+                        <div class="score-item">
+                            <span>表達能力</span>
+                            <div class="score-bar">
+                                <div class="score-bar-fill" style="width: 78%"></div>
+                            </div>
+                            <strong>78%</strong>
+                        </div>
+                        <div class="score-item">
+                            <span>思考邏輯</span>
+                            <div class="score-bar">
+                                <div class="score-bar-fill" style="width: 90%"></div>
+                            </div>
+                            <strong>90%</strong>
+                        </div>
+                        <div class="score-item">
+                            <span>完整度</span>
+                            <div class="score-bar">
+                                <div class="score-bar-fill" style="width: 82%"></div>
+                            </div>
+                            <strong>82%</strong>
+                        </div>
+                    </div>
+
+                    <div class="feedback-section">
+                        <h3 style="margin-bottom: 15px;">💬 AI 建議</h3>
+                        <div class="feedback-item">
+                            <div class="feedback-title">✅ 優點</div>
+                            <p>你在技術知識方面表現出色，對於核心概念有清晰的理解。回答結構完整，有條理。</p>
+                        </div>
+                        <div class="feedback-item">
+                            <div class="feedback-title">📈 改進建議</div>
+                            <p>可以加入更多實際專案經驗的例子，讓回答更生動具體。建議多練習解釋複雜概念的能力。</p>
+                        </div>
+                    </div>
+
+                    <button class="start-btn" onclick="restartInterview()">
+                        🔄 重新開始
+                    </button>
+                </div>
+            </div>
+
+            <!-- 側邊欄 -->
+            <div>
+                <div class="panel">
+                    <h2>ℹ️ 面試資訊</h2>
+                    <div class="stat-box">
+                        <div class="stat-value" id="completedCount">0</div>
+                        <div class="stat-label">已完成題數</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="remainingCount">5</div>
+                        <div class="stat-label">剩餘題數</div>
+                    </div>
+                </div>
+
+                <div class="panel" style="margin-top: 20px;">
+                    <h2>💡 面試技巧</h2>
+                    <ul class="tips-list">
+                        <li>用 STAR 法則回答：情境、任務、行動、結果</li>
+                        <li>回答要具體，舉出實際案例</li>
+                        <li>展現主動學習和解決問題的能力</li>
+                        <li>不知道時誠實表達，展示學習態度</li>
+                        <li>保持自信，語速適中清晰</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全域變數
+        let selectedRole = '';
+        let selectedDifficulty = '';
+        let currentQuestion = 0;
+        let totalQuestions = 5;
+        let answers = [];
+        let startTime = 0;
+        let timerInterval = null;
+
+        // 問題題庫
+        const questionBank = {
+            frontend: [
+                "請解釋 JavaScript 的閉包（Closure）是什麼？並舉一個實際應用的例子。",
+                "什麼是虛擬 DOM？React 如何使用它來提高性能？",
+                "請說明 CSS Flexbox 和 Grid 的差異，以及各自適合的使用場景。",
+                "如何優化網站的載入性能？請列舉至少 5 種方法。",
+                "請解釋什麼是跨域請求（CORS），以及如何解決跨域問題？",
+                "什麼是事件委託（Event Delegation）？它有什麼優點？",
+                "請說明 Promise、async/await 的差異和使用時機。",
+                "如何實現組件間的通訊？請描述在 React/Vue 中的不同方法。"
+            ],
+            backend: [
+                "請解釋 RESTful API 的設計原則，並說明好的 API 設計應該注意什麼？",
+                "什麼是資料庫索引？何時應該使用索引？",
+                "請說明同步與非同步的差異，Node.js 如何處理高併發？",
+                "如何設計一個可擴展的微服務架構？",
+                "請解釋 JWT 和 Session 的差異，各有什麼優缺點？",
+                "什麼是 N+1 查詢問題？如何避免？",
+                "請說明快取（Cache）策略，何時應該使用？",
+                "如何處理 API 的版本控制和向後相容性？"
+            ],
+            fullstack: [
+                "請描述一個完整的 Web 應用程式架構，從前端到後端到資料庫。",
+                "如何實現使用者認證和授權系統？",
+                "請說明 CI/CD 流程，以及如何在專案中實踐？",
+                "什麼是 Server-Side Rendering（SSR）和 Client-Side Rendering（CSR）？各有什麼優缺點？",
+                "如何設計和實作一個即時通訊功能？",
+                "請解釋 Monorepo 和 Polyrepo 的差異，各適合什麼情況？",
+                "如何進行效能優化？從前端到後端有哪些方法？",
+                "請說明你如何進行專案的技術選型？"
+            ],
+            devops: [
+                "請解釋容器化和虛擬化的差異，Docker 和 VM 有什麼不同？",
+                "什麼是 Kubernetes？它解決了什麼問題？",
+                "請說明 CI/CD 的完整流程，以及常用的工具。",
+                "如何實現零停機部署（Zero Downtime Deployment）？",
+                "什麼是基礎設施即代碼（Infrastructure as Code）？",
+                "請解釋監控和日誌管理的重要性，以及常用的工具。",
+                "如何設計高可用性的系統架構？",
+                "請說明負載平衡和自動擴展的實作方式。"
+            ]
+        };
+
+        function selectRole(role) {
+            selectedRole = role;
+            document.querySelectorAll('.role-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.target.closest('.role-card').classList.add('selected');
+            updateStartBtn();
+        }
+
+        function selectDifficulty(difficulty) {
+            selectedDifficulty = difficulty;
+            document.querySelectorAll('.diff-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+            
+            totalQuestions = {
+                easy: 3,
+                medium: 5,
+                hard: 8
+            }[difficulty];
+            
+            updateStartBtn();
+        }
+
+        function updateStartBtn() {
+            document.getElementById('startBtn').disabled = !(selectedRole && selectedDifficulty);
+        }
+
+        function startInterview() {
+            document.getElementById('setupScreen').classList.remove('active');
+            document.getElementById('interviewScreen').classList.add('active');
+            
+            currentQuestion = 0;
+            answers = [];
+            startTime = Date.now();
+            
+            document.getElementById('remainingCount').textContent = totalQuestions;
+            
+            startTimer();
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const questions = questionBank[selectedRole];
+            const question = questions[currentQuestion % questions.length];
+            
+            document.getElementById('questionText').textContent = question;
+            document.getElementById('questionNumber').textContent = 
+                `問題 ${currentQuestion + 1} / ${totalQuestions}`;
+            document.getElementById('answerInput').value = '';
+            
+            updateProgress();
+        }
+
+        function submitAnswer() {
+            const answer = document.getElementById('answerInput').value;
+            
+            if (!answer.trim()) {
+                alert('請輸入答案！');
+                return;
+            }
+            
+            answers.push({
+                question: document.getElementById('questionText').textContent,
+                answer: answer,
+                time: Date.now() - startTime
+            });
+            
+            currentQuestion++;
+            document.getElementById('completedCount').textContent = currentQuestion;
+            document.getElementById('remainingCount').textContent = totalQuestions - currentQuestion;
+            
+            if (currentQuestion >= totalQuestions) {
+                endInterview();
+            } else {
+                loadQuestion();
+            }
+        }
+
+        function skipQuestion() {
+            if (confirm('確定要跳過這題嗎？')) {
+                submitAnswer();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion) / totalQuestions) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const mins = Math.floor(elapsed / 60);
+                const secs = elapsed % 60;
+                document.getElementById('timer').textContent = 
+                    `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function endInterview() {
+            clearInterval(timerInterval);
+            
+            document.getElementById('interviewScreen').classList.remove('active');
+            document.getElementById('resultsScreen').classList.add('active');
+            
+            // 計算分數（簡化版）
+            const avgAnswerLength = answers.reduce((sum, a) => sum + a.answer.length, 0) / answers.length;
+            const score = Math.min(100, Math.round(40 + (avgAnswerLength / 10)));
+            
+            document.getElementById('totalScore').textContent = score;
+        }
+
+        function restartInterview() {
+            document.getElementById('resultsScreen').classList.remove('active');
+            document.getElementById('setupScreen').classList.add('active');
+            
+            selectedRole = '';
+            selectedDifficulty = '';
+            document.querySelectorAll('.role-card, .diff-btn').forEach(el => {
+                el.classList.remove('selected');
+            });
+            document.getElementById('completedCount').textContent = '0';
+            updateStartBtn();
+        }
+    </script>
+</body>
+</html>

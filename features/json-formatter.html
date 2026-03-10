@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📝 JSON 格式化工具</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .toolbar {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .toolbar button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .toolbar button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .editor-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .panel-header {
+            background: #667eea;
+            color: white;
+            padding: 15px 20px;
+            font-weight: 600;
+            font-size: 1.1em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-header button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s;
+        }
+
+        .panel-header button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        textarea {
+            width: 100%;
+            height: 500px;
+            padding: 20px;
+            border: none;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: none;
+            background: #f8f9fa;
+        }
+
+        textarea:focus {
+            outline: none;
+        }
+
+        .json-output {
+            width: 100%;
+            height: 500px;
+            padding: 20px;
+            overflow: auto;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .json-key {
+            color: #9cdcfe;
+        }
+
+        .json-string {
+            color: #ce9178;
+        }
+
+        .json-number {
+            color: #b5cea8;
+        }
+
+        .json-boolean {
+            color: #569cd6;
+        }
+
+        .json-null {
+            color: #569cd6;
+        }
+
+        .status-bar {
+            background: white;
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-icon {
+            font-size: 1.2em;
+        }
+
+        .status-icon.success {
+            color: #4caf50;
+        }
+
+        .status-icon.error {
+            color: #f44336;
+        }
+
+        .error-message {
+            color: #f44336;
+            font-weight: 600;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: white;
+            color: #667eea;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        @media (max-width: 1024px) {
+            .editor-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .toolbar button {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="../lab.html" class="back-button">
+        <i class="fas fa-arrow-left"></i> 返回實驗室
+    </a>
+
+    <div class="container">
+        <header>
+            <h1>📝 JSON 格式化工具</h1>
+            <p style="color: #666; margin-top: 10px;">美化、壓縮和驗證 JSON 數據</p>
+        </header>
+
+        <div class="toolbar">
+            <button onclick="formatJSON()">
+                <i class="fas fa-magic"></i> 格式化 (美化)
+            </button>
+            <button onclick="minifyJSON()">
+                <i class="fas fa-compress"></i> 壓縮
+            </button>
+            <button onclick="validateJSON()">
+                <i class="fas fa-check"></i> 驗證
+            </button>
+            <button onclick="clearAll()">
+                <i class="fas fa-trash"></i> 清除
+            </button>
+            <button onclick="loadSample()">
+                <i class="fas fa-file-code"></i> 載入範例
+            </button>
+            <button onclick="copyOutput()">
+                <i class="fas fa-copy"></i> 複製結果
+            </button>
+        </div>
+
+        <div class="editor-container">
+            <div class="panel">
+                <div class="panel-header">
+                    <span>輸入 JSON</span>
+                    <button onclick="pasteFromClipboard()">
+                        <i class="fas fa-paste"></i> 貼上
+                    </button>
+                </div>
+                <textarea id="jsonInput" placeholder="在此貼上或輸入 JSON..."></textarea>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <span>格式化輸出</span>
+                    <button onclick="copyOutput()">
+                        <i class="fas fa-copy"></i> 複製
+                    </button>
+                </div>
+                <div class="json-output" id="jsonOutput">
+                    處理結果將顯示在這裡...
+                </div>
+            </div>
+        </div>
+
+        <div class="status-bar">
+            <div class="status-item">
+                <i class="fas fa-info-circle status-icon" id="statusIcon"></i>
+                <span id="statusText">就緒</span>
+            </div>
+            <div class="status-item">
+                <span id="statsText">0 字符</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const jsonInput = document.getElementById('jsonInput');
+        const jsonOutput = document.getElementById('jsonOutput');
+        const statusIcon = document.getElementById('statusIcon');
+        const statusText = document.getElementById('statusText');
+        const statsText = document.getElementById('statsText');
+
+        // 格式化 JSON
+        function formatJSON() {
+            try {
+                const input = jsonInput.value.trim();
+                if (!input) {
+                    throw new Error('請輸入 JSON 數據');
+                }
+
+                const parsed = JSON.parse(input);
+                const formatted = JSON.stringify(parsed, null, 2);
+                const highlighted = syntaxHighlight(formatted);
+                
+                jsonOutput.innerHTML = highlighted;
+                setStatus('success', '✅ JSON 格式化成功！');
+                updateStats(formatted);
+            } catch (e) {
+                setStatus('error', `❌ 錯誤：${e.message}`);
+                jsonOutput.textContent = e.message;
+            }
+        }
+
+        // 壓縮 JSON
+        function minifyJSON() {
+            try {
+                const input = jsonInput.value.trim();
+                if (!input) {
+                    throw new Error('請輸入 JSON 數據');
+                }
+
+                const parsed = JSON.parse(input);
+                const minified = JSON.stringify(parsed);
+                
+                jsonOutput.textContent = minified;
+                setStatus('success', '✅ JSON 壓縮成功！');
+                updateStats(minified);
+            } catch (e) {
+                setStatus('error', `❌ 錯誤：${e.message}`);
+                jsonOutput.textContent = e.message;
+            }
+        }
+
+        // 驗證 JSON
+        function validateJSON() {
+            try {
+                const input = jsonInput.value.trim();
+                if (!input) {
+                    throw new Error('請輸入 JSON 數據');
+                }
+
+                const parsed = JSON.parse(input);
+                const info = analyzeJSON(parsed);
+                
+                jsonOutput.innerHTML = `
+                    <div style="color: #4caf50; font-size: 1.2em; margin-bottom: 20px;">
+                        ✅ JSON 格式正確！
+                    </div>
+                    <div style="color: #9cdcfe;">
+                        <strong>數據分析：</strong><br><br>
+                        類型：${info.type}<br>
+                        ${info.details}
+                    </div>
+                `;
+                setStatus('success', '✅ JSON 驗證通過！');
+                updateStats(input);
+            } catch (e) {
+                jsonOutput.innerHTML = `
+                    <div style="color: #f44336; font-size: 1.2em; margin-bottom: 20px;">
+                        ❌ JSON 格式錯誤！
+                    </div>
+                    <div style="color: #ce9178;">
+                        錯誤訊息：${e.message}
+                    </div>
+                `;
+                setStatus('error', `❌ 驗證失敗：${e.message}`);
+            }
+        }
+
+        // 分析 JSON 結構
+        function analyzeJSON(obj) {
+            const type = Array.isArray(obj) ? 'Array' : typeof obj;
+            let details = '';
+
+            if (Array.isArray(obj)) {
+                details = `長度：${obj.length} 個元素`;
+            } else if (typeof obj === 'object' && obj !== null) {
+                const keys = Object.keys(obj);
+                details = `屬性數量：${keys.length}<br>`;
+                details += `屬性名稱：${keys.join(', ')}`;
+            }
+
+            return { type, details };
+        }
+
+        // 語法高亮
+        function syntaxHighlight(json) {
+            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            
+            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, (match) => {
+                let cls = 'json-number';
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        cls = 'json-key';
+                    } else {
+                        cls = 'json-string';
+                    }
+                } else if (/true|false/.test(match)) {
+                    cls = 'json-boolean';
+                } else if (/null/.test(match)) {
+                    cls = 'json-null';
+                }
+                return '<span class="' + cls + '">' + match + '</span>';
+            });
+        }
+
+        // 設定狀態
+        function setStatus(type, message) {
+            statusIcon.className = `fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} status-icon ${type}`;
+            statusText.textContent = message;
+        }
+
+        // 更新統計
+        function updateStats(text) {
+            statsText.textContent = `${text.length} 字符`;
+        }
+
+        // 複製輸出
+        function copyOutput() {
+            const text = jsonOutput.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                setStatus('success', '✅ 已複製到剪貼簿！');
+            }).catch(() => {
+                alert('複製失敗，請手動複製');
+            });
+        }
+
+        // 從剪貼簿貼上
+        async function pasteFromClipboard() {
+            try {
+                const text = await navigator.clipboard.readText();
+                jsonInput.value = text;
+                setStatus('success', '✅ 已從剪貼簿貼上');
+            } catch (e) {
+                alert('無法從剪貼簿讀取，請手動貼上');
+            }
+        }
+
+        // 清除所有
+        function clearAll() {
+            jsonInput.value = '';
+            jsonOutput.textContent = '處理結果將顯示在這裡...';
+            setStatus('', '就緒');
+            statsText.textContent = '0 字符';
+        }
+
+        // 載入範例
+        function loadSample() {
+            const sample = {
+                "name": "高孟麟",
+                "title": "全端工程師",
+                "skills": ["JavaScript", "Python", "React", "Node.js"],
+                "experience": 5,
+                "contact": {
+                    "email": "example@email.com",
+                    "phone": "0912-345-678"
+                },
+                "projects": [
+                    {
+                        "name": "個人網站",
+                        "status": "completed",
+                        "technologies": ["HTML", "CSS", "JavaScript"]
+                    }
+                ],
+                "available": true
+            };
+
+            jsonInput.value = JSON.stringify(sample);
+            setStatus('success', '✅ 範例已載入');
+        }
+
+        // 自動更新字符數
+        jsonInput.addEventListener('input', () => {
+            updateStats(jsonInput.value);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔍 正則表達式測試器</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #4facfe;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .regex-input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .flags-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .flag-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .flag-checkbox input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .flag-checkbox label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+        .results-section {
+            margin-top: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .results-header h2 {
+            color: #333;
+            font-size: 1.5em;
+        }
+
+        .match-count {
+            background: #4facfe;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .highlighted-text {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            line-height: 1.8;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .match {
+            background: #ffd93d;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .matches-list {
+            margin-top: 20px;
+        }
+
+        .match-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid #4facfe;
+        }
+
+        .match-item-header {
+            font-weight: 600;
+            color: #4facfe;
+            margin-bottom: 5px;
+        }
+
+        .match-content {
+            font-family: 'Courier New', monospace;
+            color: #555;
+        }
+
+        .quick-patterns {
+            margin-top: 20px;
+            padding: 20px;
+            background: #e3f2fd;
+            border-radius: 15px;
+        }
+
+        .quick-patterns h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+
+        .pattern-btn {
+            display: inline-block;
+            background: white;
+            color: #1976d2;
+            padding: 8px 16px;
+            margin: 5px;
+            border-radius: 20px;
+            border: 2px solid #1976d2;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+
+        .pattern-btn:hover {
+            background: #1976d2;
+            color: white;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: white;
+            color: #4facfe;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .error-message {
+            background: #ffe0e0;
+            border: 2px solid #ff4444;
+            color: #cc0000;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="../lab.html" class="back-button">
+        <i class="fas fa-arrow-left"></i> 返回實驗室
+    </a>
+
+    <div class="container">
+        <h1>🔍 正則表達式測試器</h1>
+
+        <div class="input-group">
+            <label for="regexInput">正則表達式 (Regular Expression):</label>
+            <div class="regex-input-wrapper">
+                <input type="text" id="regexInput" placeholder="例如: [A-Za-z0-9]+" value="\\d+">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>旗標 (Flags):</label>
+            <div class="flags-container">
+                <div class="flag-checkbox">
+                    <input type="checkbox" id="flagG" checked>
+                    <label for="flagG">g (全域搜尋)</label>
+                </div>
+                <div class="flag-checkbox">
+                    <input type="checkbox" id="flagI">
+                    <label for="flagI">i (忽略大小寫)</label>
+                </div>
+                <div class="flag-checkbox">
+                    <input type="checkbox" id="flagM">
+                    <label for="flagM">m (多行模式)</label>
+                </div>
+                <div class="flag-checkbox">
+                    <input type="checkbox" id="flagS">
+                    <label for="flagS">s (單行模式)</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="testString">測試文字 (Test String):</label>
+            <textarea id="testString" placeholder="在此輸入要測試的文字...">我的電話是 0912-345-678，電子郵件是 test@example.com
+網站是 https://www.example.com
+訂單編號：ORD-2024-001</textarea>
+        </div>
+
+        <div class="results-section">
+            <div class="results-header">
+                <h2>匹配結果</h2>
+                <div class="match-count" id="matchCount">0 個匹配</div>
+            </div>
+
+            <div class="highlighted-text" id="highlightedText">
+                在上方輸入正則表達式和測試文字...
+            </div>
+
+            <div class="matches-list" id="matchesList"></div>
+
+            <div id="errorMessage"></div>
+        </div>
+
+        <div class="quick-patterns">
+            <h3>🚀 快速模式</h3>
+            <button class="pattern-btn" onclick="loadPattern('\\d+', '數字')">數字</button>
+            <button class="pattern-btn" onclick="loadPattern('[A-Za-z]+', '英文字母')">英文字母</button>
+            <button class="pattern-btn" onclick="loadPattern('[\\u4e00-\\u9fa5]+', '中文字')">中文字</button>
+            <button class="pattern-btn" onclick="loadPattern('[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}', 'Email')">Email</button>
+            <button class="pattern-btn" onclick="loadPattern('https?://[\\w\\./\\-?=&]+', 'URL')">URL</button>
+            <button class="pattern-btn" onclick="loadPattern('09\\d{2}-?\\d{3}-?\\d{3}', '台灣手機')">台灣手機</button>
+            <button class="pattern-btn" onclick="loadPattern('\\d{4}-\\d{2}-\\d{2}', '日期')">日期 (YYYY-MM-DD)</button>
+            <button class="pattern-btn" onclick="loadPattern('#[A-Fa-f0-9]{6}', '顏色碼')">顏色碼</button>
+            <button class="pattern-btn" onclick="loadPattern('\\b[A-Z][A-Za-z]+\\b', '大寫開頭單字')">大寫開頭單字</button>
+        </div>
+    </div>
+
+    <script>
+        const regexInput = document.getElementById('regexInput');
+        const testString = document.getElementById('testString');
+        const highlightedText = document.getElementById('highlightedText');
+        const matchesList = document.getElementById('matchesList');
+        const matchCount = document.getElementById('matchCount');
+        const errorMessage = document.getElementById('errorMessage');
+
+        const flagG = document.getElementById('flagG');
+        const flagI = document.getElementById('flagI');
+        const flagM = document.getElementById('flagM');
+        const flagS = document.getElementById('flagS');
+
+        function testRegex() {
+            errorMessage.innerHTML = '';
+            
+            const regexPattern = regexInput.value;
+            const text = testString.value;
+
+            if (!regexPattern) {
+                highlightedText.textContent = text;
+                matchCount.textContent = '0 個匹配';
+                matchesList.innerHTML = '';
+                return;
+            }
+
+            try {
+                // 建立旗標字串
+                let flags = '';
+                if (flagG.checked) flags += 'g';
+                if (flagI.checked) flags += 'i';
+                if (flagM.checked) flags += 'm';
+                if (flagS.checked) flags += 's';
+
+                const regex = new RegExp(regexPattern, flags);
+                const matches = text.matchAll(new RegExp(regexPattern, flags));
+                const matchArray = Array.from(matches);
+
+                // 更新匹配計數
+                matchCount.textContent = `${matchArray.length} 個匹配`;
+
+                // 高亮顯示匹配的文字
+                if (matchArray.length > 0) {
+                    let highlightedStr = text;
+                    let offset = 0;
+
+                    matchArray.forEach((match) => {
+                        const matchText = match[0];
+                        const start = match.index + offset;
+                        const end = start + matchText.length;
+                        
+                        const before = highlightedStr.slice(0, start);
+                        const highlighted = `<span class="match">${matchText}</span>`;
+                        const after = highlightedStr.slice(end);
+                        
+                        highlightedStr = before + highlighted + after;
+                        offset += highlighted.length - matchText.length;
+                    });
+
+                    highlightedText.innerHTML = highlightedStr;
+
+                    // 顯示匹配列表
+                    matchesList.innerHTML = '<h3 style="color: #333; margin-bottom: 15px;">匹配詳情：</h3>';
+                    matchArray.forEach((match, index) => {
+                        const matchItem = document.createElement('div');
+                        matchItem.className = 'match-item';
+                        matchItem.innerHTML = `
+                            <div class="match-item-header">Match ${index + 1} (索引: ${match.index})</div>
+                            <div class="match-content">"${match[0]}"</div>
+                        `;
+                        matchesList.appendChild(matchItem);
+                    });
+                } else {
+                    highlightedText.textContent = text;
+                    matchesList.innerHTML = '<p style="color: #999; text-align: center;">沒有找到匹配項目</p>';
+                }
+
+            } catch (e) {
+                errorMessage.innerHTML = `
+                    <div class="error-message">
+                        <strong>❌ 錯誤：</strong> ${e.message}
+                    </div>
+                `;
+                highlightedText.textContent = text;
+                matchCount.textContent = '錯誤';
+                matchesList.innerHTML = '';
+            }
+        }
+
+        function loadPattern(pattern, name) {
+            regexInput.value = pattern;
+            testRegex();
+        }
+
+        // 自動測試
+        regexInput.addEventListener('input', testRegex);
+        testString.addEventListener('input', testRegex);
+        flagG.addEventListener('change', testRegex);
+        flagI.addEventListener('change', testRegex);
+        flagM.addEventListener('change', testRegex);
+        flagS.addEventListener('change', testRegex);
+
+        // 初始測試
+        testRegex();
+    </script>
+</body>
+</html>

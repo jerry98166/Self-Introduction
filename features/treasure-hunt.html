@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 網站尋寶遊戲</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #11998e;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .info-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            color: #11998e;
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .progress-bar-container {
+            background: #e0e0e0;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #11998e, #38ef7d);
+            height: 100%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            min-height: 600px;
+        }
+
+        .treasure {
+            position: absolute;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 2em;
+        }
+
+        .treasure:hover {
+            transform: scale(1.3) rotate(15deg);
+        }
+
+        .treasure.found {
+            animation: collect 0.5s ease;
+            pointer-events: none;
+        }
+
+        @keyframes collect {
+            0% { transform: scale(1) rotate(0deg); opacity: 1; }
+            100% { transform: scale(0) rotate(360deg); opacity: 0; }
+        }
+
+        .clue-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .clue-box h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .clue-text {
+            color: #856404;
+            font-size: 1.1em;
+        }
+
+        .treasures-found {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .found-item {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            color: white;
+            font-size: 2em;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .victory-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .victory-modal.show {
+            display: flex;
+        }
+
+        .victory-content {
+            background: white;
+            border-radius: 30px;
+            padding: 50px;
+            text-align: center;
+            max-width: 600px;
+            animation: bounceIn 0.5s;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .victory-content h2 {
+            color: #11998e;
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .victory-content p {
+            color: #666;
+            font-size: 1.3em;
+            margin-bottom: 30px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: white;
+            color: #11998e;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .hint-button {
+            background: linear-gradient(135deg, #ffc107, #ff9800);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .game-area {
+                padding: 20px;
+                min-height: 400px;
+            }
+
+            .treasure {
+                font-size: 1.5em;
+            }
+
+            .victory-content {
+                padding: 30px;
+            }
+
+            .victory-content h2 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="../lab.html" class="back-button">
+        <i class="fas fa-arrow-left"></i> 返回實驗室
+    </a>
+
+    <div class="container">
+        <header>
+            <h1>🗺️ 網站尋寶遊戲</h1>
+            <p style="color: #666; margin-top: 10px;">在整個網站找到隱藏的寶藏！</p>
+            
+            <div class="game-info">
+                <div class="info-item">
+                    <div class="info-label">已找到</div>
+                    <div class="info-value" id="foundCount">0</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">總數</div>
+                    <div class="info-value">10</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">剩餘提示</div>
+                    <div class="info-value" id="hintsLeft">3</div>
+                </div>
+            </div>
+
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar" style="width: 0%">0%</div>
+            </div>
+        </header>
+
+        <div class="clue-box">
+            <h3>📜 當前線索：</h3>
+            <p class="clue-text" id="currentClue">點擊「下一個線索」開始尋寶！</p>
+            <button class="hint-button" onclick="showHint()">💡 使用提示</button>
+            <button class="hint-button" onclick="nextClue()">➡️ 下一個線索</button>
+        </div>
+
+        <div class="game-area" id="gameArea">
+            <p style="text-align: center; color: #999; font-size: 1.2em; margin-top: 200px;">
+                根據線索在這個區域尋找寶藏！<br>
+                也可以在整個頁面任何地方尋找隱藏寶藏！
+            </p>
+        </div>
+
+        <div class="treasures-found" id="treasuresFound"></div>
+    </div>
+
+    <div class="victory-modal" id="victoryModal">
+        <div class="victory-content">
+            <h2>🎉 恭喜完成！</h2>
+            <p>你找到了所有 10 個寶藏！</p>
+            <p style="color: #11998e; font-weight: bold;">⏱️ 用時：<span id="finalTime"></span></p>
+            <button onclick="restartGame()">🔄 再玩一次</button>
+        </div>
+    </div>
+
+    <script>
+        const treasures = [
+            { icon: '💎', name: '鑽石', clue: '閃閃發光的東西通常在頁面的左上角...', hint: '查看頁面的左上方區域' },
+            { icon: '🏆', name: '獎杯', clue: '勝利者的象徵常在最高處...', hint: '靠近頁面頂部' },
+            { icon: '👑', name: '皇冠', clue: '國王的寶物藏在中央位置...', hint: '在遊戲區域的中心附近' },
+            { icon: '⭐', name: '星星', clue: '星星喜歡待在右上角的天空...', hint: '頁面右上角' },
+            { icon: '🔑', name: '鑰匙', clue: '打開秘密的鑰匙藏在下方某處...', hint: '遊戲區域的下半部' },
+            { icon: '📦', name: '寶箱', clue: '沉重的寶箱總是在底部...', hint: '接近頁面底部' },
+            { icon: '💰', name: '金幣', clue: '金幣散落在中間偏左的位置...', hint: '略偏左側的中間區域' },
+            { icon: '🎁', name: '禮物', clue: '驚喜禮物藏在右側某處...', hint: '頁面右側中間位置' },
+            { icon: '💍', name: '戒指', clue: '珍貴的戒指在左下角閃耀...', hint: '遊戲區域左下角' },
+            { icon: '🌟', name: '寶石', clue: '最後的寶石在右下角等待...', hint: '遊戲區域右下角' }
+        ];
+
+        let foundTreasures = new Set();
+        let currentClueIndex = 0;
+        let hintsLeft = 3;
+        let startTime = Date.now();
+        let gameStarted = false;
+
+        function initGame() {
+            loadProgress();
+            if (!gameStarted) {
+                placeTreasures();
+            }
+            updateDisplay();
+        }
+
+        function placeTreasures() {
+            const gameArea = document.getElementById('gameArea');
+            gameArea.innerHTML = '';
+            
+            treasures.forEach((treasure, index) => {
+                const treasureEl = document.createElement('div');
+                treasureEl.className = 'treasure';
+                treasureEl.innerHTML = treasure.icon;
+                treasureEl.dataset.index = index;
+                
+                // 隨機但有規律的位置
+                const positions = [
+                    { top: '10%', left: '10%' },   // 左上
+                    { top: '10%', left: '50%' },   // 中上
+                    { top: '50%', left: '50%' },   // 正中
+                    { top: '10%', left: '85%' },   // 右上
+                    { top: '70%', left: '30%' },   // 下方
+                    { top: '85%', left: '50%' },   // 底部
+                    { top: '50%', left: '20%' },   // 中左
+                    { top: '50%', left: '80%' },   // 中右
+                    { top: '85%', left: '15%' },   // 左下
+                    { top: '85%', left: '85%' }    // 右下
+                ];
+                
+                if (!foundTreasures.has(index)) {
+                    treasureEl.style.top = positions[index].top;
+                    treasureEl.style.left = positions[index].left;
+                    
+                    treasureEl.addEventListener('click', () => collectTreasure(index));
+                    gameArea.appendChild(treasureEl);
+                }
+            });
+
+            gameStarted = true;
+        }
+
+        function collectTreasure(index) {
+            if (foundTreasures.has(index)) return;
+            
+            foundTreasures.add(index);
+            
+            const treasureEl = document.querySelector(`[data-index="${index}"]`);
+            treasureEl.classList.add('found');
+            
+            // 添加到已找到列表
+            const foundContainer = document.getElementById('treasuresFound');
+            const foundItem = document.createElement('div');
+            foundItem.className = 'found-item';
+            foundItem.innerHTML = treasures[index].icon;
+            foundItem.title = treasures[index].name;
+            foundContainer.appendChild(foundItem);
+            
+            setTimeout(() => {
+                treasureEl.remove();
+            }, 500);
+            
+            updateDisplay();
+            saveProgress();
+            
+            if (foundTreasures.size === treasures.length) {
+                showVictory();
+            }
+        }
+
+        function nextClue() {
+            // 跳過已找到的寶藏
+            do {
+                currentClueIndex = (currentClueIndex + 1) % treasures.length;
+            } while (foundTreasures.has(currentClueIndex));
+            
+            document.getElementById('currentClue').textContent = treasures[currentClueIndex].clue;
+        }
+
+        function showHint() {
+            if (hintsLeft <= 0) {
+                alert('❌ 沒有剩餘提示了！');
+                return;
+            }
+            
+            hintsLeft--;
+            alert(`💡 提示：${treasures[currentClueIndex].hint}`);
+            document.getElementById('hintsLeft').textContent = hintsLeft;
+            saveProgress();
+        }
+
+        function updateDisplay() {
+            const found = foundTreasures.size;
+            const progress = (found / treasures.length) * 100;
+            
+            document.getElementById('foundCount').textContent = found;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressBar').textContent = Math.round(progress) + '%';
+            document.getElementById('hintsLeft').textContent = hintsLeft;
+        }
+
+        function showVictory() {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            const timeString = `${minutes}:${String(seconds).padStart(2, '0')}`;
+            
+            document.getElementById('finalTime').textContent = timeString;
+            document.getElementById('victoryModal').classList.add('show');
+            
+            // 清除進度
+            localStorage.removeItem('treasure_hunt_progress');
+        }
+
+        function restartGame() {
+            foundTreasures.clear();
+            currentClueIndex = 0;
+            hintsLeft = 3;
+            startTime = Date.now();
+            
+            document.getElementById('treasuresFound').innerHTML = '';
+            document.getElementById('victoryModal').classList.remove('show');
+            document.getElementById('currentClue').textContent = '點擊「下一個線索」開始尋寶！';
+            
+            localStorage.removeItem('treasure_hunt_progress');
+            placeTreasures();
+            updateDisplay();
+        }
+
+        function saveProgress() {
+            localStorage.setItem('treasure_hunt_progress', JSON.stringify({
+                foundTreasures: Array.from(foundTreasures),
+                hintsLeft: hintsLeft,
+                startTime: startTime,
+                currentClueIndex: currentClueIndex
+            }));
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem('treasure_hunt_progress');
+            if (saved) {
+                const data = JSON.parse(saved);
+                foundTreasures = new Set(data.foundTreasures);
+                hintsLeft = data.hintsLeft;
+                startTime = data.startTime;
+                currentClueIndex = data.currentClueIndex;
+                
+                // 重建已找到的寶藏顯示
+                const foundContainer = document.getElementById('treasuresFound');
+                foundContainer.innerHTML = '';
+                data.foundTreasures.forEach(index => {
+                    const foundItem = document.createElement('div');
+                    foundItem.className = 'found-item';
+                    foundItem.innerHTML = treasures[index].icon;
+                    foundItem.title = treasures[index].name;
+                    foundContainer.appendChild(foundItem);
+                });
+            }
+        }
+
+        // 初始化遊戲
+        initGame();
+    </script>
+</body>
+</html>

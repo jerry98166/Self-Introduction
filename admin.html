@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>後台管理系統 | Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* 頂部導航 */
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 1.5rem 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header h1 {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.8rem;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* 統計卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+        
+        /* 數據面板 */
+        .data-panel {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            margin-bottom: 2rem;
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #475569;
+        }
+        
+        .panel-title {
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        
+        .panel-actions {
+            display: flex;
+            gap: 0.8rem;
+        }
+        
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+        
+        /* 表格樣式 */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #475569;
+        }
+        
+        .data-table th {
+            background: #334155;
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+        
+        .data-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .data-table td:first-child {
+            font-weight: 500;
+        }
+        
+        /* 留言卡片 */
+        .message-item {
+            background: #334155;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #667eea;
+        }
+        
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+        
+        .message-author {
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+        
+        .message-date {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        .message-content {
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .message-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-icon {
+            padding: 0.5rem;
+            background: transparent;
+            border: 1px solid #475569;
+            color: #94a3b8;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-icon:hover {
+            background: #475569;
+            color: #f1f5f9;
+        }
+        
+        /* 聊天記錄 */
+        .chat-log {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .chat-item {
+            background: #334155;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+        }
+        
+        .chat-user {
+            color: #10b981;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+        
+        .chat-bot {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+        
+        .chat-message {
+            color: #cbd5e1;
+        }
+        
+        /* 圖表容器 */
+        .chart-container {
+            background: #334155;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+        
+        /* 登入表單 */
+        .login-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        .login-box {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 400px;
+            max-width: 90%;
+        }
+        
+        .login-box h2 {
+            color: #1e293b;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #475569;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .error-message {
+            color: #ef4444;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        /* 滾動條樣式 */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <!-- 登入頁面 -->
+    <div id="login-container" class="login-container">
+        <div class="login-box">
+            <h2><i class="fas fa-shield-alt"></i> 後台登入</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">帳號</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">密碼</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> 登入
+                </button>
+                <div id="login-error" class="error-message">帳號或密碼錯誤！</div>
+            </form>
+            <div style="margin-top: 1rem; text-align: center; color: #64748b; font-size: 0.9rem;">
+                <p>測試帳號: admin</p>
+                <p>測試密碼: admin123</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主要內容 -->
+    <div id="main-content" class="container hidden">
+        <!-- 頂部導航 -->
+        <div class="header">
+            <h1>
+                <i class="fas fa-dashboard"></i>
+                後台管理系統
+            </h1>
+            <div class="header-actions">
+                <button class="btn btn-primary" onclick="refreshData()">
+                    <i class="fas fa-sync-alt"></i> 刷新數據
+                </button>
+                <button class="btn btn-danger" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> 登出
+                </button>
+            </div>
+        </div>
+
+        <!-- 統計卡片 -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-value" id="total-visitors">0</div>
+                <div class="stat-label">總訪客數</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <div class="stat-value" id="total-messages">0</div>
+                <div class="stat-label">訪客留言</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="stat-value" id="total-chats">0</div>
+                <div class="stat-label">AI 對話數</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-terminal"></i>
+                </div>
+                <div class="stat-value" id="terminal-commands">0</div>
+                <div class="stat-label">終端機指令</div>
+            </div>
+        </div>
+
+        <!-- 訪客留言板 -->
+        <div class="data-panel">
+            <div class="panel-header">
+                <h2 class="panel-title">
+                    <i class="fas fa-comments"></i>
+                    訪客留言
+                </h2>
+                <div class="panel-actions">
+                    <button class="btn btn-sm btn-danger" onclick="clearMessages()">
+                        <i class="fas fa-trash"></i> 清空留言
+                    </button>
+                </div>
+            </div>
+            <div id="messages-list"></div>
+        </div>
+
+        <!-- AI 聊天記錄 -->
+        <div class="data-panel">
+            <div class="panel-header">
+                <h2 class="panel-title">
+                    <i class="fas fa-robot"></i>
+                    AI 聊天記錄
+                </h2>
+                <div class="panel-actions">
+                    <button class="btn btn-sm btn-danger" onclick="clearChatLog()">
+                        <i class="fas fa-trash"></i> 清空記錄
+                    </button>
+                </div>
+            </div>
+            <div id="chat-log" class="chat-log"></div>
+        </div>
+
+        <!-- 終端機指令記錄 -->
+        <div class="data-panel">
+            <div class="panel-header">
+                <h2 class="panel-title">
+                    <i class="fas fa-terminal"></i>
+                    終端機指令記錄
+                </h2>
+                <div class="panel-actions">
+                    <button class="btn btn-sm btn-danger" onclick="clearTerminalLog()">
+                        <i class="fas fa-trash"></i> 清空記錄
+                    </button>
+                </div>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>時間</th>
+                        <th>指令</th>
+                        <th>訪客IP (模擬)</th>
+                    </tr>
+                </thead>
+                <tbody id="terminal-log">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // 登入驗證
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username === 'admin' && password === 'admin123') {
+                document.getElementById('login-container').classList.add('hidden');
+                document.getElementById('main-content').classList.remove('hidden');
+                loadDashboardData();
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+            }
+        });
+
+        // 載入儀表板數據
+        function loadDashboardData() {
+            // 載入訪客數
+            const visitors = localStorage.getItem('visitor_count') || 0;
+            document.getElementById('total-visitors').textContent = visitors;
+            
+            // 載入留言
+            loadMessages();
+            
+            // 載入聊天記錄
+            loadChatLog();
+            
+            // 載入終端機記錄
+            loadTerminalLog();
+        }
+
+        // 載入留言
+        function loadMessages() {
+            const messages = JSON.parse(localStorage.getItem('guestbook_messages') || '[]');
+            document.getElementById('total-messages').textContent = messages.length;
+            
+            const messagesList = document.getElementById('messages-list');
+            messagesList.innerHTML = '';
+            
+            if (messages.length === 0) {
+                messagesList.innerHTML = '<p style="text-align: center; color: #94a3b8;">目前沒有留言</p>';
+                return;
+            }
+            
+            messages.forEach((msg, index) => {
+                const date = new Date(msg.date);
+                const messageCard = document.createElement('div');
+                messageCard.className = 'message-item';
+                messageCard.innerHTML = `
+                    <div class="message-header">
+                        <span class="message-author">${msg.name}${msg.email ? ' (' + msg.email + ')' : ''}</span>
+                        <span class="message-date">${date.toLocaleString('zh-TW')}</span>
+                    </div>
+                    <div class="message-content">${msg.message}</div>
+                    <div class="message-actions">
+                        <button class="btn-icon" onclick="deleteMessage(${index})" title="刪除">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                messagesList.appendChild(messageCard);
+            });
+        }
+
+        // 刪除留言
+        function deleteMessage(index) {
+            if (confirm('確定要刪除這則留言嗎？')) {
+                const messages = JSON.parse(localStorage.getItem('guestbook_messages') || '[]');
+                messages.splice(index, 1);
+                localStorage.setItem('guestbook_messages', JSON.stringify(messages));
+                loadMessages();
+            }
+        }
+
+        // 清空留言
+        function clearMessages() {
+            if (confirm('確定要清空所有留言嗎？此操作無法復原！')) {
+                localStorage.setItem('guestbook_messages', '[]');
+                loadMessages();
+            }
+        }
+
+        // 載入聊天記錄
+        function loadChatLog() {
+            const chatLog = JSON.parse(localStorage.getItem('chatbot_log') || '[]');
+            document.getElementById('total-chats').textContent = chatLog.length;
+            
+            const chatLogContainer = document.getElementById('chat-log');
+            chatLogContainer.innerHTML = '';
+            
+            if (chatLog.length === 0) {
+                chatLogContainer.innerHTML = '<p style="text-align: center; color: #94a3b8;">目前沒有聊天記錄</p>';
+                return;
+            }
+            
+            chatLog.reverse().forEach(chat => {
+                const chatItem = document.createElement('div');
+                chatItem.className = 'chat-item';
+                chatItem.innerHTML = `
+                    <div class="${chat.type === 'user' ? 'chat-user' : 'chat-bot'}">
+                        ${chat.type === 'user' ? '<i class="fas fa-user"></i> 訪客' : '<i class="fas fa-robot"></i> AI 助手'}
+                    </div>
+                    <div class="chat-message">${chat.message}</div>
+                    <div style="color: #64748b; font-size: 0.85rem; margin-top: 0.3rem;">
+                        ${new Date(chat.time).toLocaleString('zh-TW')}
+                    </div>
+                `;
+                chatLogContainer.appendChild(chatItem);
+            });
+        }
+
+        // 清空聊天記錄
+        function clearChatLog() {
+            if (confirm('確定要清空聊天記錄嗎？')) {
+                localStorage.setItem('chatbot_log', '[]');
+                loadChatLog();
+            }
+        }
+
+        // 載入終端機記錄
+        function loadTerminalLog() {
+            const terminalLog = JSON.parse(localStorage.getItem('terminal_log') || '[]');
+            document.getElementById('terminal-commands').textContent = terminalLog.length;
+            
+            const terminalLogTable = document.getElementById('terminal-log');
+            terminalLogTable.innerHTML = '';
+            
+            if (terminalLog.length === 0) {
+                terminalLogTable.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #94a3b8;">目前沒有終端機記錄</td></tr>';
+                return;
+            }
+            
+            terminalLog.reverse().forEach(log => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${new Date(log.time).toLocaleString('zh-TW')}</td>
+                    <td><code style="color: #10b981;">${log.command}</code></td>
+                    <td>${log.ip || '127.0.0.1'}</td>
+                `;
+                terminalLogTable.appendChild(row);
+            });
+        }
+
+        // 清空終端機記錄
+        function clearTerminalLog() {
+            if (confirm('確定要清空終端機記錄嗎？')) {
+                localStorage.setItem('terminal_log', '[]');
+                loadTerminalLog();
+            }
+        }
+
+        // 刷新數據
+        function refreshData() {
+            loadDashboardData();
+            alert('數據已刷新！');
+        }
+
+        // 登出
+        function logout() {
+            if (confirm('確定要登出嗎？')) {
+                document.getElementById('main-content').classList.add('hidden');
+                document.getElementById('login-container').classList.remove('hidden');
+                document.getElementById('login-form').reset();
+                document.getElementById('login-error').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💻 線上程式碼編輯器</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1e1e1e;
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            background: #2d2d30;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #007acc;
+        }
+
+        h1 {
+            font-size: 1.5em;
+            color: #007acc;
+        }
+
+        .back-btn {
+            background: #007acc;
+            color: white;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #005a9e;
+        }
+
+        .toolbar {
+            background: #2d2d30;
+            padding: 10px 20px;
+            display: flex;
+            gap: 10px;
+            border-bottom: 1px solid #3e3e42;
+            flex-wrap: wrap;
+        }
+
+        .toolbar button {
+            background: #0e639c;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .toolbar button:hover {
+            background: #1177bb;
+        }
+
+        .toolbar .spacer {
+            flex: 1;
+        }
+
+        .container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .editor-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #3e3e42;
+        }
+
+        .tabs {
+            background: #2d2d30;
+            display: flex;
+            border-bottom: 1px solid #3e3e42;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-right: 1px solid #3e3e42;
+            background: #252526;
+            color: #ccc;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s;
+        }
+
+        .tab.active {
+            background: #1e1e1e;
+            color: #fff;
+            border-bottom: 2px solid #007acc;
+        }
+
+        .tab:hover {
+            background: #2a2d2e;
+        }
+
+        .editor-container {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .editor {
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border: none;
+            outline: none;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: none;
+            tab-size: 4;
+        }
+
+        .editor:focus {
+            background: #1e1e1e;
+        }
+
+        .preview-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+
+        .preview-header {
+            background: #f3f3f3;
+            padding: 12px 20px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .preview-frame {
+            flex: 1;
+            border: none;
+            background: white;
+        }
+
+        .line-numbers {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 50px;
+            height: 100%;
+            background: #1e1e1e;
+            color: #858585;
+            padding: 20px 0;
+            text-align: right;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            user-select: none;
+            border-right: 1px solid #3e3e42;
+        }
+
+        .status-bar {
+            background: #007acc;
+            color: white;
+            padding: 8px 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .editor-panel, .preview-panel {
+                border: none;
+                border-bottom: 1px solid #3e3e42;
+            }
+
+            h1 {
+                font-size: 1.2em;
+            }
+
+            .toolbar {
+                padding: 10px;
+            }
+
+            .toolbar button {
+                padding: 6px 12px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><i class="fas fa-code"></i> 線上程式碼編輯器</h1>
+        <a href="../lab.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> 返回
+        </a>
+    </div>
+
+    <div class="toolbar">
+        <button onclick="runCode()">
+            <i class="fas fa-play"></i> 執行 (Ctrl+Enter)
+        </button>
+        <button onclick="clearAll()">
+            <i class="fas fa-trash"></i> 清除全部
+        </button>
+        <button onclick="loadSample()">
+            <i class="fas fa-file-code"></i> 載入範例
+        </button>
+        <div class="spacer"></div>
+        <button onclick="downloadCode()">
+            <i class="fas fa-download"></i> 下載
+        </button>
+    </div>
+
+    <div class="container">
+        <div class="editor-panel">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('html')">
+                    <i class="fab fa-html5" style="color: #e34c26;"></i> HTML
+                </div>
+                <div class="tab" onclick="switchTab('css')">
+                    <i class="fab fa-css3-alt" style="color: #264de4;"></i> CSS
+                </div>
+                <div class="tab" onclick="switchTab('js')">
+                    <i class="fab fa-js-square" style="color: #f0db4f;"></i> JavaScript
+                </div>
+            </div>
+
+            <div class="editor-container">
+                <textarea class="editor" id="htmlEditor" placeholder="<!-- 在此輸入 HTML 代碼 -->"></textarea>
+                <textarea class="editor" id="cssEditor" style="display: none;" placeholder="/* 在此輸入 CSS 樣式 */"></textarea>
+                <textarea class="editor" id="jsEditor" style="display: none;" placeholder="// 在此輸入 JavaScript 代碼"></textarea>
+            </div>
+        </div>
+
+        <div class="preview-panel">
+            <div class="preview-header">
+                <i class="fas fa-eye"></i> 即時預覽
+            </div>
+            <iframe class="preview-frame" id="preview"></iframe>
+        </div>
+    </div>
+
+    <div class="status-bar">
+        <div>
+            <i class="fas fa-info-circle"></i> 
+            按 Ctrl+Enter 執行代碼 | 支援 HTML, CSS, JavaScript
+        </div>
+        <div id="status">就緒</div>
+    </div>
+
+    <script>
+        let currentTab = 'html';
+
+        // 切換分頁
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // 更新分頁樣式
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.closest('.tab').classList.add('active');
+
+            // 切換編輯器
+            document.getElementById('htmlEditor').style.display = tab === 'html' ? 'block' : 'none';
+            document.getElementById('cssEditor').style.display = tab === 'css' ? 'block' : 'none';
+            document.getElementById('jsEditor').style.display = tab === 'js' ? 'block' : 'none';
+        }
+
+        // 執行代碼
+        function runCode() {
+            const html = document.getElementById('htmlEditor').value;
+            const css = document.getElementById('cssEditor').value;
+            const js = document.getElementById('jsEditor').value;
+
+            const iframe = document.getElementById('preview');
+            const document_iframe = iframe.contentDocument || iframe.contentWindow.document;
+            
+            const output = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>${css}</style>
+                </head>
+                <body>
+                    ${html}
+                    <script>${js}<\/script>
+                </body>
+                </html>
+            `;
+
+            document_iframe.open();
+            document_iframe.write(output);
+            document_iframe.close();
+
+            updateStatus('✅ 代碼已執行');
+        }
+
+        // 清除所有代碼
+        function clearAll() {
+            if (confirm('確定要清除所有代碼嗎？')) {
+                document.getElementById('htmlEditor').value = '';
+                document.getElementById('cssEditor').value = '';
+                document.getElementById('jsEditor').value = '';
+                runCode();
+                updateStatus('🗑️ 已清除');
+            }
+        }
+
+        // 載入範例代碼
+        function loadSample() {
+            const sampleHTML = `<div class="card">
+  <h1>歡迎使用程式碼編輯器！</h1>
+  <p>這是一個即時預覽的編輯器</p>
+  <button onclick="sayHello()">點我</button>
+</div>`;
+
+            const sampleCSS = `body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.card {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  text-align: center;
+  max-width: 400px;
+}
+
+h1 {
+  color: #667eea;
+  margin-bottom: 20px;
+}
+
+p {
+  color: #666;
+  margin-bottom: 30px;
+  font-size: 1.1em;
+}
+
+button {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+button:hover {
+  transform: translateY(-2px);
+}`;
+
+            const sampleJS = `function sayHello() {
+  alert('你好！這是 JavaScript 互動！');
+  console.log('按鈕被點擊了！');
+}
+
+console.log('範例代碼已載入！');`;
+
+            document.getElementById('htmlEditor').value = sampleHTML;
+            document.getElementById('cssEditor').value = sampleCSS;
+            document.getElementById('jsEditor').value = sampleJS;
+            
+            runCode();
+            updateStatus('📂 範例已載入');
+        }
+
+        // 下載代碼
+        function downloadCode() {
+            const html = document.getElementById('htmlEditor').value;
+            const css = document.getElementById('cssEditor').value;
+            const js = document.getElementById('jsEditor').value;
+
+            const fullCode = `<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的專案</title>
+    <style>
+${css}
+    </style>
+</head>
+<body>
+${html}
+    <script>
+${js}
+    <\/script>
+</body>
+</html>`;
+
+            const blob = new Blob([fullCode], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'my-project.html';
+            a.click();
+            URL.revokeObjectURL(url);
+
+            updateStatus('💾 已下載');
+        }
+
+        // 更新狀態
+        function updateStatus(message) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            setTimeout(() => {
+                status.textContent = '就緒';
+            }, 2000);
+        }
+
+        // 鍵盤快捷鍵
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                runCode();
+            }
+            
+            // Tab 鍵插入縮排
+            if (e.key === 'Tab') {
+                const editor = document.querySelector('.editor:not([style*="display: none"])');
+                if (document.activeElement === editor) {
+                    e.preventDefault();
+                    const start = editor.selectionStart;
+                    const end = editor.selectionEnd;
+                    editor.value = editor.value.substring(0, start) + '    ' + editor.value.substring(end);
+                    editor.selectionStart = editor.selectionEnd = start + 4;
+                }
+            }
+        });
+
+        // 自動執行（可選）
+        let autoRunTimeout;
+        document.querySelectorAll('.editor').forEach(editor => {
+            editor.addEventListener('input', () => {
+                clearTimeout(autoRunTimeout);
+                autoRunTimeout = setTimeout(() => {
+                    runCode();
+                }, 1000); // 1秒後自動執行
+            });
+        });
+
+        // 初始載入範例
+        window.addEventListener('load', () => {
+            loadSample();
+        });
+    </script>
+</body>
+</html>

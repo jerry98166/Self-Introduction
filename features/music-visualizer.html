@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎵 音樂視覺化 - Music Visualizer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #visualizer {
+            flex: 1;
+            background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a0a 100%);
+            position: relative;
+        }
+
+        .controls-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            padding: 30px 20px 20px;
+            transform: translateY(0);
+            transition: transform 0.3s;
+        }
+
+        .controls-overlay.hidden {
+            transform: translateY(calc(100% - 60px));
+        }
+
+        .toggle-controls {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 5px 20px;
+            border-radius: 15px 15px 0 0;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .player-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .track-info {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .track-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .track-artist {
+            font-size: 1em;
+            opacity: 0.7;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.1s;
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85em;
+            opacity: 0.7;
+            margin-bottom: 20px;
+        }
+
+        .player-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.1);
+        }
+
+        .control-btn.play {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            font-size: 2em;
+        }
+
+        .control-btn.play:hover {
+            box-shadow: 0 0 30px rgba(102,126,234,0.5);
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .setting-group {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .setting-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255,255,255,0.2);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            cursor: pointer;
+            border: none;
+        }
+
+        .viz-mode-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .viz-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+
+        .viz-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .viz-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .file-upload {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .upload-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102,126,234,0.4);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .stats-overlay {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.9em;
+        }
+
+        .stat-row {
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .track-title {
+                font-size: 1.2em;
+            }
+
+            .stats-overlay {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <canvas id="visualizer"></canvas>
+
+        <div class="stats-overlay">
+            <div class="stat-row">🎵 模式: <strong id="vizMode">頻譜</strong></div>
+            <div class="stat-row">📊 頻率: <strong id="frequency">0 Hz</strong></div>
+            <div class="stat-row">🔊 音量: <strong id="volume">0 dB</strong></div>
+            <div class="stat-row">⚡ FPS: <strong id="fps">60</strong></div>
+        </div>
+
+        <div class="controls-overlay" id="controlsOverlay">
+            <button class="toggle-controls" onclick="toggleControls()">▲</button>
+            
+            <div class="player-section">
+                <div class="track-info">
+                    <div class="track-title" id="trackTitle">上傳音樂檔案以開始</div>
+                    <div class="track-artist" id="trackArtist">支援 MP3, WAV, OGG 格式</div>
+                </div>
+
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+
+                <div class="time-display">
+                    <span id="currentTime">0:00</span>
+                    <span id="totalTime">0:00</span>
+                </div>
+
+                <div class="player-controls">
+                    <button class="control-btn" onclick="previousTrack()">⏮️</button>
+                    <button class="control-btn" onclick="rewind()">⏪</button>
+                    <button class="control-btn play" id="playBtn" onclick="togglePlay()">▶️</button>
+                    <button class="control-btn" onclick="forward()">⏩</button>
+                    <button class="control-btn" onclick="nextTrack()">⏭️</button>
+                </div>
+
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <label class="setting-label">🔊 音量</label>
+                        <input type="range" class="slider" id="volumeSlider" min="0" max="100" value="70">
+                    </div>
+                    <div class="setting-group">
+                        <label class="setting-label">🎚️ 靈敏度</label>
+                        <input type="range" class="slider" id="sensitivitySlider" min="0.5" max="3" step="0.1" value="1.5">
+                    </div>
+                    <div class="setting-group">
+                        <label class="setting-label">🌈 色彩強度</label>
+                        <input type="range" class="slider" id="colorSlider" min="0.5" max="2" step="0.1" value="1">
+                    </div>
+                </div>
+
+                <div class="viz-mode-buttons">
+                    <button class="viz-btn active" onclick="setVizMode('spectrum')">📊 頻譜</button>
+                    <button class="viz-btn" onclick="setVizMode('waveform')">〰️ 波形</button>
+                    <button class="viz-btn" onclick="setVizMode('circular')">⭕ 圓形</button>
+                    <button class="viz-btn" onclick="setVizMode('bars3d')">📦 3D柱狀</button>
+                    <button class="viz-btn" onclick="setVizMode('particles')">✨ 粒子</button>
+                    <button class="viz-btn" onclick="setVizMode('tunnel')">🌀 隧道</button>
+                </div>
+
+                <div class="file-upload">
+                    <label for="audioFile" class="upload-btn">📁 選擇音樂檔案</label>
+                    <input type="file" id="audioFile" accept="audio/*">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全域變數
+        let canvas, ctx;
+        let audioContext, analyser, source;
+        let dataArray, bufferLength;
+        let audio = new Audio();
+        let isPlaying = false;
+        let vizMode = 'spectrum';
+        let sensitivity = 1.5;
+        let colorIntensity = 1;
+        let particles = [];
+
+        // 初始化
+        function init() {
+            canvas = document.getElementById('visualizer');
+            ctx = canvas.getContext('2d');
+            resizeCanvas();
+
+            window.addEventListener('resize', resizeCanvas);
+
+            // 檔案上傳
+            document.getElementById('audioFile').addEventListener('change', handleFileSelect);
+
+            // 音量控制
+            document.getElementById('volumeSlider').addEventListener('input', (e) => {
+                audio.volume = e.target.value / 100;
+            });
+
+            // 靈敏度控制
+            document.getElementById('sensitivitySlider').addEventListener('input', (e) => {
+                sensitivity = parseFloat(e.target.value);
+            });
+
+            // 色彩強度控制
+            document.getElementById('colorSlider').addEventListener('input', (e) => {
+                colorIntensity = parseFloat(e.target.value);
+            });
+
+            // 進度條點擊
+            document.getElementById('progressBar').addEventListener('click', (e) => {
+                const rect = e.target.getBoundingClientRect();
+                const percent = (e.clientX - rect.left) / rect.width;
+                audio.currentTime = audio.duration * percent;
+            });
+
+            // 音頻時間更新
+            audio.addEventListener('timeupdate', updateProgress);
+
+            // 初始化粒子
+            for (let i = 0; i < 100; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: Math.random() * 2 - 1,
+                    vy: Math.random() * 2 - 1,
+                    size: Math.random() * 3 + 1
+                });
+            }
+
+            animate();
+        }
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const url = URL.createObjectURL(file);
+            audio.src = url;
+
+            document.getElementById('trackTitle').textContent = file.name.replace(/\.[^/.]+$/, "");
+            document.getElementById('trackArtist').textContent = '本地檔案';
+
+            setupAudioContext();
+        }
+
+        function setupAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 2048;
+                bufferLength = analyser.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+
+                source = audioContext.createMediaElementSource(audio);
+                source.connect(analyser);
+                analyser.connect(audioContext.destination);
+            }
+        }
+
+        function togglePlay() {
+            if (!audio.src) return;
+
+            if (isPlaying) {
+                audio.pause();
+                document.getElementById('playBtn').textContent = '▶️';
+            } else {
+                audio.play();
+                document.getElementById('playBtn').textContent = '⏸️';
+            }
+            isPlaying = !isPlaying;
+        }
+
+        function rewind() {
+            audio.currentTime = Math.max(0, audio.currentTime - 10);
+        }
+
+        function forward() {
+            audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
+        }
+
+        function previousTrack() {
+            audio.currentTime = 0;
+        }
+
+        function nextTrack() {
+            // 可以擴展支援播放清單
+            audio.currentTime = 0;
+        }
+
+        function updateProgress() {
+            const percent = (audio.currentTime / audio.duration) * 100;
+            document.getElementById('progressFill').style.width = percent + '%';
+            document.getElementById('currentTime').textContent = formatTime(audio.currentTime);
+            document.getElementById('totalTime').textContent = formatTime(audio.duration);
+        }
+
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return '0:00';
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function setVizMode(mode) {
+            vizMode = mode;
+            document.getElementById('vizMode').textContent = {
+                'spectrum': '頻譜',
+                'waveform': '波形',
+                'circular': '圓形',
+                'bars3d': '3D柱狀',
+                'particles': '粒子',
+                'tunnel': '隧道'
+            }[mode];
+
+            document.querySelectorAll('.viz-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function toggleControls() {
+            const overlay = document.getElementById('controlsOverlay');
+            overlay.classList.toggle('hidden');
+            const btn = document.querySelector('.toggle-controls');
+            btn.textContent = overlay.classList.contains('hidden') ? '▼' : '▲';
+        }
+
+        // 視覺化繪製
+        let lastTime = Date.now();
+        let fps = 60;
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // 計算 FPS
+            const now = Date.now();
+            const delta = now - lastTime;
+            fps = Math.round(1000 / delta);
+            lastTime = now;
+            document.getElementById('fps').textContent = fps;
+
+            // 清除畫布
+            ctx.fillStyle = 'rgba(10, 10, 10, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            if (analyser) {
+                analyser.getByteFrequencyData(dataArray);
+
+                // 計算平均音量
+                const average = dataArray.reduce((a, b) => a + b) / bufferLength;
+                document.getElementById('volume').textContent = Math.round(average) + ' dB';
+
+                // 找到主頻率
+                const maxIndex = dataArray.indexOf(Math.max(...dataArray));
+                const frequency = Math.round(maxIndex * audioContext.sampleRate / analyser.fftSize);
+                document.getElementById('frequency').textContent = frequency + ' Hz';
+
+                switch(vizMode) {
+                    case 'spectrum':
+                        drawSpectrum();
+                        break;
+                    case 'waveform':
+                        drawWaveform();
+                        break;
+                    case 'circular':
+                        drawCircular();
+                        break;
+                    case 'bars3d':
+                        drawBars3D();
+                        break;
+                    case 'particles':
+                        drawParticles();
+                        break;
+                    case 'tunnel':
+                        drawTunnel();
+                        break;
+                }
+            }
+        }
+
+        function drawSpectrum() {
+            const barWidth = canvas.width / bufferLength * 2;
+            let x = 0;
+
+            for (let i = 0; i < bufferLength; i++) {
+                const barHeight = dataArray[i] * sensitivity;
+                const hue = (i / bufferLength) * 360 * colorIntensity;
+                
+                ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
+                ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+                
+                x += barWidth + 1;
+            }
+        }
+
+        function drawWaveform() {
+            analyser.getByteTimeDomainData(dataArray);
+            
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = `hsl(${Date.now() / 10 % 360}, 100%, 50%)`;
+            ctx.beginPath();
+
+            const sliceWidth = canvas.width / bufferLength;
+            let x = 0;
+
+            for (let i = 0; i < bufferLength; i++) {
+                const v = dataArray[i] / 128.0;
+                const y = v * canvas.height / 2;
+
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+
+                x += sliceWidth;
+            }
+
+            ctx.stroke();
+        }
+
+        function drawCircular() {
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = Math.min(canvas.width, canvas.height) / 3;
+
+            for (let i = 0; i < bufferLength; i++) {
+                const angle = (i / bufferLength) * Math.PI * 2;
+                const barHeight = dataArray[i] * sensitivity * 0.5;
+                const hue = (i / bufferLength) * 360 * colorIntensity;
+
+                const x1 = centerX + Math.cos(angle) * radius;
+                const y1 = centerY + Math.sin(angle) * radius;
+                const x2 = centerX + Math.cos(angle) * (radius + barHeight);
+                const y2 = centerY + Math.sin(angle) * (radius + barHeight);
+
+                ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+            }
+        }
+
+        function drawBars3D() {
+            const barWidth = 20;
+            const gap = 5;
+            const cols = Math.floor(canvas.width / (barWidth + gap));
+            const rows = Math.floor(bufferLength / cols);
+
+            for (let i = 0; i < bufferLength; i += 4) {
+                const col = (i / 4) % cols;
+                const row = Math.floor((i / 4) / cols);
+                
+                const x = col * (barWidth + gap);
+                const y = row * (barWidth + gap);
+                const height = dataArray[i] * sensitivity * 0.5;
+                const hue = (i / bufferLength) * 360 * colorIntensity;
+
+                // 3D 效果
+                ctx.fillStyle = `hsl(${hue}, 100%, 40%)`;
+                ctx.fillRect(x, y, barWidth, barWidth);
+                
+                ctx.fillStyle = `hsl(${hue}, 100%, 60%)`;
+                ctx.fillRect(x + 5, y - height, barWidth - 5, height);
+            }
+        }
+
+        function drawParticles() {
+            const avgVolume = dataArray.reduce((a, b) => a + b) / bufferLength;
+
+            particles.forEach((p, index) => {
+                const influence = dataArray[index % bufferLength] / 255;
+                
+                p.x += p.vx * (1 + influence * sensitivity);
+                p.y += p.vy * (1 + influence * sensitivity);
+
+                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+                const hue = (index / particles.length) * 360 * colorIntensity;
+                ctx.fillStyle = `hsla(${hue}, 100%, 50%, ${influence})`;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size * (1 + influence * 2), 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        function drawTunnel() {
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const time = Date.now() * 0.001;
+
+            for (let i = 0; i < 50; i++) {
+                const radius = i * 20 - (time * 100 % 1000);
+                if (radius < 0) continue;
+
+                const intensity = dataArray[Math.floor(i * bufferLength / 50)] / 255;
+                const hue = (i * 10 + time * 100) % 360;
+
+                ctx.strokeStyle = `hsla(${hue}, 100%, 50%, ${intensity * colorIntensity})`;
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+        }
+
+        // 初始化
+        init();
+    </script>
+</body>
+</html>

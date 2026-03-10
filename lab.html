@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>功能實驗室 | Advanced Features Lab</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/handpose"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 1s ease;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            padding: 1rem 2rem;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+        
+        .back-btn:hover {
+            background: white;
+            color: #667eea;
+            transform: translateX(-5px);
+        }
+        
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .category-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 2px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.8s ease;
+        }
+        
+        .category-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .category-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .category-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-item {
+            padding: 0.8rem;
+            margin-bottom: 0.5rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .feature-item:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateX(5px);
+        }
+        
+        .feature-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .badge-ready {
+            background: #10b981;
+        }
+        
+        .badge-beta {
+            background: #f59e0b;
+        }
+        
+        .badge-coming {
+            background: #6b7280;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            color: #1f2937;
+            padding: 3rem;
+            border-radius: 20px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideInUp 0.4s ease;
+        }
+        
+        .modal-close {
+            float: right;
+            font-size: 2rem;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-close:hover {
+            color: #ef4444;
+            transform: rotate(90deg);
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .stats-bar {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+        
+        .launch-btn {
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            margin-top: 1rem;
+            width: 100%;
+        }
+        
+        .launch-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i> 返回主頁
+    </a>
+    
+    <div class="container">
+        <div class="header">
+            <h1>🚀 功能實驗室</h1>
+            <p>54個讓人印象深刻的進階功能</p>
+        </div>
+        
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-number" id="ready-count">15</span>
+                <span class="stat-label">已就緒功能</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="beta-count">20</span>
+                <span class="stat-label">測試中功能</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="total-count">54</span>
+                <span class="stat-label">總功能數</span>
+            </div>
+        </div>
+        
+        <div class="categories">
+            <!-- AI / 機器學習類 -->
+            <div class="category-card">
+                <div class="category-icon">🤖</div>
+                <h2 class="category-title">AI / 機器學習</h2>
+                <ul class="feature-list">
+                    <li class="feature-item" onclick="openFeature('ai-interview')">
+                        <span>AI 面試模擬器</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('ai-navigation')">
+                        <span>AI 個人化導覽</span>
+                        <span class="feature-badge badge-beta">測試中</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('voice-assistant')">
+                        <span>語音對話助理</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('emotion-analysis')">
+                        <span>即時情緒分析</span>
+                        <span class="feature-badge badge-beta">測試中</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('auto-summary')">
+                        <span>AI 作品集摘要</span>
+                        <span class="feature-badge badge-beta">測試中</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('gesture-control')">
+                        <span>手勢辨識控制</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('face-interaction')">
+                        <span>臉部表情互動</span>
+                        <span class="feature-badge badge-beta">測試中</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('code-review')">
+                        <span>AI 程式碼審查</span>
+                        <span class="feature-badge badge-beta">測試中</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- 資安主題類 -->
+            <div class="category-card">
+                <div class="category-icon">🔐</div>
+                <h2 class="category-title">資安主題</h2>
+                <ul class="feature-list">
+                    <li class="feature-item" onclick="openFeature('ctf-system')">
+                        <span>CTF 關卡系統</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('honeypot')">
+                        <span>蜜罐系統</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('digital-footprint')">
+                        <span>數位足跡展示</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('encrypted-message')">
+                        <span>加密留言系統</span>
+                        <span class="feature-badge badge-beta">測試中</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('password-strength')">
+                        <span>密碼強度測試</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('packet-visualization')">
+                        <span>網路封包視覺化</span>
+                        <span class="feature-badge badge-beta">測試中</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('fake-bsod')">
+                        <span>假藍屏彩蛋</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- 遊戲化類 -->
+            <div class="category-card">
+                <div class="category-icon">🎮</div>
+                <h2 class="category-title">遊戲化互動</h2>
+                <ul class="feature-list">
+                    <li class="feature-item" onclick="openFeature('rpg-card')">
+                        <span>RPG 角色卡</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('skill-battle')">
+                        <span>技能對戰系統</span>
+                        <span class="feature-badge badge-beta">測試中</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('treasure-hunt')">
+                        <span>網站尋寶遊戲</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('code-puzzle')">
+                        <span>程式碼解謎</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('multiplayer-canvas')">
+                        <span>多人塗鴉牆</span>
+                        <span class="feature-badge badge-beta">測試中</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('time-capsule')">
+                        <span>時間膠囊</span>
+                        <span class="feature-badge badge-beta">測試中</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('breakout-game')">
+                        <span>打磚塊遊戲</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- 數據視覺化類 -->
+            <div class="category-card">
+                <div class="category-icon">📊</div>
+                <h2 class="category-title">數據視覺化</h2>
+                <ul class="feature-list">
+                    <li class="feature-item" onclick="openFeature('github-3d')">
+                        <span>GitHub 3D 貢獻圖</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('learning-heatmap')">
+                        <span>學習時間熱力圖</span>
+                        <span class="feature-badge badge-beta">測試中</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('skill-growth')">
+                        <span>技能成長曲線</span>
+                        <span class="feature-badge badge-beta">測試中</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('visitor-globe')">
+                        <span>全球訪客地圖</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('usage-heatmap')">
+                        <span>使用熱力圖</span>
+                        <span class="feature-badge badge-beta">測試中</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('wakatime-dashboard')">
+                        <span>程式碼統計儀表板</span>
+                        <span class="feature-badge badge-beta">測試中</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- 社交網路類 -->
+            <div class="category-card">
+                <div class="category-icon">🌐</div>
+                <h2 class="category-title">社交網路</h2>
+                <ul class="feature-list">
+                    <li class="feature-item" onclick="openFeature('live-chat')">
+                        <span>即時訪客聊天室</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('business-card')">
+                        <span>動態名片交換</span>
+                        <span class="feature-badge badge-beta">測試中</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('code-collab')">
+                        <span>協作程式編輯器</span>
+                        <span class="feature-badge badge-beta">測試中</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('recommendation-wall')">
+                        <span>推薦信牆</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- 視覺體驗類 -->
+            <div class="category-card">
+                <div class="category-icon">🎨</div>
+                <h2 class="category-title">視覺體驗</h2>
+                <ul class="feature-list">
+                    <li class="feature-item" onclick="openFeature('webgl-shader')">
+                        <span>WebGL 著色器</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('version-museum')">
+                        <span>版本博物館</span>
+                        <span class="feature-badge badge-beta">測試中</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('weather-theme')">
+                        <span>動態天氣主題</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('music-visualizer')">
+                        <span>音樂視覺化</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('mouse-art')">
+                        <span>滑鼠軌跡藝術</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('xray-mode')">
+                        <span>X光透視模式</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- 實用工具類 -->
+            <div class="category-card">
+                <div class="category-icon">🛠️</div>
+                <h2 class="category-title">實用工具</h2>
+                <ul class="feature-list">
+                    <li class="feature-item" onclick="openFeature('code-editor')">
+                        <span>程式碼編輯器</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('api-tester')">
+                        <span>API 測試工具</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('regex-tester')">
+                        <span>正則測試器</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('json-formatter')">
+                        <span>JSON 格式化</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('timezone-converter')">
+                        <span>時區轉換</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- 實驗性類 -->
+            <div class="category-card">
+                <div class="category-icon">🔮</div>
+                <h2 class="category-title">實驗性功能</h2>
+                <ul class="feature-list">
+                    <li class="feature-item" onclick="openFeature('ar-card')">
+                        <span>AR 名片</span>
+                        <span class="feature-badge badge-beta">測試中</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('voice-synthesis')">
+                        <span>語音合成介紹</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('eye-tracking')">
+                        <span>眼動追蹤</span>
+                        <span class="feature-badge badge-beta">測試中</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('quantum-art')">
+                        <span>量子亂數藝術</span>
+                        <span class="feature-badge badge-beta">測試中</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('digital-twin')">
+                        <span>數位雙生</span>
+                        <span class="feature-badge badge-coming">開發中</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- PWA類 -->
+            <div class="category-card">
+                <div class="category-icon">📱</div>
+                <h2 class="category-title">PWA 功能</h2>
+                <ul class="feature-list">
+                    <li class="feature-item" onclick="openFeature('pwa-offline')">
+                        <span>PWA 離線模式</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('push-notification')">
+                        <span>推播通知</span>
+                        <span class="feature-badge badge-beta">測試中</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('haptic-feedback')">
+                        <span>震動反饋</span>
+                        <span class="feature-badge badge-ready">已就緒</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- 商業化類 -->
+            <div class="category-card">
+                <div class="category-icon">💰</div>
+                <h2 class="category-title">商業化功能</h2>
+                <ul class="feature-list">
+                    <li class="feature-item" onclick="openFeature('premium-content')">
+                        <span>付費內容解鎖</span>
+                        <span class="feature-badge badge-beta">測試中</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('booking-system')">
+                        <span>預約系統</span>
+                        <span class="feature-badge badge-beta">測試中</span>
+                    </li>
+                    <li class="feature-item" onclick="openFeature('dynamic-pricing')">
+                        <span>動態定價名片</span>
+                        <span class="feature-badge badge-beta">測試中</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 功能模態框 -->
+    <div id="feature-modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+    
+    <script src="lab.js"></script>
+</body>
+</html>

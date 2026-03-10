@@ -1,14 +1,110 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
+    <!-- ========== 基礎 Meta 標籤 ========== -->
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="個人自我介紹網站 - 展示我的技能、專案和經驗">
-    <title>我的個人網站 | Self Introduction</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <!-- ========== SEO Meta 標籤 ========== -->
+    <title>高孟麟 - 全端工程師 | 個人作品集與技能展示</title>
+    <meta name="description" content="高孟麟的個人網站，全端工程師，專精於 React、Vue、Node.js 開發。查看我的專案作品、技術技能和專業經驗。">
+    <meta name="keywords" content="全端工程師,前端開發,後端開發,React,Vue,Node.js,個人作品集,高孟麟,Web開發">
+    <meta name="author" content="高孟麟">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow">
+    <link rel="canonical" href="https://yourwebsite.com/">
+    
+    <!-- ========== Open Graph / Facebook ========== -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yourwebsite.com/">
+    <meta property="og:title" content="高孟麟 - 全端工程師 | 個人作品集">
+    <meta property="og:description" content="專精於 React、Vue、Node.js 的全端工程師，查看我的專案作品與技術技能。">
+    <meta property="og:image" content="https://yourwebsite.com/images/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="zh_TW">
+    <meta property="og:site_name" content="高孟麟的個人網站">
+    
+    <!-- ========== Twitter Card ========== -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://yourwebsite.com/">
+    <meta name="twitter:title" content="高孟麟 - 全端工程師 | 個人作品集">
+    <meta name="twitter:description" content="專精於 React、Vue、Node.js 的全端工程師，查看我的專案作品與技術技能。">
+    <meta name="twitter:image" content="https://yourwebsite.com/images/twitter-card.jpg">
+    <meta name="twitter:creator" content="@yourusername">
+    
+    <!-- ========== 安全性標頭 ========== -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://www.google-analytics.com;">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta name="format-detection" content="telephone=no">
+    
+    <!-- ========== Favicon ========== -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="msapplication-TileColor" content="#6366f1">
+    
+    <!-- ========== Preconnect 效能優化 ========== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://www.google-analytics.com">
+    
+    <!-- ========== CSS 樣式表 ========== -->
+    <link rel="preload" href="styles.css" as="style">
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" as="style">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- ========== 預載重要圖片 ========== -->
+    <link rel="preload" href="images/profile.webp" as="image" type="image/webp">
+    <link rel="preload" href="images/profile.jpg" as="image" type="image/jpeg">
+    
+    <!-- ========== JavaScript 延遲載入 ========== -->
+    <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- ========== Google Analytics（請替換為您的 GA ID）========== -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX', {
+            'anonymize_ip': true,
+            'cookie_flags': 'SameSite=None;Secure'
+        });
+    </script>
+    
+    <!-- ========== 結構化資料（Schema.org）========== -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "高孟麟",
+        "jobTitle": "全端工程師",
+        "url": "https://yourwebsite.com",
+        "image": "https://yourwebsite.com/images/profile.jpg",
+        "sameAs": [
+            "https://github.com/yourusername",
+            "https://linkedin.com/in/yourusername",
+            "https://twitter.com/yourusername"
+        ],
+        "knowsAbout": ["Web Development", "React", "Vue", "Node.js", "JavaScript", "Full Stack Development"],
+        "alumniOf": {
+            "@type": "Organization",
+            "name": "您的大學名稱"
+        },
+        "description": "專精於前後端開發的全端工程師，擁有豐富的 React、Vue 和 Node.js 開發經驗。"
+    }
+    </script>
 </head>
 <body>
     <!-- 加載畫面 -->
@@ -26,6 +122,8 @@
     <div id="cursor-follower" class="cursor-follower"></div>
     <!-- 粒子背景 -->
     <canvas id="particles-canvas"></canvas>
+    <!-- Three.js 3D 背景 -->
+    <div id="three-container"></div>
     
     <!-- 深色/淺色模式切換按鈕 -->
     <button id="theme-toggle" class="theme-toggle" aria-label="切換主題">
@@ -52,6 +150,22 @@
         <i class="fas fa-arrow-up"></i>
     </button>
 
+    <!-- AI 聊天機器人按鈕 -->
+    <button id="chatbot-toggle" class="chatbot-toggle" aria-label="AI 聊天機器人">
+        <i class="fas fa-robot"></i>
+    </button>
+
+    <!-- 互動終端機按鈕 -->
+    <button id="terminal-toggle" class="terminal-toggle" aria-label="互動終端機">
+        <i class="fas fa-terminal"></i>
+    </button>
+
+    <!-- 在線狀態指示器 -->
+    <div class="online-status">
+        <div class="status-dot"></div>
+        <span class="status-text" data-zh="在線" data-en="Online">在線</span>
+    </div>
+
     <!-- 導航欄 -->
     <nav class="navbar" id="navbar">
         <div class="container">
@@ -72,6 +186,9 @@
                     <li><a href="#projects" class="nav-link" data-zh="作品集" data-en="Projects">作品集</a></li>
                     <li><a href="#education" class="nav-link" data-zh="學歷" data-en="Education">學歷</a></li>
                     <li><a href="#typing-game" class="nav-link" data-zh="打字遊戲" data-en="Typing Game">打字遊戲</a></li>
+                    <li><a href="#guestbook" class="nav-link" data-zh="留言板" data-en="Guestbook">留言板</a></li>
+                    <li><a href="lab.html" class="nav-link nav-lab" data-zh="🧪 功能實驗室" data-en="🧪 Feature Lab">🧪 功能實驗室</a></li>
+                    <li><a href="admin.html" class="nav-link nav-admin" data-zh="⚙️ 管理後台" data-en="⚙️ Admin Panel">⚙️ 管理後台</a></li>
                     <li><a href="#contact" class="nav-link" data-zh="聯絡我" data-en="Contact">聯絡我</a></li>
                 </ul>
             </div>
@@ -132,7 +249,10 @@
                 </div>
                 <div class="hero-image">
                     <div class="image-wrapper">
-                        <img src="images/profile.jpg" alt="高孟麟" class="profile-image">
+                        <picture>
+                            <source srcset="images/profile.webp" type="image/webp">
+                            <img src="images/profile.jpg" alt="高孟麟的個人照片 - 全端工程師" class="profile-image" width="600" height="800" loading="eager">
+                        </picture>
                     </div>
                 </div>
             </div>
@@ -155,7 +275,10 @@
             <div class="about-content">
                 <div class="about-image">
                     <div class="about-image-wrapper">
-                        <img src="images/profile.jpg" alt="高孟麟" class="about-profile-image">
+                        <picture>
+                            <source srcset="images/profile.webp" type="image/webp">
+                            <img src="images/profile.jpg" alt="高孟麟的工作照片" class="about-profile-image" width="600" height="800" loading="lazy">
+                        </picture>
                     </div>
                 </div>
                 <div class="about-text">
@@ -1073,6 +1196,116 @@
             </div>
         </div>
     </section>
+
+    <!-- 訪客留言板 -->
+    <section id="guestbook" class="guestbook section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title" data-zh="訪客留言板" data-en="Guestbook">訪客留言板</h2>
+                <div class="section-divider"></div>
+                <p class="section-description" data-zh="留下您的想法和建議" data-en="Leave your thoughts and suggestions">留下您的想法和建議</p>
+            </div>
+            <div class="guestbook-content">
+                <div class="guestbook-form-container">
+                    <h3 data-zh="留下您的訊息" data-en="Leave Your Message">留下您的訊息</h3>
+                    <form id="guestbook-form" class="guestbook-form">
+                        <div class="form-group">
+                            <label for="guest-name">姓名 *</label>
+                            <input type="text" id="guest-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="guest-email">Email（選填）</label>
+                            <input type="email" id="guest-email">
+                        </div>
+                        <div class="form-group">
+                            <label for="guest-message">留言 *</label>
+                            <textarea id="guest-message" rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> 發送留言
+                        </button>
+                    </form>
+                </div>
+                <div class="guestbook-messages" id="guestbook-messages">
+                    <h3 data-zh="訪客留言" data-en="Guest Messages">訪客留言</h3>
+                    <div class="messages-container">
+                        <!-- 留言將動態生成在這裡 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI 聊天機器人面板 -->
+    <div id="chatbot-panel" class="chatbot-panel">
+        <div class="chatbot-header">
+            <div class="chatbot-title">
+                <i class="fas fa-robot"></i>
+                <span data-zh="AI 助手" data-en="AI Assistant">AI 助手</span>
+            </div>
+            <div class="chatbot-actions">
+                <button class="chatbot-minimize" aria-label="最小化">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button class="chatbot-close" aria-label="關閉">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="chatbot-body">
+            <div class="chatbot-messages" id="chatbot-messages">
+                <div class="chat-message bot-message">
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        <p data-zh="您好！我是 AI 助手。您想了解關於高孟麟的什麼資訊呢？" data-en="Hello! I'm the AI assistant. What would you like to know about Menglin?">您好！我是 AI 助手。您想了解關於高孟麟的什麼資訊呢？</p>
+                    </div>
+                </div>
+            </div>
+            <div class="chatbot-quick-questions">
+                <button class="quick-question" data-question="技能">技能專長</button>
+                <button class="quick-question" data-question="經歷">工作經歷</button>
+                <button class="quick-question" data-question="專案">專案作品</button>
+                <button class="quick-question" data-question="聯絡">聯絡方式</button>
+            </div>
+        </div>
+        <div class="chatbot-footer">
+            <input type="text" id="chatbot-input" placeholder="輸入您的問題..." data-zh-placeholder="輸入您的問題..." data-en-placeholder="Ask me anything...">
+            <button id="chatbot-send" class="btn-send">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- 互動終端機面板 -->
+    <div id="terminal-panel" class="terminal-panel">
+        <div class="terminal-header">
+            <div class="terminal-title">
+                <i class="fas fa-terminal"></i>
+                <span>Terminal v1.0.0</span>
+            </div>
+            <div class="terminal-actions">
+                <button class="terminal-minimize" aria-label="最小化">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button class="terminal-close" aria-label="關閉">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="terminal-body" id="terminal-body">
+            <div class="terminal-output">
+                <div class="terminal-line">Welcome to Portfolio Terminal v1.0.0</div>
+                <div class="terminal-line">Type 'help' for available commands.</div>
+                <div class="terminal-line">────────────────────────────────────────</div>
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span class="terminal-prompt">visitor@portfolio:~$</span>
+            <input type="text" id="terminal-input" class="terminal-input" autofocus>
+        </div>
+    </div>
 
     <!-- 頁尾 -->
     <footer class="footer">

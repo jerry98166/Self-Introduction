@@ -1,0 +1,35 @@
+# robots.txt - 搜尋引擎爬蟲指引檔案
+
+# 允許所有搜尋引擎爬取
+User-agent: *
+Allow: /
+
+# 不允許爬取的目錄
+Disallow: /admin/
+Disallow: /private/
+Disallow: /temp/
+Disallow: /*.json$
+Disallow: /*.txt$
+
+# Sitemap 位置
+Sitemap: https://yourwebsite.com/sitemap.xml
+
+# 特定爬蟲規則
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /images/
+
+# 爬取延遲（秒）
+Crawl-delay: 1
+
+# 禁止特定爬蟲（垃圾郵件機器人）
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /

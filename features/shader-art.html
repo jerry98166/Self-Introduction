@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎨 WebGL 著色器藝術 - Shader Art</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.8;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
+        }
+
+        .canvas-container {
+            position: relative;
+            background: #000;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(102, 126, 234, 0.3);
+        }
+
+        #glCanvas {
+            display: block;
+            width: 100%;
+            height: 700px;
+            cursor: crosshair;
+        }
+
+        .canvas-info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.9em;
+        }
+
+        .info-row {
+            margin-bottom: 5px;
+        }
+
+        .control-panel {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .control-panel h2 {
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .preset-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .preset-btn {
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(102,126,234,0.2), rgba(118,75,162,0.2));
+            border: 2px solid rgba(102,126,234,0.3);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .preset-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(102,126,234,0.4);
+            border-color: rgba(102,126,234,0.8);
+        }
+
+        .preset-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-color: #667eea;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .control-group:last-child {
+            border-bottom: none;
+        }
+
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255,255,255,0.2);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            cursor: pointer;
+            border: none;
+        }
+
+        .color-picker-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .color-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 3px solid rgba(255,255,255,0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .color-btn:hover, .color-btn.active {
+            border-color: white;
+            transform: scale(1.1);
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .action-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .stats-box {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        @media (max-width: 1200px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+
+            #glCanvas {
+                height: 500px;
+            }
+
+            .preset-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            #glCanvas {
+                height: 400px;
+            }
+
+            .preset-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 WebGL 著色器藝術</h1>
+            <p class="subtitle">使用 GLSL 創造令人驚嘆的視覺效果</p>
+        </header>
+
+        <div class="main-layout">
+            <!-- Canvas 區域 -->
+            <div class="canvas-container">
+                <canvas id="glCanvas"></canvas>
+                <div class="canvas-info">
+                    <div class="info-row">🎨 <strong id="shaderName">彩虹波浪</strong></div>
+                    <div class="info-row">⚡ FPS: <strong id="fpsDisplay">60</strong></div>
+                    <div class="info-row">🖱️ 滑鼠: <span id="mousePos">0, 0</span></div>
+                </div>
+            </div>
+
+            <!-- 控制面板 -->
+            <div class="control-panel">
+                <h2>🎮 著色器預設</h2>
+                <div class="preset-grid">
+                    <button class="preset-btn active" onclick="loadShader('wave')">🌊 波浪</button>
+                    <button class="preset-btn" onclick="loadShader('plasma')">💫 電漿</button>
+                    <button class="preset-btn" onclick="loadShader('fractal')">🔮 碎形</button>
+                    <button class="preset-btn" onclick="loadShader('galaxy')">🌌 銀河</button>
+                    <button class="preset-btn" onclick="loadShader('fire')">🔥 火焰</button>
+                    <button class="preset-btn" onclick="loadShader('water')">💧 水流</button>
+                    <button class="preset-btn" onclick="loadShader('matrix')">💻 矩陣</button>
+                    <button class="preset-btn" onclick="loadShader('aurora')">🌈 極光</button>
+                </div>
+
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>⏱️ 速度</span>
+                        <span id="speedValue">1.0x</span>
+                    </div>
+                    <input type="range" class="slider" id="speedSlider" min="0" max="3" step="0.1" value="1.0">
+                </div>
+
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>📐 縮放</span>
+                        <span id="scaleValue">1.0x</span>
+                    </div>
+                    <input type="range" class="slider" id="scaleSlider" min="0.5" max="3" step="0.1" value="1.0">
+                </div>
+
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>🎨 強度</span>
+                        <span id="intensityValue">1.0</span>
+                    </div>
+                    <input type="range" class="slider" id="intensitySlider" min="0" max="2" step="0.1" value="1.0">
+                </div>
+
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>🎨 配色方案</span>
+                    </div>
+                    <div class="color-picker-group">
+                        <div class="color-btn active" style="background: linear-gradient(135deg, #667eea, #764ba2);" onclick="setColorScheme(1)"></div>
+                        <div class="color-btn" style="background: linear-gradient(135deg, #f093fb, #f5576c);" onclick="setColorScheme(2)"></div>
+                        <div class="color-btn" style="background: linear-gradient(135deg, #4facfe, #00f2fe);" onclick="setColorScheme(3)"></div>
+                        <div class="color-btn" style="background: linear-gradient(135deg, #43e97b, #38f9d7);" onclick="setColorScheme(4)"></div>
+                        <div class="color-btn" style="background: linear-gradient(135deg, #fa709a, #fee140);" onclick="setColorScheme(5)"></div>
+                        <div class="color-btn" style="background: linear-gradient(135deg, #30cfd0, #330867);" onclick="setColorScheme(6)"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="action-btn" onclick="toggleAnimation()">⏯️ 暫停/播放</button>
+                    <button class="action-btn" onclick="randomize()">🎲 隨機化</button>
+                    <button class="action-btn" onclick="screenshot()">📸 截圖</button>
+                    <button class="action-btn" onclick="toggleFullscreen()">🖥️ 全螢幕</button>
+                </div>
+
+                <div class="stats-box">
+                    <div class="stat-item">
+                        <span>渲染器</span>
+                        <span>WebGL 2.0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>解析度</span>
+                        <span id="resolution">1920x1080</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>著色器</span>
+                        <span id="shaderType">Fragment</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // WebGL 初始化
+        let canvas, gl;
+        let shaderProgram;
+        let isAnimating = true;
+        let startTime = Date.now();
+        let currentShader = 'wave';
+        let speed = 1.0;
+        let scale = 1.0;
+        let intensity = 1.0;
+        let colorScheme = 1;
+        let mouseX = 0, mouseY = 0;
+        let fps = 60;
+        let lastFrameTime = 0;
+
+        // 頂點著色器（固定）
+        const vertexShaderSource = `
+            attribute vec4 position;
+            void main() {
+                gl_Position = position;
+            }
+        `;
+
+        // 片段著色器程式庫
+        const shaders = {
+            wave: `
+                precision highp float;
+                uniform float time;
+                uniform vec2 resolution;
+                uniform vec2 mouse;
+                uniform float speed;
+                uniform float scale;
+                uniform float intensity;
+                uniform int colorScheme;
+
+                void main() {
+                    vec2 uv = gl_FragCoord.xy / resolution.xy;
+                    vec2 pos = (uv - 0.5) * scale;
+                    
+                    float dist = length(pos);
+                    float angle = atan(pos.y, pos.x);
+                    
+                    float wave = sin(dist * 10.0 - time * speed) * 0.5 + 0.5;
+                    wave += sin(angle * 5.0 + time * speed * 0.5) * 0.5;
+                    
+                    vec3 color1 = vec3(0.4, 0.7, 0.9);
+                    vec3 color2 = vec3(0.9, 0.4, 0.7);
+                    vec3 color = mix(color1, color2, wave * intensity);
+                    
+                    gl_FragColor = vec4(color, 1.0);
+                }
+            `,
+            plasma: `
+                precision highp float;
+                uniform float time;
+                uniform vec2 resolution;
+                uniform float speed;
+                uniform float scale;
+                uniform float intensity;
+
+                void main() {
+                    vec2 uv = gl_FragCoord.xy / resolution.xy * scale;
+                    float t = time * speed * 0.5;
+                    
+                    float c = sin(uv.x * 10.0 + t);
+                    c += sin(uv.y * 10.0 + t);
+                    c += sin((uv.x + uv.y) * 10.0 + t);
+                    c += sin(sqrt(uv.x * uv.x + uv.y * uv.y) * 10.0 + t);
+                    
+                    vec3 color = vec3(
+                        sin(c + 0.0) * 0.5 + 0.5,
+                        sin(c + 2.0) * 0.5 + 0.5,
+                        sin(c + 4.0) * 0.5 + 0.5
+                    );
+                    
+                    gl_FragColor = vec4(color * intensity, 1.0);
+                }
+            `,
+            fractal: `
+                precision highp float;
+                uniform float time;
+                uniform vec2 resolution;
+                uniform float speed;
+                uniform float scale;
+                uniform float intensity;
+
+                void main() {
+                    vec2 uv = (gl_FragCoord.xy - resolution.xy * 0.5) / resolution.y * scale;
+                    float t = time * speed * 0.2;
+                    
+                    vec2 z = uv;
+                    float i;
+                    for(float iter = 0.0; iter < 50.0; iter++) {
+                        i = iter;
+                        z = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + uv + vec2(sin(t), cos(t)) * 0.5;
+                        if(length(z) > 4.0) break;
+                    }
+                    
+                    float shade = i / 50.0;
+                    vec3 color = vec3(shade * intensity, shade * 0.5 * intensity, shade * 1.5 * intensity);
+                    
+                    gl_FragColor = vec4(color, 1.0);
+                }
+            `,
+            galaxy: `
+                precision highp float;
+                uniform float time;
+                uniform vec2 resolution;
+                uniform float speed;
+                uniform float scale;
+                uniform float intensity;
+
+                void main() {
+                    vec2 uv = (gl_FragCoord.xy - resolution.xy * 0.5) / resolution.y * scale;
+                    float t = time * speed * 0.1;
+                    
+                    float angle = atan(uv.y, uv.x) + t;
+                    float dist = length(uv);
+                    
+                    float spiral = sin(angle * 5.0 - dist * 10.0 + t * 2.0) * 0.5 + 0.5;
+                    spiral *= smoothstep(2.0, 0.0, dist);
+                    
+                    vec3 color = vec3(spiral * 0.7, spiral * 0.5, spiral) * intensity;
+                    color += vec3(1.0) * smoothstep(0.02, 0.0, dist);
+                    
+                    gl_FragColor = vec4(color, 1.0);
+                }
+            `,
+            fire: `
+                precision highp float;
+                uniform float time;
+                uniform vec2 resolution;
+                uniform float speed;
+                uniform float intensity;
+
+                float noise(vec2 p) {
+                    return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+                }
+
+                void main() {
+                    vec2 uv = gl_FragCoord.xy / resolution.xy;
+                    float t = time * speed;
+                    
+                    float flame = 0.0;
+                    for(float i = 1.0; i < 5.0; i++) {
+                        flame += noise(vec2(uv.x * i, uv.y * i - t)) / i;
+                    }
+                    
+                    flame *= (1.0 - uv.y);
+                    flame = pow(flame, 2.0);
+                    
+                    vec3 color = vec3(flame * 1.5, flame * 0.5, flame * 0.1) * intensity;
+                    
+                    gl_FragColor = vec4(color, 1.0);
+                }
+            `,
+            water: `
+                precision highp float;
+                uniform float time;
+                uniform vec2 resolution;
+                uniform float speed;
+                uniform float scale;
+                uniform float intensity;
+
+                void main() {
+                    vec2 uv = gl_FragCoord.xy / resolution.xy;
+                    float t = time * speed * 0.5;
+                    
+                    float wave = sin(uv.x * 10.0 * scale + t) * 0.05;
+                    wave += sin(uv.y * 15.0 * scale - t * 1.5) * 0.03;
+                    
+                    vec2 distorted = uv + vec2(wave, wave * 0.5);
+                    
+                    float shade = sin(distorted.y * 20.0 + t) * 0.5 + 0.5;
+                    vec3 color = vec3(0.1, 0.5 + shade * 0.3, 0.9) * intensity;
+                    
+                    gl_FragColor = vec4(color, 1.0);
+                }
+            `,
+            matrix: `
+                precision highp float;
+                uniform float time;
+                uniform vec2 resolution;
+                uniform float speed;
+                uniform float intensity;
+
+                float random(vec2 st) {
+                    return fract(sin(dot(st, vec2(12.9898, 78.233))) * 43758.5453);
+                }
+
+                void main() {
+                    vec2 uv = gl_FragCoord.xy / resolution.xy;
+                    float t = time * speed;
+                    
+                    float col = floor(uv.x * 50.0);
+                    float row = floor((uv.y - t * 0.5) * 50.0);
+                    
+                    float char = random(vec2(col, floor(t * 10.0)));
+                    float bright = smoothstep(0.3, 0.8, fract(uv.y - t * 0.5 * char));
+                    
+                    vec3 color = vec3(0.0, bright, 0.0) * intensity;
+                    
+                    gl_FragColor = vec4(color, 1.0);
+                }
+            `,
+            aurora: `
+                precision highp float;
+                uniform float time;
+                uniform vec2 resolution;
+                uniform float speed;
+                uniform float scale;
+                uniform float intensity;
+
+                void main() {
+                    vec2 uv = gl_FragCoord.xy / resolution.xy;
+                    float t = time * speed * 0.3;
+                    
+                    vec3 color = vec3(0.0);
+                    for(float i = 1.0; i < 4.0; i++) {
+                        float freq = i * scale;
+                        float wave = sin(uv.x * freq + t + i) * cos(uv.y * freq - t);
+                        wave = pow(abs(wave), 3.0);
+                        
+                        color += vec3(
+                            sin(t + i) * 0.5 + 0.5,
+                            cos(t + i * 2.0) * 0.5 + 0.5,
+                            sin(t + i * 3.0) * 0.5 + 0.5
+                        ) * wave;
+                    }
+                    
+                    color *= intensity;
+                    gl_FragColor = vec4(color, 1.0);
+                }
+            `
+        };
+
+        const shaderNames = {
+            wave: '彩虹波浪',
+            plasma: '電漿效果',
+            fractal: '碎形藝術',
+            galaxy: '銀河漩渦',
+            fire: '火焰粒子',
+            water: '水波紋理',
+            matrix: '矩陣數碼',
+            aurora: '極光舞動'
+        };
+
+        // 初始化
+        function init() {
+            canvas = document.getElementById('glCanvas');
+            gl = canvas.getContext('webgl');
+
+            if (!gl) {
+                alert('您的瀏覽器不支援 WebGL！');
+                return;
+            }
+
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            canvas.addEventListener('mousemove', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                mouseX = (e.clientX - rect.left) / rect.width;
+                mouseY = 1.0 - (e.clientY - rect.top) / rect.height;
+                document.getElementById('mousePos').textContent = 
+                    `${Math.round(mouseX * 100)}%, ${Math.round(mouseY * 100)}%`;
+            });
+
+            // 設置控制器
+            document.getElementById('speedSlider').addEventListener('input', (e) => {
+                speed = parseFloat(e.target.value);
+                document.getElementById('speedValue').textContent = speed.toFixed(1) + 'x';
+            });
+
+            document.getElementById('scaleSlider').addEventListener('input', (e) => {
+                scale = parseFloat(e.target.value);
+                document.getElementById('scaleValue').textContent = scale.toFixed(1) + 'x';
+            });
+
+            document.getElementById('intensitySlider').addEventListener('input', (e) => {
+                intensity = parseFloat(e.target.value);
+                document.getElementById('intensityValue').textContent = intensity.toFixed(1);
+            });
+
+            loadShader('wave');
+            render();
+        }
+
+        function resizeCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * window.devicePixelRatio;
+            canvas.height = rect.height * window.devicePixelRatio;
+            gl.viewport(0, 0, canvas.width, canvas.height);
+            document.getElementById('resolution').textContent = `${canvas.width}x${canvas.height}`;
+        }
+
+        function createShader(type, source) {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+
+            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                console.error('Shader compilation error:', gl.getShaderInfoLog(shader));
+                gl.deleteShader(shader);
+                return null;
+            }
+
+            return shader;
+        }
+
+        function loadShader(name) {
+            currentShader = name;
+            document.getElementById('shaderName').textContent = shaderNames[name];
+
+            const vertexShader = createShader(gl.VERTEX_SHADER, vertexShaderSource);
+            const fragmentShader = createShader(gl.FRAGMENT_SHADER, shaders[name]);
+
+            if (shaderProgram) {
+                gl.deleteProgram(shaderProgram);
+            }
+
+            shaderProgram = gl.createProgram();
+            gl.attachShader(shaderProgram, vertexShader);
+            gl.attachShader(shaderProgram, fragmentShader);
+            gl.linkProgram(shaderProgram);
+
+            if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+                console.error('Program linking error:', gl.getProgramInfoLog(shaderProgram));
+                return;
+            }
+
+            gl.useProgram(shaderProgram);
+
+            // 設置頂點
+            const vertices = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
+            const buffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+            gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+            const positionLocation = gl.getAttribLocation(shaderProgram, 'position');
+            gl.enableVertexAttribArray(positionLocation);
+            gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+            // 更新按鈕狀態
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            startTime = Date.now();
+        }
+
+        function render() {
+            if (isAnimating) {
+                const currentTime = Date.now();
+                const elapsed = (currentTime - startTime) / 1000.0;
+
+                gl.clearColor(0, 0, 0, 1);
+                gl.clear(gl.COLOR_BUFFER_BIT);
+
+                // 設置 uniforms
+                const timeLocation = gl.getUniformLocation(shaderProgram, 'time');
+                const resolutionLocation = gl.getUniformLocation(shaderProgram, 'resolution');
+                const mouseLocation = gl.getUniformLocation(shaderProgram, 'mouse');
+                const speedLocation = gl.getUniformLocation(shaderProgram, 'speed');
+                const scaleLocation = gl.getUniformLocation(shaderProgram, 'scale');
+                const intensityLocation = gl.getUniformLocation(shaderProgram, 'intensity');
+
+                gl.uniform1f(timeLocation, elapsed);
+                gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
+                gl.uniform2f(mouseLocation, mouseX, mouseY);
+                gl.uniform1f(speedLocation, speed);
+                gl.uniform1f(scaleLocation, scale);
+                gl.uniform1f(intensityLocation, intensity);
+
+                gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+                // 計算 FPS
+                if (lastFrameTime) {
+                    const delta = currentTime - lastFrameTime;
+                    fps = Math.round(1000 / delta);
+                    document.getElementById('fpsDisplay').textContent = fps;
+                }
+                lastFrameTime = currentTime;
+            }
+
+            requestAnimationFrame(render);
+        }
+
+        function toggleAnimation() {
+            isAnimating = !isAnimating;
+        }
+
+        function randomize() {
+            const shaderKeys = Object.keys(shaders);
+            const randomShader = shaderKeys[Math.floor(Math.random() * shaderKeys.length)];
+            loadShader(randomShader);
+            
+            speed = Math.random() * 2 + 0.5;
+            scale = Math.random() * 2 + 0.5;
+            intensity = Math.random() * 1.5 + 0.5;
+
+            document.getElementById('speedSlider').value = speed;
+            document.getElementById('scaleSlider').value = scale;
+            document.getElementById('intensitySlider').value = intensity;
+            document.getElementById('speedValue').textContent = speed.toFixed(1) + 'x';
+            document.getElementById('scaleValue').textContent = scale.toFixed(1) + 'x';
+            document.getElementById('intensityValue').textContent = intensity.toFixed(1);
+        }
+
+        function screenshot() {
+            canvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `shader-art-${Date.now()}.png`;
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                canvas.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        function setColorScheme(scheme) {
+            colorScheme = scheme;
+            document.querySelectorAll('.color-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        // 啟動
+        init();
+    </script>
+</body>
+</html>

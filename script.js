@@ -146,16 +146,21 @@ function initNavigation() {
     // 平滑滾動
     navLinks.forEach(link => {
         link.addEventListener('click', (e) => {
-            e.preventDefault();
             const targetId = link.getAttribute('href');
-            const targetSection = document.querySelector(targetId);
             
-            if (targetSection) {
-                const offsetTop = targetSection.offsetTop - 80;
-                window.scrollTo({
-                    top: offsetTop,
-                    behavior: 'smooth'
-                });
+            // 只對內部錨點連結（以 # 開頭）進行平滑滾動
+            // 讓外部連結（如 lab.html、admin.html）正常跳轉
+            if (targetId.startsWith('#')) {
+                e.preventDefault();
+                const targetSection = document.querySelector(targetId);
+                
+                if (targetSection) {
+                    const offsetTop = targetSection.offsetTop - 80;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
             }
             
             // 關閉手機選單
@@ -1299,3 +1304,435 @@ function init3DCardEffect() {
         });
     });
 }
+
+// ========================================
+// Three.js 3D 背景動畫
+// ========================================
+function initThreeJS() {
+    if (typeof THREE === 'undefined') return;
+    
+    const container = document.getElementById('three-container');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    container.appendChild(renderer.domElement);
+    
+    // 創建幾何體
+    const geometry = new THREE.TorusKnotGeometry(10, 3, 100, 16);
+    const material = new THREE.MeshBasicMaterial({ 
+        color: 0x6366f1, 
+        wireframe: true 
+    });
+    const torusKnot = new THREE.Mesh(geometry, material);
+    scene.add(torusKnot);
+    
+    camera.position.z = 30;
+    
+    // 動畫循環
+    function animate() {
+        requestAnimationFrame(animate);
+        torusKnot.rotation.x += 0.01;
+        torusKnot.rotation.y += 0.01;
+        renderer.render(scene, camera);
+    }
+    animate();
+    
+    // 窗口大小調整
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+}
+
+// ========================================
+// AI 聊天機器人功能
+// ========================================
+function initChatbot() {
+    const toggle = document.getElementById('chatbot-toggle');
+    const panel = document.getElementById('chatbot-panel');
+    const closeBtn = panel.querySelector('.chatbot-close');
+    const minimizeBtn = panel.querySelector('.chatbot-minimize');
+    const input = document.getElementById('chatbot-input');
+    const sendBtn = document.getElementById('chatbot-send');
+    const messagesContainer = document.getElementById('chatbot-messages');
+    const quickQuestions = document.querySelectorAll('.quick-question');
+    
+    toggle.addEventListener('click', () => {
+        panel.classList.toggle('active');
+    });
+    
+    closeBtn.addEventListener('click', () => {
+        panel.classList.remove('active');
+    });
+    
+    minimizeBtn.addEventListener('click', () => {
+        panel.classList.remove('active');
+    });
+    
+    sendBtn.addEventListener('click', sendMessage);
+    input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+    });
+    
+    quickQuestions.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const question = btn.dataset.question;
+            input.value = question;
+            sendMessage();
+        });
+    });
+    
+    function sendMessage() {
+        const message = input.value.trim();
+        if (!message) return;
+        
+        // 顯示用戶消息
+        addMessage(message, 'user');
+        
+        // 記錄到後台日誌
+        logChatMessage(message, 'user');
+        
+        input.value = '';
+        
+        // AI 回覆（模擬）
+        setTimeout(() => {
+            const response = getAIResponse(message);
+            addMessage(response, 'bot');
+            logChatMessage(response, 'bot');
+        }, 800);
+    }
+    
+    function addMessage(text, type) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chat-message ${type}-message`;
+        
+        const avatar = document.createElement('div');
+        avatar.className = 'message-avatar';
+        avatar.innerHTML = type === 'bot' ? '<i class="fas fa-robot"></i>' : '<i class="fas fa-user"></i>';
+        
+        const content = document.createElement('div');
+        content.className = 'message-content';
+        content.innerHTML = `<p>${text}</p>`;
+        
+        messageDiv.appendChild(avatar);
+        messageDiv.appendChild(content);
+        messagesContainer.appendChild(messageDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+    
+    function getAIResponse(message) {
+        const msg = message.toLowerCase();
+        
+        if (msg.includes('技能') || msg.includes('skill')) {
+            return '我精通前端開發（HTML、CSS、JavaScrip、React）、後端開發（Node.js、Python）以及資料庫管理（MySQL、MongoDB）。我也熟悉 Git 版本控制和 DevOps 工具。';
+        } else if (msg.includes('經歷') || msg.includes('experience')) {
+            return '我有5年以上的開發經驗，曾在多家科技公司工作，參與過大型電商平台、企業管理系統等專案開發。';
+        } else if (msg.includes('專案') || msg.includes('project')) {
+            return '我完成了超過50個專案，包括電商平台、社交媒體應用、數據分析平台等。您可以查看我的作品集區塊了解更多細節！';
+        } else if (msg.includes('聯絡') || msg.includes('contact')) {
+            return '您可以通過頁面下方的聯絡表單與我聯繫，或直接發送郵件。我會盡快回覆您！';
+        } else if (msg.includes('學歷') || msg.includes('education')) {
+            return '我畢業於知名大學計算機科學系，擁有學士學位，並持續學習最新的技術和框架。';
+        } else {
+            return '感謝您的問題！您可以詢問我關於技能、經歷、專案、學歷或聯絡方式等相關問題。如需更詳細的資訊，歡迎瀏覽網站各個區塊。';
+        }
+    }
+}
+
+// ========================================
+// 互動終端機功能
+// ========================================
+function initTerminal() {
+    const toggle = document.getElementById('terminal-toggle');
+    const panel = document.getElementById('terminal-panel');
+    const closeBtn = panel.querySelector('.terminal-close');
+    const minimizeBtn = panel.querySelector('.terminal-minimize');
+    const input = document.getElementById('terminal-input');
+    const body = document.getElementById('terminal-body');
+    const output = body.querySelector('.terminal-output');
+    
+    const commands = {
+        help: () => `Available commands:
+  help       - Show this help message
+  about      - Display information about me
+  skills     - List my skills
+  projects   - Show my projects
+  contact    - Get contact information
+  experience - View my work experience
+  education  - Display my education
+  clear      - Clear the terminal
+  date       - Show current date and time
+  echo       - Print a message`,
+        
+        about: () => `Name: 高孟麟 (Menglin Gao)
+Role: Full-Stack Developer
+Experience: 5+ years
+Location: Taiwan
+Interests: Web Development, AI, Open Source`,
+        
+        skills: () => `Technical Skills:
+• Frontend: HTML, CSS, JavaScript, React, Vue.js
+• Backend: Node.js, Python, PHP
+• Database: MySQL, MongoDB, PostgreSQL
+• Tools: Git, Docker, AWS
+• Other: RESTful API, GraphQL, DevOps`,
+        
+        projects: () => `Recent Projects:
+1. E-commerce Platform - Full-stack web application
+2. Social Media Dashboard - React-based analytics tool
+3. Task Management System - Team collaboration app
+4. Portfolio Website - You're looking at it!`,
+        
+        contact: () => `Contact Information:
+Email: contact@example.com
+GitHub: github.com/menglin
+LinkedIn: linkedin.com/in/menglin
+Twitter: @menglin_dev`,
+        
+        experience: () => `Work Experience:
+• Senior Developer at Tech Corp (2021-Present)
+• Full-Stack Developer at StartUp Inc (2019-2021)
+• Junior Developer at Web Agency (2018-2019)`,
+        
+        education: () => `Education:
+• Bachelor of Computer Science
+  University of Technology (2014-2018)
+• Web Development Bootcamp
+  Tech Academy (2017)`,
+        
+        clear: () => {
+            output.innerHTML = '';
+            return '';
+        },
+        
+        date: () => new Date().toString(),
+        
+        echo: (args) => args.join(' ')
+    };
+    
+    toggle.addEventListener('click', () => {
+        panel.classList.toggle('active');
+        if (panel.classList.contains('active')) {
+            input.focus();
+        }
+    });
+    
+    closeBtn.addEventListener('click', () => {
+        panel.classList.remove('active');
+    });
+    
+    minimizeBtn.addEventListener('click', () => {
+        panel.classList.remove('active');
+    });
+    
+    input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const command = input.value.trim();
+            if (command) {
+                executeCommand(command);
+                input.value = '';
+            }
+        }
+    });
+    
+    function executeCommand(commandStr) {
+        // 顯示輸入的命令
+        addLine(`visitor@portfolio:~$ ${commandStr}`);
+        
+        // 記錄到後台日誌
+        logTerminalCommand(commandStr);
+        
+        // 解析命令
+        const parts = commandStr.split(' ');
+        const cmd = parts[0].toLowerCase();
+        const args = parts.slice(1);
+        
+        // 執行命令
+        if (commands[cmd]) {
+            const result = commands[cmd](args);
+            if (result) {
+                addLine(result);
+            }
+        } else {
+            addLine(`Command not found: ${cmd}. Type 'help' for available commands.`);
+        }
+        
+        addLine('────────────────────────────────────────');
+    }
+    
+    function addLine(text) {
+        const line = document.createElement('div');
+        line.className = 'terminal-line';
+        line.textContent = text;
+        output.appendChild(line);
+        body.scrollTop = body.scrollHeight;
+    }
+}
+
+// ========================================
+// 訪客留言板功能
+// ========================================
+function initGuestbook() {
+    const form = document.getElementById('guestbook-form');
+    const messagesContainer = document.querySelector('.messages-container');
+    
+    // 從 localStorage 載入留言
+    loadMessages();
+    
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const name = document.getElementById('guest-name').value.trim();
+        const email = document.getElementById('guest-email').value.trim();
+        const message = document.getElementById('guest-message').value.trim();
+        
+        if (name && message) {
+            addMessage({
+                name: name,
+                email: email,
+                message: message,
+                date: new Date().toISOString()
+            });
+            
+            form.reset();
+        }
+    });
+    
+    function addMessage(data) {
+        // 保存到 localStorage
+        const messages = getMessages();
+        messages.unshift(data);
+        localStorage.setItem('guestbook_messages', JSON.stringify(messages));
+        
+        // 顯示留言
+        displayMessage(data);
+    }
+    
+    function displayMessage(data) {
+        const messageCard = document.createElement('div');
+        messageCard.className = 'message-card';
+        
+        const date = new Date(data.date);
+        const dateStr = date.toLocaleDateString('zh-TW', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        messageCard.innerHTML = `
+            <div class="message-header">
+                <span class="message-author">${escapeHtml(data.name)}</span>
+                <span class="message-date">${dateStr}</span>
+            </div>
+            <p class="message-text">${escapeHtml(data.message)}</p>
+        `;
+        
+        messagesContainer.insertBefore(messageCard, messagesContainer.firstChild);
+    }
+    
+    function loadMessages() {
+        const messages = getMessages();
+        messages.forEach(msg => displayMessage(msg));
+    }
+    
+    function getMessages() {
+        const stored = localStorage.getItem('guestbook_messages');
+        return stored ? JSON.parse(stored) : [];
+    }
+    
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+}
+
+// ========================================
+// 在線狀態更新
+// ========================================
+function initOnlineStatus() {
+    const statusDot = document.querySelector('.status-dot');
+    const statusText = document.querySelector('.status-text');
+    
+    // 模擬在線狀態變化
+    setInterval(() => {
+        const isOnline = Math.random() > 0.1; // 90% 在線機率
+        
+        if (isOnline) {
+            statusDot.style.background = '#10b981';
+            statusText.setAttribute('data-zh', '在線');
+            statusText.setAttribute('data-en', 'Online');
+            statusText.textContent = currentLanguage === 'zh' ? '在線' : 'Online';
+        } else {
+            statusDot.style.background = '#ef4444';
+            statusText.setAttribute('data-zh', '離線');
+            statusText.setAttribute('data-en', 'Offline');
+            statusText.textContent = currentLanguage === 'zh' ? '離線' : 'Offline';
+        }
+    }, 30000); // 每30秒更新一次
+}
+
+// ========================================
+// 後台日誌記錄功能
+// ========================================
+function logChatMessage(message, type) {
+    const log = JSON.parse(localStorage.getItem('chatbot_log') || '[]');
+    log.push({
+        message: message,
+        type: type,
+        time: new Date().toISOString()
+    });
+    localStorage.setItem('chatbot_log', JSON.stringify(log));
+}
+
+function logTerminalCommand(command) {
+    const log = JSON.parse(localStorage.getItem('terminal_log') || '[]');
+    log.push({
+        command: command,
+        time: new Date().toISOString(),
+        ip: '127.0.0.1' // 模擬IP
+    });
+    localStorage.setItem('terminal_log', JSON.stringify(log));
+}
+
+// ========================================
+// 更新 DOMContentLoaded
+// ========================================
+document.addEventListener('DOMContentLoaded', function() {
+    // 初始化所有原有功能
+    initParticles();
+    initNavigation();
+    initThemeToggle();
+    initBackToTop();
+    initTypingAnimation();
+    initScrollAnimations();
+    initProjectFilters();
+    initContactForm();
+    initStatCounters();
+    initSkillBars();
+    initPreloader();
+    initScrollProgress();
+    initCursorFollower();
+    initLanguageToggle();
+    initMusicPlayer();
+    initPrintResume();
+    initVisitorCounter();
+    initLiveClock();
+    initSkillsRadarChart();
+    initTypingGame();
+    initSocialShare();
+    initAchievements();
+    init3DCardEffect();
+    
+    // 初始化新功能
+    initThreeJS();
+    initChatbot();
+    initTerminal();
+    initGuestbook();
+    initOnlineStatus();
+});
