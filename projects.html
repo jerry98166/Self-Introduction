@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="高孟麟的作品集 - 展示我的專案作品、技術能力和創新成果">
+    <title>作品集 | 高孟麟 - 全端工程師</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #8b5cf6;
+            --accent-color: #ec4899;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-light: #9ca3af;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-dark: #111827;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-success: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+        }
+
+        [data-theme="dark"] {
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --bg-primary: #1f2937;
+            --bg-secondary: #111827;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', 'Noto Sans TC', sans-serif;
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header Section */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 6rem 2rem 4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            z-index: 10;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-5px);
+        }
+
+        .header-title {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            letter-spacing: -1px;
+        }
+
+        .header-subtitle {
+            font-size: 1.5rem;
+            opacity: 0.95;
+            font-weight: 300;
+            margin-bottom: 2rem;
+        }
+
+        .header-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-top: 0.5rem;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: var(--shadow-xl);
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: var(--bg-primary);
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .filter-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.8rem 1.5rem;
+            background: var(--bg-secondary);
+            border: 2px solid transparent;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+        }
+
+        .filter-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: var(--bg-secondary);
+            border-radius: 50px;
+            padding: 0.8rem 1.5rem;
+            min-width: 300px;
+        }
+
+        .search-box input {
+            border: none;
+            background: none;
+            outline: none;
+            flex: 1;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        .search-box i {
+            color: var(--text-secondary);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* Projects Grid */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 2.5rem;
+            margin-top: 2rem;
+        }
+
+        /* Project Card */
+        .project-card {
+            background: var(--bg-primary);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            border: 1px solid rgba(99, 102, 241, 0.1);
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        .project-card:nth-child(1) { animation-delay: 0.1s; }
+        .project-card:nth-child(2) { animation-delay: 0.2s; }
+        .project-card:nth-child(3) { animation-delay: 0.3s; }
+        .project-card:nth-child(4) { animation-delay: 0.4s; }
+        .project-card:nth-child(5) { animation-delay: 0.5s; }
+        .project-card:nth-child(6) { animation-delay: 0.6s; }
+        .project-card:nth-child(7) { animation-delay: 0.7s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .project-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.25);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        /* Featured Project */
+        .project-card-featured {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%);
+            border: 2px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .project-card-featured:hover {
+            box-shadow: 0 25px 50px rgba(99, 102, 241, 0.35);
+        }
+
+        .project-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #000;
+            padding: 8px 16px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+            animation: pulse-badge 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-badge {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .project-image {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/10;
+            overflow: hidden;
+        }
+
+        .project-image .image-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: white;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .project-card:hover .image-placeholder {
+            transform: scale(1.1);
+        }
+
+        .project-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.95) 0%, rgba(168, 85, 247, 0.95) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 1rem;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+        }
+
+        .project-card:hover .project-overlay {
+            opacity: 1;
+        }
+
+        .project-link {
+            width: 55px;
+            height: 55px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.3rem;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .project-link:hover {
+            transform: scale(1.15) rotate(15deg);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .project-info {
+            padding: 2rem;
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.8rem;
+        }
+
+        .project-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .project-status {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+
+        .status-completed {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+        }
+
+        .status-development {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+
+        .project-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+
+        .project-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 8px 12px;
+            background: rgba(99, 102, 241, 0.08);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            background: rgba(99, 102, 241, 0.15);
+            transform: translateX(5px);
+        }
+
+        .feature-item i {
+            color: var(--primary-color);
+        }
+
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tag {
+            padding: 6px 14px;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .tag:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .tag-primary {
+            background: rgba(99, 102, 241, 0.1);
+            color: #6366f1;
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .tag-secondary {
+            background: rgba(168, 85, 247, 0.1);
+            color: #a855f7;
+            border-color: rgba(168, 85, 247, 0.3);
+        }
+
+        .tag-accent {
+            background: rgba(236, 72, 153, 0.1);
+            color: #ec4899;
+            border-color: rgba(236, 72, 153, 0.3);
+        }
+
+        .tag-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .project-stats {
+            display: flex;
+            gap: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(99, 102, 241, 0.1);
+        }
+
+        .project-stats .stat {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .project-stats .stat i {
+            color: var(--primary-color);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 4rem 1rem 3rem;
+            }
+
+            .header-title {
+                font-size: 2.5rem;
+            }
+
+            .header-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .back-btn {
+                top: 1rem;
+                left: 1rem;
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .header-stats {
+                gap: 1.5rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .filter-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                min-width: auto;
+                width: 100%;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .container {
+                padding: 2rem 1rem;
+            }
+
+            .project-card-featured {
+                margin-bottom: 1rem;
+            }
+
+            .project-badge {
+                top: 15px;
+                right: 15px;
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+
+            .project-info {
+                padding: 1.5rem;
+            }
+
+            .project-title {
+                font-size: 1.3rem;
+            }
+
+            .project-features {
+                grid-template-columns: 1fr;
+            }
+
+            .project-link {
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Theme Toggle -->
+    <button id="theme-toggle" class="theme-toggle" aria-label="切換主題">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <!-- Header -->
+    <div class="header">
+        <a href="index.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            返回首頁
+        </a>
+        <div class="header-content">
+            <h1 class="header-title">
+                <i class="fas fa-briefcase"></i>
+                作品集
+            </h1>
+            <p class="header-subtitle">
+                探索我的專案作品 · 技術創新 · 實踐經驗
+            </p>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <span class="stat-number" id="total-projects">7</span>
+                    <span class="stat-label">總專案數</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">4</span>
+                    <span class="stat-label">技術領域</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">10+</span>
+                    <span class="stat-label">使用技術</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="filter-section">
+        <div class="filter-container">
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">
+                    <i class="fas fa-th"></i> 全部專案
+                </button>
+                <button class="filter-btn" data-filter="web">
+                    <i class="fas fa-globe"></i> 網站開發
+                </button>
+                <button class="filter-btn" data-filter="app">
+                    <i class="fas fa-mobile-alt"></i> 應用程式
+                </button>
+                <button class="filter-btn" data-filter="ai">
+                    <i class="fas fa-robot"></i> AI / 機器學習
+                </button>
+                <button class="filter-btn" data-filter="design">
+                    <i class="fas fa-palette"></i> 設計
+                </button>
+            </div>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-input" placeholder="搜尋專案...">
+            </div>
+        </div>
+    </div>
+
+    <!-- Projects Container -->
+    <div class="container">
+        <div class="projects-grid" id="projects-grid">
+            <!-- 中原大學嚮導 - 精選專案 -->
+            <div class="project-card project-card-featured" data-category="web ai">
+                <div class="project-badge">
+                    <i class="fas fa-star"></i>
+                    <span>精選專案</span>
+                </div>
+                <div class="project-image">
+                    <div class="image-placeholder" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <div class="project-overlay">
+                        <a href="projects/cycu-guide.html" class="project-link" title="專案詳情">
+                            <i class="fas fa-info-circle"></i>
+                        </a>
+                        <a href="http://jerry98166.github.io/CampusProject/CYCU-ChatBot/frontend/index.html" target="_blank" class="project-link" title="查看專案">
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <a href="https://github.com/jerry98166/CampusProject" target="_blank" class="project-link" title="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="project-info">
+                    <div class="project-header">
+                        <h3 class="project-title">中原大學嚮導</h3>
+                        <div class="project-status">
+                            <span class="status-badge status-active">運行中</span>
+                        </div>
+                    </div>
+                    <p class="project-description">
+                        智能校園導覽系統，結合 AI 聊天機器人技術，為新生和訪客提供即時的校園資訊查詢、地點導航及課程資訊服務，打造便捷的智慧校園體驗。
+                    </p>
+                    <div class="project-features">
+                        <div class="feature-item">
+                            <i class="fas fa-robot"></i>
+                            <span>AI 聊天助手</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-map-marked-alt"></i>
+                            <span>互動式地圖</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-mobile-alt"></i>
+                            <span>響應式設計</span>
+                        </div>
+                    </div>
+                    <div class="project-tags">
+                        <span class="tag tag-primary">JavaScript</span>
+                        <span class="tag tag-secondary">ChatBot</span>
+                        <span class="tag tag-accent">HTML/CSS</span>
+                        <span class="tag tag-success">RWD</span>
+                    </div>
+                    <div class="project-stats">
+                        <div class="stat">
+                            <i class="fas fa-code"></i>
+                            <span>前端開發</span>
+                        </div>
+                        <div class="stat">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>2024</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 俄羅斯方塊遊戲 -->
+            <div class="project-card" data-category="app web">
+                <div class="project-image">
+                    <div class="image-placeholder" style="background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <div class="project-overlay">
+                        <a href="https://jerry98166.github.io/terris/" target="_blank" class="project-link" title="開始遊戲">
+                            <i class="fas fa-play"></i>
+                        </a>
+                        <a href="https://github.com/jerry98166/terris" target="_blank" class="project-link" title="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="project-info">
+                    <div class="project-header">
+                        <h3 class="project-title">俄羅斯方塊</h3>
+                        <div class="project-status">
+                            <span class="status-badge status-active">運行中</span>
+                        </div>
+                    </div>
+                    <p class="project-description">
+                        經典俄羅斯方塊遊戲的網頁實作版本，採用原生 JavaScript 開發，支援鍵盤操作、即時計分、速度調整等功能，完整還原經典遊戲體驗。
+                    </p>
+                    <div class="project-features">
+                        <div class="feature-item">
+                            <i class="fas fa-cubes"></i>
+                            <span>經典玩法</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-trophy"></i>
+                            <span>計分系統</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-keyboard"></i>
+                            <span>鍵盤控制</span>
+                        </div>
+                    </div>
+                    <div class="project-tags">
+                        <span class="tag tag-primary">JavaScript</span>
+                        <span class="tag tag-secondary">HTML5 Canvas</span>
+                        <span class="tag tag-accent">Game Dev</span>
+                        <span class="tag tag-success">CSS3</span>
+                    </div>
+                    <div class="project-stats">
+                        <div class="stat">
+                            <i class="fas fa-gamepad"></i>
+                            <span>遊戲開發</span>
+                        </div>
+                        <div class="stat">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>2024</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 電子商務平台 -->
+            <div class="project-card" data-category="web">
+                <div class="project-image">
+                    <div class="image-placeholder" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="project-overlay">
+                        <a href="#" class="project-link" title="查看專案">
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <a href="#" class="project-link" title="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="project-info">
+                    <div class="project-header">
+                        <h3 class="project-title">電子商務平台</h3>
+                        <div class="project-status">
+                            <span class="status-badge status-completed">已完成</span>
+                        </div>
+                    </div>
+                    <p class="project-description">
+                        完整的電子商務解決方案，包含購物車、支付整合、後台管理系統，支援多種支付方式和物流追蹤功能。
+                    </p>
+                    <div class="project-features">
+                        <div class="feature-item">
+                            <i class="fas fa-shopping-bag"></i>
+                            <span>購物車系統</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-credit-card"></i>
+                            <span>支付整合</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-chart-line"></i>
+                            <span>數據分析</span>
+                        </div>
+                    </div>
+                    <div class="project-tags">
+                        <span class="tag tag-primary">React</span>
+                        <span class="tag tag-secondary">Node.js</span>
+                        <span class="tag tag-success">MongoDB</span>
+                        <span class="tag tag-accent">Express</span>
+                    </div>
+                    <div class="project-stats">
+                        <div class="stat">
+                            <i class="fas fa-layer-group"></i>
+                            <span>全端開發</span>
+                        </div>
+                        <div class="stat">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>2023</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 任務管理應用 -->
+            <div class="project-card" data-category="app">
+                <div class="project-image">
+                    <div class="image-placeholder" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <div class="project-overlay">
+                        <a href="#" class="project-link">
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <a href="#" class="project-link">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="project-info">
+                    <div class="project-header">
+                        <h3 class="project-title">任務管理應用</h3>
+                        <div class="project-status">
+                            <span class="status-badge status-active">運行中</span>
+                        </div>
+                    </div>
+                    <p class="project-description">
+                        協助團隊管理任務和專案的應用程式，支援即時協作、進度追蹤、通知提醒等功能，提升團隊效率。
+                    </p>
+                    <div class="project-features">
+                        <div class="feature-item">
+                            <i class="fas fa-users"></i>
+                            <span>團隊協作</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-bell"></i>
+                            <span>即時通知</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-chart-pie"></i>
+                            <span>進度追蹤</span>
+                        </div>
+                    </div>
+                    <div class="project-tags">
+                        <span class="tag tag-primary">Vue.js</span>
+                        <span class="tag tag-secondary">Firebase</span>
+                        <span class="tag tag-success">PWA</span>
+                    </div>
+                    <div class="project-stats">
+                        <div class="stat">
+                            <i class="fas fa-code"></i>
+                            <span>前端開發</span>
+                        </div>
+                        <div class="stat">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>2024</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI 圖像識別系統 -->
+            <div class="project-card" data-category="ai">
+                <div class="project-image">
+                    <div class="image-placeholder" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div class="project-overlay">
+                        <a href="#" class="project-link">
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <a href="#" class="project-link">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="project-info">
+                    <div class="project-header">
+                        <h3 class="project-title">AI 圖像識別系統</h3>
+                        <div class="project-status">
+                            <span class="status-badge status-development">開發中</span>
+                        </div>
+                    </div>
+                    <p class="project-description">
+                        基於深度學習的圖像識別系統，能夠準確識別和分類圖片內容，應用於智能相冊管理和內容審核。
+                    </p>
+                    <div class="project-features">
+                        <div class="feature-item">
+                            <i class="fas fa-image"></i>
+                            <span>圖像分類</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-search"></i>
+                            <span>物體檢測</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-robot"></i>
+                            <span>深度學習</span>
+                        </div>
+                    </div>
+                    <div class="project-tags">
+                        <span class="tag tag-primary">Python</span>
+                        <span class="tag tag-secondary">TensorFlow</span>
+                        <span class="tag tag-accent">OpenCV</span>
+                        <span class="tag tag-success">Flask</span>
+                    </div>
+                    <div class="project-stats">
+                        <div class="stat">
+                            <i class="fas fa-robot"></i>
+                            <span>AI 開發</span>
+                        </div>
+                        <div class="stat">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>2024</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 個人部落格系統 -->
+            <div class="project-card" data-category="web">
+                <div class="project-image">
+                    <div class="image-placeholder" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">
+                        <i class="fas fa-blog"></i>
+                    </div>
+                    <div class="project-overlay">
+                        <a href="#" class="project-link">
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <a href="#" class="project-link">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="project-info">
+                    <div class="project-header">
+                        <h3 class="project-title">個人部落格系統</h3>
+                        <div class="project-status">
+                            <span class="status-badge status-completed">已完成</span>
+                        </div>
+                    </div>
+                    <p class="project-description">
+                        功能完整的部落格平台，支援 Markdown 編輯、評論系統、標籤分類、搜尋功能，並具備 SEO 優化。
+                    </p>
+                    <div class="project-features">
+                        <div class="feature-item">
+                            <i class="fab fa-markdown"></i>
+                            <span>Markdown</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-comments"></i>
+                            <span>評論系統</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-search"></i>
+                            <span>SEO 優化</span>
+                        </div>
+                    </div>
+                    <div class="project-tags">
+                        <span class="tag tag-primary">Next.js</span>
+                        <span class="tag tag-secondary">Tailwind CSS</span>
+                        <span class="tag tag-success">PostgreSQL</span>
+                    </div>
+                    <div class="project-stats">
+                        <div class="stat">
+                            <i class="fas fa-layer-group"></i>
+                            <span>全端開發</span>
+                        </div>
+                        <div class="stat">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>2023</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 品牌視覺設計 -->
+            <div class="project-card" data-category="design">
+                <div class="project-image">
+                    <div class="image-placeholder" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <div class="project-overlay">
+                        <a href="#" class="project-link">
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <a href="#" class="project-link">
+                            <i class="fab fa-behance"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="project-info">
+                    <div class="project-header">
+                        <h3 class="project-title">品牌視覺設計</h3>
+                        <div class="project-status">
+                            <span class="status-badge status-completed">已完成</span>
+                        </div>
+                    </div>
+                    <p class="project-description">
+                        為新創公司設計完整的品牌識別系統和網站介面，包含 Logo 設計、色彩規劃、字體選擇和 UI 元件庫。
+                    </p>
+                    <div class="project-features">
+                        <div class="feature-item">
+                            <i class="fas fa-pencil-ruler"></i>
+                            <span>品牌設計</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-paint-brush"></i>
+                            <span>UI 設計</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-swatchbook"></i>
+                            <span>設計系統</span>
+                        </div>
+                    </div>
+                    <div class="project-tags">
+                        <span class="tag tag-primary">Figma</span>
+                        <span class="tag tag-secondary">UI/UX</span>
+                        <span class="tag tag-accent">Branding</span>
+                    </div>
+                    <div class="project-stats">
+                        <div class="stat">
+                            <i class="fas fa-palette"></i>
+                            <span>視覺設計</span>
+                        </div>
+                        <div class="stat">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>2023</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="empty-state" style="display: none;">
+            <i class="fas fa-search"></i>
+            <h3>找不到相符的專案</h3>
+            <p>請嘗試其他搜尋關鍵字或篩選條件</p>
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="back-to-top" aria-label="回到頂部">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        const themeIcon = themeToggle.querySelector('i');
+
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        html.setAttribute('data-theme', currentTheme);
+        updateThemeIcon(currentTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        });
+
+        function updateThemeIcon(theme) {
+            if (theme === 'dark') {
+                themeIcon.className = 'fas fa-sun';
+            } else {
+                themeIcon.className = 'fas fa-moon';
+            }
+        }
+
+        // Filter Functionality
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const projectCards = document.querySelectorAll('.project-card');
+        const searchInput = document.getElementById('search-input');
+        const emptyState = document.getElementById('empty-state');
+        const projectsGrid = document.getElementById('projects-grid');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Update active button
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const filter = btn.getAttribute('data-filter');
+                filterProjects(filter, searchInput.value);
+            });
+        });
+
+        searchInput.addEventListener('input', (e) => {
+            const activeFilter = document.querySelector('.filter-btn.active').getAttribute('data-filter');
+            filterProjects(activeFilter, e.target.value);
+        });
+
+        function filterProjects(category, searchTerm) {
+            let visibleCount = 0;
+
+            projectCards.forEach(card => {
+                const categories = card.getAttribute('data-category').split(' ');
+                const title = card.querySelector('.project-title').textContent.toLowerCase();
+                const description = card.querySelector('.project-description').textContent.toLowerCase();
+                const tags = Array.from(card.querySelectorAll('.tag')).map(tag => tag.textContent.toLowerCase());
+
+                const matchesCategory = category === 'all' || categories.includes(category);
+                const matchesSearch = searchTerm === '' || 
+                    title.includes(searchTerm.toLowerCase()) || 
+                    description.includes(searchTerm.toLowerCase()) ||
+                    tags.some(tag => tag.includes(searchTerm.toLowerCase()));
+
+                if (matchesCategory && matchesSearch) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Show/hide empty state
+            if (visibleCount === 0) {
+                emptyState.style.display = 'block';
+                projectsGrid.style.display = 'none';
+            } else {
+                emptyState.style.display = 'none';
+                projectsGrid.style.display = 'grid';
+            }
+        }
+
+        // Back to Top Button
+        const backToTopBtn = document.getElementById('back-to-top');
+
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopBtn.classList.add('show');
+            } else {
+                backToTopBtn.classList.remove('show');
+            }
+        });
+
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Smooth Scroll for Links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Scroll Animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        projectCards.forEach(card => {
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
