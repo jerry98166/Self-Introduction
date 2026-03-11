@@ -64,12 +64,6 @@ const FeatureLab = {
                 status: 'ready',
                 launch: () => this.launchVisitorGlobe()
             },
-            'live-chat': {
-                name: '即時訪客聊天室',
-                description: '所有在線訪客可以即時互動的聊天室',
-                status: 'ready',
-                launch: () => this.launchLiveChat()
-            },
             'webgl-shader': {
                 name: 'WebGL 著色器背景',
                 description: '使用GLSL Shader創造流體模擬、星系漩渦等效果',
@@ -183,6 +177,42 @@ const FeatureLab = {
                 description: '專業的推薦信展示系統',
                 status: 'ready',
                 launch: () => this.launchRecommendationWall()
+            },
+            'base64-converter': {
+                name: 'Base64 編碼解碼器',
+                description: '快速進行 Base64 編碼和解碼轉換',
+                status: 'ready',
+                launch: () => window.open('features/base64-converter.html', '_blank')
+            },
+            'markdown-preview': {
+                name: 'Markdown 編輯器',
+                description: '即時預覽的 Markdown 編輯器',
+                status: 'ready',
+                launch: () => window.open('features/markdown-preview.html', '_blank')
+            },
+            'color-picker': {
+                name: '調色盤工具',
+                description: 'HEX/RGB 顏色轉換和調色盤',
+                status: 'ready',
+                launch: () => window.open('features/color-picker.html', '_blank')
+            },
+            'qrcode-generator': {
+                name: 'QR Code 生成器',
+                description: '生成任何文字或網址的 QR Code',
+                status: 'ready',
+                launch: () => window.open('features/qrcode-generator.html', '_blank')
+            },
+            'unit-converter': {
+                name: '單位轉換器',
+                description: '長度、重量、溫度、資料大小轉換',
+                status: 'ready',
+                launch: () => window.open('features/unit-converter.html', '_blank')
+            },
+            'hash-calculator': {
+                name: '雜湊值計算器',
+                description: '計算 MD5、SHA-1、SHA-256 雜湊值',
+                status: 'ready',
+                launch: () => window.open('features/hash-calculator.html', '_blank')
             }
         };
     },
@@ -280,22 +310,18 @@ FeatureLab.launchTreasureHunt = function() {
 
 // GitHub 3D 貢獻圖
 FeatureLab.launchGitHub3D = function() {
-    window.open('features/github-3d.html', '_blank');
+    window.open('features/contribution-3d.html', '_blank');
 };
 
 // 全球訪客地圖
 FeatureLab.launchVisitorGlobe = function() {
-    window.open('features/visitor-globe.html', '_blank');
+    window.open('features/visitor-map.html', '_blank');
 };
 
-// 即時聊天室
-FeatureLab.launchLiveChat = function() {
-    window.open('features/live-chat.html', '_blank');
-};
 
 // WebGL 著色器
 FeatureLab.launchWebGLShader = function() {
-    window.open('features/webgl-shader.html', '_blank');
+    window.open('features/shader-art.html', '_blank');
 };
 
 // 動態天氣主題

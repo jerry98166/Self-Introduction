@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>📝 Markdown 編輯器</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #1e1e1e;
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 1fr             grid-template-columns: 1fr             grid-template-columns: 1fr             grid-template-columns: 1fr             grid-template-columns: 1fr             grid-template-columns: 1fr             grid-template-columns: 1fr             grid-template-columns: 1fr             grid-template-columns: 1fr             grid-template-columns: 1fr             grid-template-columns: 1fr             grid-template-columns: 1fr             grid-template-columns: 1fr             grid-template-col, m            grid-templfont-size: 16px;
+            resize: none;
+        }
+        .preview-panel {
+            background: #2d2d2d;
+            padding: 40px;
+        }
+        .markdown-body { line-height: 1.6; }
+        .markdown-body h1 { font-size: 2em; margin: 20px 0; }
+        .markdown-body h2 { font-size: 1.5em; margin: 15px 0; }
+        .markdown-body code {
+            background: #1e1e1e;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="editor-panel">
+            <h2 style="margin-bottom: 20px;">✍️ Markdown 編輯器</h2>
+            <textarea id="mdInput" placeholder="# 開始輸入 Markdown...
+
+## 標題範例
+- 列表項目 1
+- 列表項目 2
+
+**粗體文字**
+*斜體文字*
+
+\`程式碼\`"></textarea>
+        </div>
+        <div class="preview-panel">
+            <h2 style="margin-bottom: 20px;">👁️ 即時預覽</h2>
+            <div class="markdown-body" id="preview"></div>
+        </div>
+    </div>
+    <a href="../lab.html" class="back-btn">← 返回</a>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        const input = document.getElementById('mdInput');
+        const preview = document.getElementById('preview');
+        
+        input.addEventListener('input', () => {
+            preview.innerHTML = marked.parse(input.value);
+        });
+    </script>
+</body>
+</html>

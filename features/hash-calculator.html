@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>🔒 雜湊值計算器</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: white;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                (25                            color: white;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+        }
+        .hash-grid {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .hash-item {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .hash-label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .hash-value {
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        button {
+            padding: 8px 15px;
+            background: #3498db;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .back-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            border: 2px solid white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔒 雜湊值計算器</h1>
+        
+        <div class="panel">
+            <h3 style="margin-bottom: 15px;">輸入文字：</h3>
+            <textarea id="inputText" placeholder="輸入要計算雜湊值的文字..." oninput="calculateHashes()">Hello, World!</textarea>
+        </div>
+        
+        <div class="panel">
+            <h3 style="margin-bottom: 15px;">雜湊結果：</h3>
+            <div class="hash-grid">
+                <div class="hash-item">
+                    <div class="hash-label">
+                        <span>MD5</span>
+                        <button onclick="copyHash('md5')">📋 複製</button>
+                    </div>
+                    <div class="hash-value" id="md5">-</div>
+                </div>
+                <div class="hash-item">
+                    <div class="hash-label">
+                        <span>SHA-1</span>
+                        <button onclick="copyHash('sha1')">📋 複製</button>
+                    </div>
+                    <div class="hash-value" id="sha1">-</div>
+                </div>
+                <div class="hash-item">
+                    <div class="hash-label">
+                        <span>SHA-256</span>
+                        <button onclick="copyHash('sha256')">📋 複製</button>
+                    </div>
+                    <div class="hash-value" id="sha256">-</div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="../lab.html" class="back-btn">← 返回功能實驗室</a>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.js"></script>
+    <script>
+        function calculateHashes() {
+            const text = document.getElementById('inputText').value;
+            
+            if (text) {
+                document.getElementById('md5').textContent = CryptoJS.MD5(text).toString();
+                document.getElementById('sha1').textContent = CryptoJS.SHA1(text).toString();
+                document.getElementById('sha256').textContent = CryptoJS.SHA256(text).toString();
+            } else {
+                document.getElementById('md5').textContent = '-';
+                document.getElementById('sha1').textContent = '-';
+                document.getElementById('sha256').textContent = '-';
+            }
+        }
+        
+        function copyHash(type) {
+            const text = document.getElementById(type).textContent;
+            navigator.clipboard.writeText(text);
+            alert('✅ 已複製到剪貼簿！');
+        }
+        
+        calculateHashes();
+    </script>
+</body>
+</html>

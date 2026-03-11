@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>🍯 蜜罐系統</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0d1117;
+            color: #58a6ff;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { color: #f85149; text-align: center; margin-bottom: 30px; }
+        .terminal {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+            max-height: 500px            max-height: 500px            max-height: 500px            max-height: 500px            max-height: 500px            max-height: 500px            max-height: 500px            max-height: 500px            max-height: 500px            max-height: 50tra            ma; }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .timestamp { color: #8b949e; }
+        .ip { color: #ffa657; }
+        .action { color: #7ee787; }
+        .alert { color: #f85149; font-weight: bold; }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: #161b22;
+            padding: 20px;
+            border-radius: 6px;
+            border: 1px solid #30363d;
+            text-align: center;
+        }
+        .stat-value { font-size: 2em; color: #58a6ff; margin-bottom: 10px; }
+        .stat-label { color: #8b949e; }
+        .fake-input {
+            display: none;
+            position: absolute;
+            left: -9999px;
+        }
+        .back-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #238636;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍯 蜜罐系統 - Honeypot Monitor</h1>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="totalVisits">0</div>
+                <div class="stat-label">總訪問次數</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="suspiciousCount">0</div>
+                <div class="stat-label">可疑行為</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="uniqueIPs">0</div>
+                <div class="stat-label">唯一IP</div>
+            </div>
+        </div>
+        
+        <h3 style="margin-bottom: 10px;">📊 實時監控日誌</h3>
+        <div class="terminal" id="logTerminal"></div>
+        
+        <!-- 隱藏的蜜罐陷阱 -->
+        <input type="text" class="fake-input" id="honeypot1" name="email">
+        <input type="password" class="fake-input" id="honeypot2" name="password">
+        
+        <a href="../lab.html" class="back-btn">← 返回功能實驗室</a>
+    </div>
+    <script>
+        let totalVisits = 0;
+        let suspiciousCount = 0;
+        const uniqueIPs = new Set();
+        
+        function addLog(type, message) {
+            const terminal = document.getElementById('logTerminal');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            
+            const timestamp = new Date().toLocaleTimeString();
+            const fakeIP = `${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
+            
+            entry.innerHTML = \`
+                <span class="timestamp">[${timestamp}]</span>
+                <span class="ip">${fakeIP}</span>
+                <span class="${type}">${message}</span>
+            \`;
+            
+            terminal.insertBefore(entry, terminal.firstChild);
+            
+            if (terminal.children.length > 50) {
+                terminal.removeChild(terminal.lastChild);
+            }
+            
+            uniqueIPs.add(fakeIP);
+            updateStats();
+        }
+        
+        function updateStats() {
+            document.getElementById('totalVisits').textContent = totalVisits;
+            document.getElementById('suspiciousCount').textContent = suspiciousCount;
+            document.getElementById('uniqueIPs').textContent = uniqueIPs.size;
+        }
+        
+        // 模擬訪問監控
+        function simulateTraffic() {
+            const actions = [
+                { type: 'action', msg: 'GET /index.html - 正常訪問' },
+                { type: 'action', msg: 'GET /api/data - API請求' },
+                { type: 'alert', msg: 'GET /admin - 嘗試訪問管理頁面 ⚠️', suspicious: true },
+                { type: 'alert', msg: 'SQL注入嘗試檢測 ⚠️', suspicious: true },
+                { type: 'action', msg: 'POST /contact - 表單提交' },
+                { type: 'alert', msg: '多次失敗登入嘗試 🚨', suspicious: true }
+            ];
+            
+            const action = actions[Math.floor(Math.random() * actions.length)];
+            totalVisits++;
+            if (action.suspicious) suspiciousCount++;
+            addLog(action.type, action.msg);
+        }
+        
+        // 偵測蜜罐觸發
+        document.querySelectorAll('.fake-input').forEach(input => {
+            input.addEventListener('focus', () => {
+                suspiciousCount++;
+                addLog('alert', '🚨 蜜罐陷阱被觸發！偵測到機器人行為');
+            });
+        });
+        
+        // 初始日誌
+        addLog('action', '系統啟動 - 開始監控');
+        addLog('action', '加載安全模塊');
+        addLog('action', '蜜罐系統就緒');
+        
+        // 定期模擬活動
+        setInterval(simulateTraffic, 3000);
+    </script>
+</body>
+</html>

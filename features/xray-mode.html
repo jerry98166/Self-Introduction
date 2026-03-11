@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X-Ray 網頁透視模式 - Web X-Ray</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .controls button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        #activateBtn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        #deactivateBtn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            display: none;
+        }
+
+        .controls button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .info-box ul {
+            margin-left: 20px;
+            line-height: 2;
+            color: #495057;
+        }
+
+        .demo-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .demo-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .demo-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .demo-box {
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .demo-box h4 {
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #667eea;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* X-Ray Mode Styles */
+        .xray-active * {
+            outline: 2px solid red !important;
+            background: rgba(255, 255, 0, 0.1) !important;
+        }
+
+        .xray-active *:hover {
+            background: rgba(255, 255, 0, 0.3) !important;
+            outline: 3px solid lime !important;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .demo-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="window.location.href='../lab.html'">← 返回實驗室</button>
+
+    <div class="container">
+        <h1>🔍 X-Ray 網頁透視模式</h1>
+        <p class="subtitle">查看網頁的 HTML 結構和元素邊界</p>
+
+        <div class="controls">
+            <button id="activateBtn">🔬 啟用 X-Ray 模式</button>
+            <button id="deactivateBtn">❌ 關閉 X-Ray 模式</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="number" id="divCount">0</div>
+                <div class="label">DIV 元素</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="totalElements">0</div>
+                <div class="label">總元素數</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="buttonCount">0</div>
+                <div class="label">按鈕元素</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="imageCount">0</div>
+                <div class="label">圖片元素</div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>🎯 X-Ray 模式功能</h3>
+            <ul>
+                <li><strong>元素邊界：</strong>為所有 HTML 元素添加紅色邊框，清楚顯示結構</li>
+                <li><strong>背景高亮：</strong>使用半透明黃色背景標示元素範圍</li>
+                <li><strong>滑鼠懸停：</strong>滑鼠移到元素上會顯示綠色邊框強調</li>
+                <li><strong>元素統計：</strong>即時顯示頁面中各類元素的數量</li>
+                <li><strong>調試工具：</strong>適合開發者檢查網頁布局和結構問題</li>
+            </ul>
+        </div>
+
+        <div class="demo-section">
+            <h2>📦 測試區域</h2>
+            <p>啟用 X-Ray 模式後，以下示範區域會顯示元素邊界：</p>
+            
+            <div class="demo-content">
+                <div class="demo-box">
+                    <h4>Box 1</h4>
+                    <p>這是第一個測試盒子</p>
+                </div>
+                <div class="demo-box">
+                    <h4>Box 2</h4>
+                    <p>這是第二個測試盒子</p>
+                </div>
+                <div class="demo-box">
+                    <h4>Box 3</h4>
+                    <p>這是第三個測試盒子</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>💡 使用說明</h3>
+            <ul>
+                <li>點擊「啟用 X-Ray 模式」按鈕來查看網頁結構</li>
+                <li>所有元素會顯示紅色邊框和黃色背景</li>
+                <li>滑鼠移到元素上會看到綠色強調邊框</li>
+                <li>查看上方統計卡片了解元素數量</li>
+                <li>點擊「關閉 X-Ray 模式」恢復正常顯示</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const activateBtn = document.getElementById('activateBtn');
+        const deactivateBtn = document.getElementById('deactivateBtn');
+        let isActive = false;
+
+        function updateStats() {
+            const divs = document.getElementsByTagName('div').length;
+            const buttons = document.getElementsByTagName('button').length;
+            const images = document.getElementsByTagName('img').length;
+            const total = document.getElementsByTagName('*').length;
+
+            document.getElementById('divCount').textContent = divs;
+            document.getElementById('buttonCount').textContent = buttons;
+            document.getElementById('imageCount').textContent = images;
+            document.getElementById('totalElements').textContent = total;
+        }
+
+        activateBtn.addEventListener('click', () => {
+            document.body.classList.add('xray-active');
+            activateBtn.style.display = 'none';
+            deactivateBtn.style.display = 'inline-block';
+            isActive = true;
+            updateStats();
+        });
+
+        deactivateBtn.addEventListener('click', () => {
+            document.body.classList.remove('xray-active');
+            activateBtn.style.display = 'inline-block';
+            deactivateBtn.style.display = 'none';
+            isActive = false;
+        });
+
+        // Initial stats
+        updateStats();
+
+        // Update stats every 2 seconds when active
+        setInterval(() => {
+            if (isActive) {
+                updateStats();
+            }
+        }, 2000);
+    </script>
+</body>
+</html>

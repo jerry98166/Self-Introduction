@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>🔊 語音合成介紹</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: white;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+        }
+        h1 { text-align: center; margin-bottom: 30px; }
+        .speech-panel {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        textarea         textarea         textarea         textarea         textarea         textare;
+            border-radius: 10px;
+            border: none;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+        }
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        button {
+            padding: 15px 30px;
+            background: #27ae60;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        button:hover { background: #229954; transform: translateY(-2px); }
+        button.stop { background: #e74c3c; }
+        button.stop:hover { background: #c0392b; }
+        .settings {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .setting-item {
+            margin: 15px 0;
+        }
+        .setting-item label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        input[type="range"] {
+            width: 100%;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            font-size: 14px;
+        }
+        .back-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            border: 2px solid white;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔊 語音合成介紹</h1>
+        
+        <div class="speech-panel">
+            <h3 style="margin-bottom: 15px;">輸入要朗讀的文字：</h3>
+            <textarea id="textInput" placeholder="輸入任何文字，然後點擊播放按鈕...">您好！我是一個網頁語音合成系統。我可以讀出任何您輸入的中文或英文文字。歡迎試試看！</textarea>
+            
+            <div class="controls">
+                <button onclick="speak()">🔊 播放</button>
+                <button class="stop" onclick="stop()">⏹️ 停止</button>
+                <button onclick="pause()">⏸️ 暫停</button>
+                <button onclick="resume()">▶️ 繼續</button>
+            </div>
+        </div>
+        
+        <div class="settings">
+            <h3 style="margin-bottom: 20px;">⚙️ 語音設定</h3>
+            
+            <div class="setting-item">
+                <label>語音選擇：</label>
+                <select id="voiceSelect"></select>
+            </div>
+            
+            <div class="setting-item">
+                <label>語速：<span id="rateValue">1.0</span></label>
+                <input type="range" id="rateInput" min="0.5" max="2" step="0.1" value="1" oninput="updateRate(this.value)">
+            </div>
+            
+            <div class="setting-item">
+                <label>音調：<span id="pitchValue">1.0</span></label>
+                <input type="range" id="pitchInput" min="0" max="2" step="0.1" value="1" oninput="updatePitch(this.value)">
+            </div>
+            
+            <div class="setting-item">
+                <label>音量：<span id="volumeValue">1.0</span></label>
+                <input type="range" id="volumeInput" min="0" max="1" step="0.1" value="1" oninput="updateVolume(this.value)">
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="../lab.html" class="back-btn">← 返回功能實驗室</a>
+        </div>
+    </div>
+    <script>
+        const synth = window.speechSynthesis;
+        let voices = [];
+        let currentUtterance = null;
+        
+        function loadVoices() {
+            voices = synth.getVoices();
+            const select = document.getElementById('voiceSelect');
+            select.innerHTML = '';
+            
+            voices.forEach((voice, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = \`\${voice.name} (\${voice.lang})\`;
+                if (voice.lang.includes('zh') || voice.lang.includes('cmn')) {
+                    option.selected = true;
+                }
+                select.appendChild(option);
+            });
+        }
+        
+        if (synth.onvoiceschanged !== undefined) {
+            synth.onvoiceschanged = loadVoices;
+        }
+        loadVoices();
+        
+        function speak() {
+            if (synth.speaking) {
+                alert('已經在播放中！');
+                return;
+            }
+            
+            const text = document.getElementById('textInput').value;
+            if (!text.trim()) {
+                alert('請輸入文字！');
+                return;
+            }
+            
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            const selectedVoice = document.getElementById('voiceSelect').value;
+            currentUtterance.voice = voices[selectedVoice];
+            currentUtterance.rate = parseFloat(document.getElementById('rateInput').value);
+            currentUtterance.pitch = parseFloat(document.getElementById('pitchInput').value);
+            currentUtterance.volume = parseFloat(document.getElementById('volumeInput').value);
+            
+            synth.speak(currentUtterance);
+        }
+        
+        function stop() {
+            synth.cancel();
+        }
+        
+        function pause() {
+            synth.pause();
+        }
+        
+        function resume() {
+            synth.resume();
+        }
+        
+        function updateRate(val) {
+            document.getElementById('rateValue').textContent = val;
+        }
+        
+        function updatePitch(val) {
+            document.getElementById('pitchValue').textContent = val;
+        }
+        
+        function updateVolume(val) {
+            document.getElementById('volumeValue').textContent = val;
+        }
+    </script>
+</body>
+</html>

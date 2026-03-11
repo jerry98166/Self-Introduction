@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>📨 推薦信牆</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: white;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 { text-align: center; margin-bottom: 40px; font-size: 2        h1 { text-align: center; margin-bottom: 40px; font-size: 2        h1 { text-align: center; margin-bottom: 40px; font-size: 2        h1 { text-align: center; margin-bottom: 40px; font-size: 2        h1 { text-align: center; margin-bottom: 40px; font-size: 2        h1 { text-align: center; margin-bottom: 40px; font-size: 2        h1 { text-align: center; margin-bottom: 400,0        h1 { text-align: on: all 0.3s;
+        }
+        .rec-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.15);
+        }
+        .rec-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+        }
+        .rec-info h3 { margin-bottom: 5px; }
+        .rec-info .position { opacity: 0.8; font-size: 0.9em; }
+        .rec-content {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .rec-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+        .rating {
+            font-size: 1.2em;
+        }
+        .date {
+            opacity: 0.7;
+            font-size: 0.9em;
+        }
+        .back-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            border: 2px solid white;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📨 推薦信牆</h1>
+        
+        <div class="recommendations">
+            <div class="rec-card">
+                <div class="rec-header">
+                    <div class="avatar">👨‍💼</div>
+                    <div class="rec-info">
+                        <h3>張經理</h3>
+                        <div class="position">前主管 · ABC科技公司</div>
+                    </div>
+                </div>
+                <div class="rec-content">
+                    "與他合作的兩年期間，我看到了他卓越的技術能力和對工作的熱情。他不僅完成了多個關鍵專案，還主動幫助團隊成員成長。強烈推薦！"
+                </div>
+                <div class="rec-footer">
+                    <div class="rating">⭐⭐⭐⭐⭐</div>
+                    <div class="date">2024-02-15</div>
+                </div>
+            </div>
+            
+            <div class="rec-card">
+                <div class="rec-header">
+                    <div class="avatar">👩‍💻</div>
+                    <div class="rec-info">
+                        <h3>李工程師</h3>
+                        <div class="position">同事 · XYZ軟體公司</div>
+                    </div>
+                </div>
+                <div class="rec-content">
+                    "非常優秀的開發者！程式碼品質高，而且樂於分享知識。在專案中遇到困難時，總能提出創新的解決方案。是團隊的重要支柱。"
+                </div>
+                <div class="rec-footer">
+                    <div class="rating">⭐⭐⭐⭐⭐</div>
+                    <div class="date">2024-01-20</div>
+                </div>
+            </div>
+            
+            <div class="rec-card">
+                <div class="rec-header">
+                    <div class="avatar">👨‍🏫</div>
+                    <div class="rec-info">
+                        <h3>王教授</h3>
+                        <div class="position">指導教授 · 國立大學</div>
+                    </div>
+                </div>
+                <div class="rec-content">
+                    "學習態度認真，對新技術充滿好奇心。在研究項目中展現出色的問題解決能力，並發表了高質量的論文。期待他未來的發展。"
+                </div>
+                <div class="rec-footer">
+                    <div class="rating">⭐⭐⭐⭐⭐</div>
+                    <div class="date">2023-12-10</div>
+                </div>
+            </div>
+            
+            <div class="rec-card">
+                <div class="rec-header">
+                    <div class="avatar">👨‍💼</div>
+                    <div class="rec-info">
+                        <h3>陳客戶</h3>
+                        <div class="position">客戶 · DEF企業</div>
+                    </div>
+                </div>
+                <div class="rec-content">
+                    "專業、準時、高效！我們的專案在他的帶領下順利完成，不僅達到了所有需求，還超出了我們的期待。非常感謝！"
+                </div>
+                <div class="rec-footer">
+                    <div class="rating">⭐⭐⭐⭐⭐</div>
+                    <div class="date">2024-03-05</div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="../lab.html" class="back-btn">← 返回功能實驗室</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 Base64 編碼解碼器</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: '
+
+Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: white;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { text-align: center; margin-bottom: 30px; }
+        .panel {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: 100%;
+            min-height: 150px;
+# base64-converter.html
+cat << 'EOF' > base64-converter.ht;
+                        solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.2);
+            color: white;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+        }
+        textarea::placeholder { color: rgba(255,255,255,0.5); }
+        button {
+            padding: 15px 30px;
+            background: #27ae60;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover { background: #229954; }
+        .decode { background: #3498db; }
+        .decode:hover { background: #2980b9; }
+        .clear { background: #e74c3c; }
+        .clear:hover { background: #c0392b; }
+        .back-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            border: 2px solid white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Base64 編碼解碼器</h1>
+        
+        <div class="panel">
+            <h3 style="margin-bottom: 15px;">原始文字</h3>
+            <textarea id="plainText" placeholder="輸入要編碼的文字..."></textarea>
+            <div style="margin-top: 15px;">
+                <button onclick="encode()">📤 編碼</button>
+                <button class="clear" onclick="clearPlain()">🗑️ 清除</button>
+            </div>
+        </div>
+        
+        <div class="panel">
+            <h3 style="margin-bottom: 15px;">Base64 編碼結果</h3>
+            <textarea id="base64Text" placeholder="Base64 編碼結果會顯示在這裡..."></textarea>
+            <div style="margin-top: 15px;">
+                <button class="decode" onclick="decode()">📥 解碼</button>
+                <button onclick="copyToClipboard()">📋 複製</button>
+                <button class="clear" onclick="clearBase64()">🗑️ 清除</button>
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="../lab.html" class="back-btn">← 返回功能實驗室</a>
+        </div>
+    </div>
+    <script>
+        function encode() {
+            const plain = document.getElementById('plainText').value;
+            try {
+                const encoded = btoa(unescape(encodeURIComponent(plain)));
+                document.getElementById('base64Text').value = encoded;
+            } catch (e) {
+                alert('編碼錯誤：' + e.message);
+            }
+        }
+        
+        function decode() {
+            const base64 = document.getElementById('base64Text').value;
+            try {
+                const decoded = decodeURIComponent(escape(atob(base64)));
+                document.getElementById('plainText').value = decoded;
+            } catch (e) {
+                alert('解碼錯誤：請確認輸入正確的 Base64 字串');
+            }
+        }
+        
+        function copyToClipboard() {
+            const base64Text = document.getElementById('base64Text');
+            base64Text.select();
+            document.execCommand('copy');
+            alert('✅ 已複製到剪貼簿！');
+        }
+        
+        function clearPlain() {
+            document.getElementById('plainText').value = '';
+        }
+        
+        function clearBase64() {
+            document.getElementById('base64Text').value = '';
+        }
+    </script>
+</body>
+</html>

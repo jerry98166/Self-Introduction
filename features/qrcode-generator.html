@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>📱 QR Code 生成器</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: white;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+        }
+        h1 { text-align: center; margin-bottom: 30px; }
+        .input-panel {
+            background: rgba(255,255,255,0.1);
+            padding: 25px;
+            border-radius: 15px;
+                                                                                                                                                  border-radius: 10px;
+            border: 2px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.2);
+            color: white;
+            font-size: 16px;
+            font-family: inherit;
+        }
+        textarea { min-height: 100px; resize: vertical; }
+        button {
+            padding: 15px 30px;
+            background: #27ae60;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        button:hover { background: #229954; }
+        .qr-display {
+            text-align: center;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        #qrcode { display: inline-block; }
+        .back-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            border: 2px solid white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 QR Code 生成器</h1>
+        
+        <div class="input-panel">
+            <label style="display: block; margin-bottom: 10px; font-weight: 600;">輸入內容：</label>
+            <textarea id="qrInput" placeholder="輸入文字、網址、聯絡資訊等...
+例如: https://example.com">https://github.com</textarea>
+            <button onclick="generateQR()">🎯 生成 QR Code</button>
+        </div>
+        
+        <div class="qr-display">
+            <div id="qrcode"></div>
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="../lab.html" class="back-btn">← 返回功能實驗室</a>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script>
+        function generateQR() {
+            const text = document.getElementById('qrInput').value;
+            if (!text) {
+                alert('請輸入內容！');
+                return;
+            }
+            
+            const qrcodeDiv = document.getElementById('qrcode');
+            qrcodeDiv.innerHTML = '';
+            
+            new QRCode(qrcodeDiv, {
+                text: text,
+                width: 256,
+                height: 256,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+        
+        // Generate default QR code
+        generateQR();
+    </script>
+</body>
+</html>

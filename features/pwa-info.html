@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>📱 PWA 離線模式</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: white;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+        }
+        h1 { text-align: center; margin-bottom: 30px; }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .feature-card {
+            background: rgb            background:               bac 30px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.2);
+        }
+        .feature-icon { font-size: 3em; margin-bottom: 15px; }
+        .feature-title { font-size: 1.3em; margin-bottom: 10px; font-weight: 600; }
+        button {
+            padding: 15px 30px;
+            background: #27ae60;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .back-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            border: 2px solid white;
+            margin-top: 20px;
+        }
+        .info-box {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 PWA 離線模式</h1>
+        
+        <div class="info-box">
+            <h2 style="margin-bottom: 15px;">什麼是 PWA？</h2>
+            <p>Progressive Web App（漸進式網頁應用程式）讓網站像原生APP一樣，支援離線使用、推送通知、安裝到桌面等功能。</p>
+        </div>
+        
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📴</div>
+                <div class="feature-title">離線存取</div>
+                <p>無網路也能使用</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🏠</div>
+                <div class="feature-title">安裝到桌面</div>
+                <p>像原生APP一樣</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔔</div>
+                <div class="feature-title">推送通知</div>
+                <p>即時消息提醒</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <div class="feature-title">快速載入</div>
+                <p>緩存加速</p>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <button onclick="installPWA()">📥 安裝此應用</button>
+            <button onclick="checkStatus()">📊 檢查狀態</button>
+        </div>
+        
+        <div class="info-box">
+            <h3 style="margin-bottom: 10px;">💡 使用說明</h3>
+            <p>• 點擊「安裝此應用」可將網站安裝到桌面</p>
+            <p>• 安裝後可在離線狀態下使用</p>
+            <p>• 支援 Chrome、Edge、Safari 等現代瀏覽器</p>
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="../lab.html" class="back-btn">← 返回功能實驗室</a>
+        </div>
+    </div>
+    <script>
+        let deferredPrompt;
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+        
+        function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        alert('✅ 安裝成功！');
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                alert('此網站已經安裝，或瀏覽器不支援 PWA 安裝功能。\\n\\n可以嘗試：\\n1. Chrome/Edge: 網址列旁的安裝圖示\\n2. Safari: 分享 → 加入主畫面');
+            }
+        }
+        
+        function checkStatus() {
+            let status = '📊 PWA 狀態檢查：\\n\\n';
+            status += \`✅ Service Worker: \${navigator.serviceWorker ? '支援' : '不支援'}\\n\`;
+            status += \`✅ 離線緩存: \${'caches' in window ? '支援' : '不支援'}\\n\`;
+            status += \`✅ 推送通知: \${'Notification' in window ? '支援' : '不支援'}\\n\`;
+            status += \`✅ 獨立模式: \${window.matchMedia('(display-mode: standalone)').matches ? '是' : '否'}\\n\`;
+            alert(status);
+        }
+    </script>
+</body>
+</html>

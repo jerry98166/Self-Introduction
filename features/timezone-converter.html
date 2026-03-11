@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌍 時區轉換工具 - Timezone Converter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .current-time {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+
+        .current-time .time {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .current-time .date {
+            font-size: 1.3em;
+            opacity: 0.9;
+        }
+
+        .converter-panel {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+
+        .converter-panel h2 {
+            margin-bottom: 25px;
+            font-size: 1.5em;
+        }
+
+        .converter-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .timezone-select {
+            background: rgba(255,255,255,0.15);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .timezone-select label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .timezone-select select,
+        .timezone-select input {
+            width: 100%;
+            padding: 12px;
+            font-size: 1em;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            background: rgba(255,255,255,0.2);
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .timezone-select select option {
+            background: #333;
+            color: #fff;
+        }
+
+        .time-display {
+            font-size: 2em;
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .swap-btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.4);
+            color: #fff;
+            padding: 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5em;
+            transition: all 0.3s;
+        }
+
+        .swap-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(180deg);
+        }
+
+        .world-clocks {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .clock-card {
+            background: rgba(255,255,255,0.15);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .clock-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.2);
+        }
+
+        .clock-card .city {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .clock-card .time {
+            font-size: 1.8em;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 5px;
+        }
+
+        .clock-card .offset {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .clock-card .icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .add-clock-btn {
+            padding: 15px 30px;
+            background: #27ae60;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1em;
+        }
+
+        .add-clock-btn:hover {
+            background: #229954;
+            transform: translateY(-2px);
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s;
+            border: 2px solid white;
+        }
+
+        .back-btn:hover {
+            background: white;
+            color: #667eea;
+            transform: scale(1.05);
+        }
+
+        .info-box {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #3498db;
+        }
+
+        @media (max-width: 768px) {
+            .converter-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .swap-btn {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌍 時區轉換工具</h1>
+            <p class="subtitle">輕鬆轉換世界各地的時間</p>
+        </header>
+
+        <div class="current-time">
+            <div class="time" id="currentTime">--:--:--</div>
+            <div class="date" id="currentDate">----/--/--</div>
+            <div style="margin-top: 10px; opacity: 0.8;" id="currentTimezone">載入中...</div>
+        </div>
+
+        <div class="converter-panel">
+            <h2>⏰ 時區轉換器</h2>
+            
+            <div class="converter-grid">
+                <div class="timezone-select">
+                    <label>來源時區</label>
+                    <select id="sourceTimezone">
+                        <option value="Asia/Taipei">台北 (UTC+8)</option>
+                        <option value="America/New_York">紐約 (UTC-5/-4)</option>
+                        <option value="Europe/London">倫敦 (UTC+0/+1)</option>
+                        <option value="Asia/Tokyo">東京 (UTC+9)</option>
+                        <option value="America/Los_Angeles">洛杉磯 (UTC-8/-7)</option>
+                        <option value="Europe/Paris">巴黎 (UTC+1/+2)</option>
+                        <option value="Asia/Shanghai">上海 (UTC+8)</option>
+                        <option value="Australia/Sydney">雪梨 (UTC+10/+11)</option>
+                        <option value="Asia/Dubai">杜拜 (UTC+4)</option>
+                        <option value="America/Chicago">芝加哥 (UTC-6/-5)</option>
+                    </select>
+                    <input type="datetime-local" id="sourceTime">
+                    <div class="time-display" id="sourceTimeDisplay">--:--</div>
+                </div>
+
+                <button class="swap-btn" onclick="swapTimezones()">⇄</button>
+
+                <div class="timezone-select">
+                    <label>目標時區</label>
+                    <select id="targetTimezone">
+                        <option value="America/New_York">紐約 (UTC-5/-4)</option>
+                        <option value="Europe/London">倫敦 (UTC+0/+1)</option>
+                        <option value="Asia/Tokyo">東京 (UTC+9)</option>
+                        <option value="Asia/Taipei">台北 (UTC+8)</option>
+                        <option value="America/Los_Angeles">洛杉磯 (UTC-8/-7)</option>
+                        <option value="Europe/Paris">巴黎 (UTC+1/+2)</option>
+                        <option value="Asia/Shanghai">上海 (UTC+8)</option>
+                        <option value="Australia/Sydney">雪梨 (UTC+10/+11)</option>
+                        <option value="Asia/Dubai">杜拜 (UTC+4)</option>
+                        <option value="America/Chicago">芝加哥 (UTC-6/-5)</option>
+                    </select>
+                    <div class="time-display" id="targetTimeDisplay">--:--</div>
+                    <div style="text-align: center; margin-top: 10px; opacity: 0.8;" id="timeDifference"></div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <strong>💡 小提示：</strong> 選擇日期時間和時區，即時看到轉換結果。時區差異會自動計算。
+            </div>
+        </div>
+
+        <div class="converter-panel">
+            <h2>🌐 世界時鐘</h2>
+            <div class="world-clocks" id="worldClocks"></div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="../lab.html" class="back-btn">← 返回功能實驗室</a>
+        </div>
+    </div>
+
+    <script>
+        const majorCities = [
+            { name: '台北', timezone: 'Asia/Taipei', icon: '🇹🇼' },
+            { name: '東京', timezone: 'Asia/Tokyo', icon: '🇯🇵' },
+            { name: '首爾', timezone: 'Asia/Seoul', icon: '🇰🇷' },
+            { name: '香港', timezone: 'Asia/Hong_Kong', icon: '🇭🇰' },
+            { name: '新加坡', timezone: 'Asia/Singapore', icon: '🇸🇬' },
+            { name: '紐約', timezone: 'America/New_York', icon: '🇺🇸' },
+            { name: '倫敦', timezone: 'Europe/London', icon: '🇬🇧' },
+            { name: '巴黎', timezone: 'Europe/Paris', icon: '🇫🇷' },
+            { name: '雪梨', timezone: 'Australia/Sydney', icon: '🇦🇺' },
+            { name: '杜拜', timezone: 'Asia/Dubai', icon: '🇦🇪' },
+            { name: '洛杉磯', timezone: 'America/Los_Angeles', icon: '🇺🇸' },
+            { name: '芝加哥', timezone: 'America/Chicago', icon: '🇺🇸' }
+        ];
+
+        function updateCurrentTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('zh-TW', { hour12: false });
+            const dateStr = now.toLocaleDateString('zh-TW');
+            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const offset = -now.getTimezoneOffset() / 60;
+            
+            document.getElementById('currentTime').textContent = timeStr;
+            document.getElementById('currentDate').textContent = dateStr;
+            document.getElementById('currentTimezone').textContent = `${timezone} (UTC${offset >= 0 ? '+' : ''}${offset})`;
+        }
+
+        function updateConverter() {
+            const sourceInput = document.getElementById('sourceTime');
+            const sourceTimezone = document.getElementById('sourceTimezone').value;
+            const targetTimezone = document.getElementById('targetTimezone').value;
+
+            if (!sourceInput.value) {
+                const now = new Date();
+                sourceInput.value = now.toISOString().slice(0, 16);
+            }
+
+            const sourceDate = new Date(sourceInput.value);
+            
+            // Display source time
+            const sourceTimeStr = sourceDate.toLocaleString('zh-TW', {
+                timeZone: sourceTimezone,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+            document.getElementById('sourceTimeDisplay').textContent = sourceTimeStr;
+
+            // Display target time
+            const targetTimeStr = sourceDate.toLocaleString('zh-TW', {
+                timeZone: targetTimezone,
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+            document.getElementById('targetTimeDisplay').textContent = targetTimeStr;
+
+            // Calculate time difference
+            const sourceOffset = getTimezoneOffset(sourceDate, sourceTimezone);
+            const targetOffset = getTimezoneOffset(sourceDate, targetTimezone);
+            const diffHours = targetOffset - sourceOffset;
+            
+            document.getElementById('timeDifference').textContent = 
+                `時差: ${diffHours >= 0 ? '+' : ''}${diffHours} 小時`;
+        }
+
+        function getTimezoneOffset(date, timezone) {
+            const utcDate = new Date(date.toLocaleString('en-US', { timeZone: 'UTC' }));
+            const tzDate = new Date(date.toLocaleString('en-US', { timeZone: timezone }));
+            return (tzDate - utcDate) / (1000 * 60 * 60);
+        }
+
+        function swapTimezones() {
+            const source = document.getElementById('sourceTimezone');
+            const target = document.getElementById('targetTimezone');
+            const temp = source.value;
+            source.value = target.value;
+            target.value = temp;
+            updateConverter();
+        }
+
+        function updateWorldClocks() {
+            const container = document.getElementById('worldClocks');
+            const now = new Date();
+            
+            container.innerHTML = majorCities.map(city => {
+                const timeStr = now.toLocaleTimeString('zh-TW', {
+                    timeZone: city.timezone,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                });
+                
+                const dateStr = now.toLocaleDateString('zh-TW', {
+                    timeZone: city.timezone,
+                    month: 'short',
+                    day: 'numeric'
+                });
+
+                const offset = getTimezoneOffset(now, city.timezone);
+                const offsetStr = `UTC${offset >= 0 ? '+' : ''}${offset}`;
+
+                return `
+                    <div class="clock-card">
+                        <div class="icon">${city.icon}</div>
+                        <div class="city">${city.name}</div>
+                        <div class="time">${timeStr}</div>
+                        <div>${dateStr}</div>
+                        <div class="offset">${offsetStr}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Initialize
+        updateCurrentTime();
+        updateConverter();
+        updateWorldClocks();
+
+        // Update every second
+        setInterval(() => {
+            updateCurrentTime();
+            updateConverter();
+            updateWorldClocks();
+        }, 1000);
+
+        // Event listeners
+        document.getElementById('sourceTimezone').addEventListener('change', updateConverter);
+        document.getElementById('targetTimezone').addEventListener('change', updateConverter);
+        document.getElementById('sourceTime').addEventListener('change', updateConverter);
+    </script>
+</body>
+</html>

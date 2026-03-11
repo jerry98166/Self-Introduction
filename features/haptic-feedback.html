@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>📳 震動反饋</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: white;
+        }
+        .container {
+            max-width: 800px;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ba                     5,255,0.15);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 15px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+            text-align: center;
+        }
+        .pattern-btn:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-5px);
+        }
+        .pattern-btn:active {
+            transform: scale(0.95);
+        }
+        .pattern-icon { font-size: 2.5em; margin-bottom: 10px; }
+        .back-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            border: 2px solid white;
+            margin-top: 20px;
+        }
+        .info-box {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📳 震動反饋</h1>
+        
+        <div class="info-box">
+            <p style="text-align: center;">點擊下方按鈕體驗不同的震動模式（需支援的行動裝置）</p>
+        </div>
+        
+        <div class="pattern-grid">
+            <button class="pattern-btn" onclick="vibrate([200])">
+                <div class="pattern-icon">📳</div>
+                <div>單次震動</div>
+            </button>
+            <button class="pattern-btn" onclick="vibrate([100, 50, 100])">
+                <div class="pattern-icon">📳📳</div>
+                <div>雙次震動</div>
+            </button>
+            <button class="pattern-btn" onclick="vibrate([100, 50, 100, 50, 100])">
+                <div class="pattern-icon">📳📳📳</div>
+                <div>三連震動</div>
+            </button>
+            <button class="pattern-btn" onclick="vibrate([50, 50, 50, 50, 50, 50, 50, 50])">
+                <div class="pattern-icon">〰️</div>
+                <div>節奏震動</div>
+            </button>
+            <button class="pattern-btn" onclick="vibrate([100, 100, 200, 100, 300])">
+                <div class="pattern-icon">🎵</div>
+                <div>旋律震動</div>
+            </button>
+            <button class="pattern-btn" onclick="vibrate([1000])">
+                <div class="pattern-icon">⚡</div>
+                <div>長震動</div>
+            </button>
+        </div>
+        
+        <div class="info-box">
+            <h3 style="margin-bottom: 15px;">💡 使用說明</h3>
+            <p>• 此功能需要支援震動的行動裝置</p>
+            <p>• 電腦瀏覽器通常不支援震動功能</p>
+            <p>• 數字代表震動時間（毫秒）和間隔</p>
+            <p>• 例如 [100, 50, 100] = 震100ms, 停50ms, 震100ms</p>
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="../lab.html" class="back-btn">← 返回功能實驗室</a>
+        </div>
+    </div>
+    <script>
+        function vibrate(pattern) {
+            if ('vibrate' in navigator) {
+                navigator.vibrate(pattern);
+                console.log('震動模式:', pattern);
+            } else {
+                alert('⚠️ 您的裝置不支援震動功能\\n\\n請使用支援震動的行動裝置（如 Android 手機）');
+            }
+        }
+    </script>
+</body>
+</html>

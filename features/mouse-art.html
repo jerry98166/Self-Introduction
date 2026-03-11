@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>滑鼠藝術創作 - Mouse Art</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .controls button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .controls button.active {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        #rainbowBtn {
+            background: linear-gradient(135deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+        }
+
+        #fireBtn {
+            background: linear-gradient(135deg, #ff4500, #ff6347, #ff7f50);
+        }
+
+        #neonBtn {
+            background: linear-gradient(135deg, #00ffff, #00ff00, #ff00ff);
+        }
+
+        #clearBtn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .controls button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        #canvas {
+            width: 100%;
+            height: 500px;
+            border: 3px solid #667eea;
+            border-radius: 15px;
+            cursor: crosshair;
+            background: #000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .info {
+            margin-top: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            color: white;
+        }
+
+        .info h3 {
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .info ul {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #667eea;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .controls button {
+                width: 100%;
+            }
+
+            #canvas {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="window.location.href='../lab.html'">← 返回實驗室</button>
+
+    <div class="container">
+        <h1>🎨 滑鼠藝術創作</h1>
+        <p class="subtitle">移動滑鼠在畫布上創作絢麗的藝術作品</p>
+
+        <div class="controls">
+            <button id="rainbowBtn" class="active">🌈 彩虹模式</button>
+            <button id="fireBtn">🔥 火焰模式</button>
+            <button id="neonBtn">⚡ 霓虹模式</button>
+            <button id="clearBtn">🗑️ 清除畫布</button>
+        </div>
+
+        <canvas id="canvas"></canvas>
+
+        <div class="info">
+            <h3>💡 使用說明</h3>
+            <ul>
+                <li><strong>彩虹模式：</strong>繪製彩虹漸變色的線條</li>
+                <li><strong>火焰模式：</strong>繪製火焰般的紅橙色線條</li>
+                <li><strong>霓虹模式：</strong>繪製霓虹發光效果的線條</li>
+                <li><strong>移動滑鼠：</strong>在畫布上自由移動即可繪製</li>
+                <li><strong>清除畫布：</strong>點擊清除按鈕重新開始創作</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Set canvas size
+        function resizeCanvas() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        let hue = 0;
+        let mode = 'rainbow'; // rainbow, fire, neon
+
+        // Mode buttons
+        document.getElementById('rainbowBtn').addEventListener('click', function() {
+            mode = 'rainbow';
+            updateActiveButton(this);
+        });
+
+        document.getElementById('fireBtn').addEventListener('click', function() {
+            mode = 'fire';
+            updateActiveButton(this);
+        });
+
+        document.getElementById('neonBtn').addEventListener('click', function() {
+            mode = 'neon';
+            updateActiveButton(this);
+        });
+
+        document.getElementById('clearBtn').addEventListener('click', function() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+
+        function updateActiveButton(activeBtn) {
+            document.querySelectorAll('.controls button').forEach(btn => {
+                if (btn.id !== 'clearBtn') {
+                    btn.classList.remove('active');
+                }
+            });
+            activeBtn.classList.add('active');
+        }
+
+        // Drawing
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        canvas.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        });
+
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', () => isDrawing = false);
+        canvas.addEventListener('mouseout', () => isDrawing = false);
+
+        // Touch support
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            isDrawing = true;
+            lastX = touch.clientX - rect.left;
+            lastY = touch.clientY - rect.top;
+        });
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (!isDrawing) return;
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(x, y);
+            ctx.strokeStyle = getColor();
+            ctx.lineWidth = 5;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+            
+            [lastX, lastY] = [x, y];
+            hue = (hue + 1) % 360;
+        });
+
+        canvas.addEventListener('touchend', () => isDrawing = false);
+
+        function draw(e) {
+            if (!isDrawing) return;
+
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.strokeStyle = getColor();
+            ctx.lineWidth = 5;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+            hue = (hue + 1) % 360;
+        }
+
+        function getColor() {
+            switch(mode) {
+                case 'rainbow':
+                    return `hsl(${hue}, 100%, 50%)`;
+                case 'fire':
+                    const fireColors = ['#ff0000', '#ff4500', '#ff6347', '#ff7f50', '#ffa500'];
+                    return fireColors[Math.floor(Math.random() * fireColors.length)];
+                case 'neon':
+                    const neonColors = ['#00ffff', '#00ff00', '#ff00ff', '#ffff00'];
+                    return neonColors[Math.floor(Math.random() * neonColors.length)];
+                default:
+                    return '#ffffff';
+            }
+        }
+
+        // Auto increment hue for rainbow mode
+        setInterval(() => {
+            if (mode === 'rainbow') {
+                hue = (hue + 1) % 360;
+            }
+        }, 50);
+    </script>
+</body>
+</html>

@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 Code打磚塊遊戲 - Breakout Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .game-container {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background: rgba(255,255,255,0.15);
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        #gameCanvas {
+            display: block;
+            margin: 0 auto;
+            background: #1a1a2e;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            cursor: none;
+        }
+
+        .controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .control-btn {
+            padding: 12px 30px;
+            margin: 5px;
+            background: #3498db;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1em;
+        }
+
+        .control-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .control-btn.pause {
+            background: #f39c12;
+        }
+
+        .control-btn.pause:hover {
+            background: #e67e22;
+        }
+
+        .control-btn.reset {
+            background: #e74c3c;
+        }
+
+        .control-btn.reset:hover {
+            background: #c0392b;
+        }
+
+        .game-over-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .game-over-content {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            padding: 50px;
+            border-radius: 20px;
+            text-align: center;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .game-over-content h2 {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .game-over-content .final-score {
+            font-size: 2em;
+            margin: 20px 0;
+        }
+
+        .instructions {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .instructions h3 {
+            margin-bottom: 15px;
+        }
+
+        .instructions ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .instructions li {
+            padding: 8px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .instructions li:before {
+            content: "🎮";
+            position: absolute;
+            left: 0;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s;
+            border: 2px solid white;
+        }
+
+        .back-btn:hover {
+            background: white;
+            color: #2c3e50;
+            transform: scale(1.05);
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .blink {
+            animation: blink 1s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎮 Code 打磚塊遊戲</h1>
+            <p class="subtitle">用技能名稱當磚塊的經典遊戲</p>
+        </header>
+
+        <div class="game-container">
+            <div class="game-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="score">0</div>
+                    <div class="stat-label">分數</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="level">1</div>
+                    <div class="stat-label">關卡</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="lives">3</div>
+                    <div class="stat-label">生命</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="bricksLeft">0</div>
+                    <div class="stat-label">剩餘磚塊</div>
+                </div>
+            </div>
+
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+            <div class="controls">
+                <button class="control-btn" id="startBtn" onclick="startGame()">🚀 開始遊戲</button>
+                <button class="control-btn pause" id="pauseBtn" onclick="togglePause()" disabled>⏸️ 暫停</button>
+                <button class="control-btn reset" onclick="resetGame()">🔄 重新開始</button>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>🎯 遊戲說明</h3>
+            <ul>
+                <li>使用滑鼠左右移動擋板</li>
+                <li>打破所有磚塊以進入下一關</li>
+                <li>每個磚塊代表一個技能，分數不同</li>
+                <li>掉球會失去一條生命</li>
+                <li>打破特殊磚塊獲得額外獎勵！</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="../lab.html" class="back-btn">← 返回功能實驗室</a>
+        </div>
+    </div>
+
+    <div class="game-over-overlay" id="gameOverOverlay">
+        <div class="game-over-content">
+            <h2 id="gameOverTitle">🎯 遊戲結束</h2>
+            <div class="final-score">
+                最終分數: <span id="finalScore">0</span>
+            </div>
+            <div class="final-score">
+                達到關卡: <span id="finalLevel">1</span>
+            </div>
+            <button class="control-btn" onclick="resetGame()" style="margin-top: 20px;">🔄 再玩一次</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Game state
+        let gameState = 'ready'; // ready, playing, paused, gameover
+        let score = 0;
+        let level = 1;
+        let lives = 3;
+
+        // Paddle
+        const paddle = {
+            width: 100,
+            height: 15,
+            x: canvas.width / 2 - 50,
+            y: canvas.height - 30,
+            speed: 8,
+            dx: 0
+        };
+
+        // Ball
+        const ball = {
+            x: canvas.width / 2,
+            y: paddle.y - 10,
+            radius: 8,
+            speed: 4,
+            dx: 4,
+            dy: -4
+        };
+
+        // Skills/Bricks data
+        const skills = [
+            { name: 'JavaScript', color: '#f7df1e', points: 10 },
+            { name: 'Python', color: '#3776ab', points: 10 },
+            { name: 'React', color: '#61dafb', points: 15 },
+            { name: 'Node.js', color: '#68a063', points: 15 },
+            { name: 'TypeScript', color: '#3178c6', points: 20 },
+            { name: 'Vue.js', color: '#42b883', points: 15 },
+            { name: 'Docker', color: '#2496ed', points: 20 },
+            { name: 'MongoDB', color: '#47a248', points: 15 },
+            { name: 'Git', color: '#f05032', points: 10 },
+            { name: 'AWS', color: '#ff9900', points: 25 },
+            { name: 'Kubernetes', color: '#326ce5', points: 25 },
+            { name: 'SQL', color: '#cc2927', points: 15 }
+        ];
+
+        let bricks = [];
+
+        function createBricks() {
+            bricks = [];
+            const rows = 4 + level;
+            const cols = 8;
+            const brickWidth = 90;
+            const brickHeight = 25;
+            const padding = 5;
+            const offsetTop = 50;
+            const offsetLeft = (canvas.width - (cols * (brickWidth + padding))) / 2;
+
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    const skill = skills[Math.floor(Math.random() * skills.length)];
+                    bricks.push({
+                        x: offsetLeft + col * (brickWidth + padding),
+                        y: offsetTop + row * (brickHeight + padding),
+                        width: brickWidth,
+                        height: brickHeight,
+                        skill: skill.name,
+                        color: skill.color,
+                        points: skill.points,
+                        visible: true
+                    });
+                }
+            }
+            updateBricksLeft();
+        }
+
+        function drawPaddle() {
+            ctx.fillStyle = '#3498db';
+            ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+            
+            // Paddle highlight
+            ctx.fillStyle = 'rgba(255,255,255,0.3)';
+            ctx.fillRect(paddle.x, paddle.y, paddle.width, 5);
+        }
+
+        function drawBall() {
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+            ctx.fillStyle = '#e74c3c';
+            ctx.fill();
+            ctx.strokeStyle = '#c0392b';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.closePath();
+        }
+
+        function drawBricks() {
+            bricks.forEach(brick => {
+                if (brick.visible) {
+                    // Brick background
+                    ctx.fillStyle = brick.color;
+                    ctx.fillRect(brick.x, brick.y, brick.width, brick.height);
+                    
+                    // Brick border
+                    ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(brick.x, brick.y, brick.width, brick.height);
+                    
+                    // Skill name
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 11px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(brick.skill, brick.x + brick.width / 2, brick.y + brick.height / 2);
+                }
+            });
+        }
+
+        function movePaddle() {
+            paddle.x += paddle.dx;
+            
+            // Wall collision
+            if (paddle.x < 0) paddle.x = 0;
+            if (paddle.x + paddle.width > canvas.width) {
+                paddle.x = canvas.width - paddle.width;
+            }
+        }
+
+        function moveBall() {
+            ball.x += ball.dx;
+            ball.y += ball.dy;
+
+            // Wall collision (left/right)
+            if (ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0) {
+                ball.dx = -ball.dx;
+            }
+
+            // Wall collision (top)
+            if (ball.y - ball.radius < 0) {
+                ball.dy = -ball.dy;
+            }
+
+            // Paddle collision
+            if (
+                ball.y + ball.radius > paddle.y &&
+                ball.x > paddle.x &&
+                ball.x < paddle.x + paddle.width
+            ) {
+                // Calculate hit position for angle
+                const hitPos = (ball.x - paddle.x) / paddle.width;
+                const angle = (hitPos - 0.5) * (Math.PI / 3);
+                const speed = Math.sqrt(ball.dx * ball.dx + ball.dy * ball.dy);
+                
+                ball.dx = speed * Math.sin(angle);
+                ball.dy = -speed * Math.cos(angle);
+            }
+
+            // Bottom collision (lose life)
+            if (ball.y + ball.radius > canvas.height) {
+                lives--;
+                updateLives();
+                
+                if (lives <= 0) {
+                    gameOver();
+                } else {
+                    resetBall();
+                }
+            }
+
+            // Brick collision
+            bricks.forEach(brick => {
+                if (brick.visible) {
+                    if (
+                        ball.x > brick.x &&
+                        ball.x < brick.x + brick.width &&
+                        ball.y > brick.y &&
+                        ball.y < brick.y + brick.height
+                    ) {
+                        ball.dy = -ball.dy;
+                        brick.visible = false;
+                        score += brick.points;
+                        updateScore();
+                        updateBricksLeft();
+                        
+                        // Check level complete
+                        if (bricks.every(b => !b.visible)) {
+                            levelUp();
+                        }
+                    }
+                }
+            });
+        }
+
+        function resetBall() {
+            ball.x = canvas.width / 2;
+            ball.y = paddle.y - 10;
+            ball.dx = (Math.random() > 0.5 ? 1 : -1) * 4;
+            ball.dy = -4;
+        }
+
+        function levelUp() {
+            level++;
+            updateLevel();
+            ball.speed += 0.5;
+            createBricks();
+            resetBall();
+            gameState = 'paused';
+            
+            setTimeout(() => {
+                alert(`🎉 恭喜過關！進入第 ${level} 關！`);
+                if (gameState === 'paused') {
+                    gameState = 'playing';
+                }
+            }, 100);
+        }
+
+        function gameOver() {
+            gameState = 'gameover';
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalLevel').textContent = level;
+            document.getElementById('gameOverOverlay').style.display = 'flex';
+        }
+
+        function draw() {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw game elements
+            drawBricks();
+            drawPaddle();
+            drawBall();
+
+            // Draw game state text
+            if (gameState === 'ready') {
+                ctx.fillStyle = 'rgba(255,255,255,0.8)';
+                ctx.font = 'bold 24px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('點擊「開始遊戲」開始！', canvas.width / 2, canvas.height / 2);
+            } else if (gameState === 'paused') {
+                ctx.fillStyle = 'rgba(255,255,255,0.8)';
+                ctx.font = 'bold 36px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('⏸️ 暫停', canvas.width / 2, canvas.height / 2);
+            }
+        }
+
+        function update() {
+            if (gameState === 'playing') {
+                movePaddle();
+                moveBall();
+            }
+            draw();
+            requestAnimationFrame(update);
+        }
+
+        function startGame() {
+            if (gameState === 'ready' || gameState === 'gameover') {
+                gameState = 'playing';
+                document.getElementById('startBtn').disabled = true;
+                document.getElementById('pauseBtn').disabled = false;
+                createBricks();
+                resetBall();
+            }
+        }
+
+        function togglePause() {
+            if (gameState === 'playing') {
+                gameState = 'paused';
+                document.getElementById('pauseBtn').textContent = '▶️ 繼續';
+            } else if (gameState === 'paused') {
+                gameState = 'playing';
+                document.getElementById('pauseBtn').textContent = '⏸️ 暫停';
+            }
+        }
+
+        function resetGame() {
+            gameState = 'ready';
+            score = 0;
+            level = 1;
+            lives = 3;
+            updateScore();
+            updateLevel();
+            updateLives();
+            resetBall();
+            createBricks();
+            
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('pauseBtn').disabled = true;
+            document.getElementById('pauseBtn').textContent = '⏸️ 暫停';
+            document.getElementById('gameOverOverlay').style.display = 'none';
+            
+            draw();
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent = score;
+        }
+
+        function updateLevel() {
+            document.getElementById('level').textContent = level;
+        }
+
+        function updateLives() {
+            document.getElementById('lives').textContent = lives;
+        }
+
+        function updateBricksLeft() {
+            const left = bricks.filter(b => b.visible).length;
+            document.getElementById('bricksLeft').textContent = left;
+        }
+
+        // Mouse controls
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            paddle.x = mouseX - paddle.width / 2;
+            
+            if (paddle.x < 0) paddle.x = 0;
+            if (paddle.x + paddle.width > canvas.width) {
+                paddle.x = canvas.width - paddle.width;
+            }
+        });
+
+        // Touch controls
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const touchX = e.touches[0].clientX - rect.left;
+            paddle.x = touchX - paddle.width / 2;
+            
+            if (paddle.x < 0) paddle.x = 0;
+            if (paddle.x + paddle.width > canvas.width) {
+                paddle.x = canvas.width - paddle.width;
+            }
+        });
+
+        // Initialize
+        createBricks();
+        draw();
+        update();
+    </script>
+</body>
+</html>
