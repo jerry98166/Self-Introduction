@@ -542,6 +542,7 @@
         // 載入留言
         function loadMessages() {
             const messages = JSON.parse(localStorage.getItem('guestbook_messages') || '[]');
+            console.log('Admin: Loading messages', messages); // Debug log
             document.getElementById('total-messages').textContent = messages.length;
             
             const messagesList = document.getElementById('messages-list');
@@ -549,6 +550,7 @@
             
             if (messages.length === 0) {
                 messagesList.innerHTML = '<p style="text-align: center; color: #94a3b8;">目前沒有留言</p>';
+                console.log('Admin: No messages found'); // Debug log
                 return;
             }
             
@@ -570,6 +572,7 @@
                 `;
                 messagesList.appendChild(messageCard);
             });
+            console.log('Admin: Messages displayed successfully'); // Debug log
         }
 
         // 刪除留言
@@ -661,8 +664,15 @@
 
         // 刷新數據
         function refreshData() {
+            console.log('Refreshing dashboard data...'); // Debug log
             loadDashboardData();
-            alert('數據已刷新！');
+            
+            // 更好的提示訊息
+            const messages = JSON.parse(localStorage.getItem('guestbook_messages') || '[]');
+            const chatLog = JSON.parse(localStorage.getItem('chatbot_log') || '[]');
+            const terminalLog = JSON.parse(localStorage.getItem('terminal_log') || '[]');
+            
+            alert(`數據已刷新！\n留言: ${messages.length} 則\n聊天記錄: ${chatLog.length} 則\n終端機記錄: ${terminalLog.length} 則`);
         }
 
         // 登出

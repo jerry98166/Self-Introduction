@@ -5,35 +5,75 @@ let particles = [];
 const particleCount = 50;
 
 // ========================================
+// 立即移除 Preloader（避免卡住）
+// ========================================
+function removePreloaderNow() {
+    const preloader = document.getElementById('preloader');
+    if (!preloader) return;
+    
+    const hide = () => {
+        preloader.classList.add('hidden');
+        setTimeout(() => {
+            preloader.style.display = 'none';
+        }, 500);
+    };
+    
+    // 立即隱藏（添加短暫延遲以顯示載入動畫）
+    setTimeout(hide, 800);
+}
+
+// 在 DOM 內容載入後立即處理 preloader
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', removePreloaderNow);
+} else {
+    removePreloaderNow();
+}
+
+// 強制移除保護（3秒後，防止永久卡住）
+setTimeout(() => {
+    const preloader = document.getElementById('preloader');
+    if (preloader && preloader.style.display !== 'none') {
+        preloader.style.display = 'none';
+    }
+}, 3000);
+
+// ========================================
 // DOM 載入完成後執行
 // ========================================
 document.addEventListener('DOMContentLoaded', function() {
+    const safeInit = (fn) => { try { fn(); } catch(e) { console.warn(fn.name + ' failed:', e); } };
+
     // 初始化所有功能
-    initParticles();
-    initNavigation();
-    initThemeToggle();
-    initBackToTop();
-    initTypingAnimation();
-    initScrollAnimations();
-    initProjectFilters();
-    initContactForm();
-    initStatCounters();
-    initSkillBars();
+    safeInit(initParticles);
+    safeInit(initNavigation);
+    safeInit(initThemeToggle);
+    safeInit(initBackToTop);
+    safeInit(initTypingAnimation);
+    safeInit(initScrollAnimations);
+    safeInit(initProjectFilters);
+    safeInit(initContactForm);
+    safeInit(initStatCounters);
+    safeInit(initSkillBars);
     
     // 新功能初始化
-    initPreloader();
-    initScrollProgress();
-    initCursorFollower();
-    initLanguageToggle();
-    initMusicPlayer();
-    initPrintResume();
-    initVisitorCounter();
-    initLiveClock();
-    initSkillsRadarChart();
-    initTypingGame();
-    initSocialShare();
-    initAchievements();
-    init3DCardEffect();
+    safeInit(initScrollProgress);
+    safeInit(initCursorFollower);
+    safeInit(initLanguageToggle);
+    safeInit(initMusicPlayer);
+    safeInit(initPrintResume);
+    safeInit(initVisitorCounter);
+    safeInit(initLiveClock);
+    safeInit(initSkillsRadarChart);
+    safeInit(initTypingGame);
+    safeInit(initSocialShare);
+    safeInit(initAchievements);
+    safeInit(init3DCardEffect);
+    
+    // 初始化右側功能
+    safeInit(initThreeJS);
+    safeInit(initChatbot);
+    safeInit(initTerminal);
+    safeInit(initOnlineStatus);
 });
 
 // ========================================
@@ -41,6 +81,13 @@ document.addEventListener('DOMContentLoaded', function() {
 // ========================================
 function initParticles() {
     const canvas = document.getElementById('particles-canvas');
+    
+    // 如果 canvas 不存在，直接返回
+    if (!canvas) {
+        console.warn('Particles canvas not found');
+        return;
+    }
+    
     const ctx = canvas.getContext('2d');
     
     canvas.width = window.innerWidth;
@@ -727,23 +774,21 @@ window.portfolioUtils = {
 // 新功能實現
 // ========================================
 
-// 加載畫面
+// 加載畫面（已在文件開頭處理）
 function initPreloader() {
-    const preloader = document.getElementById('preloader');
-    
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            preloader.classList.add('hidden');
-            setTimeout(() => {
-                preloader.style.display = 'none';
-            }, 500);
-        }, 1000);
-    });
+    // Preloader 已在文件開頭的 IIFE 中處理
+    // 此函數保留為空以保持兼容性
+    return;
 }
 
 // 滾動進度條
 function initScrollProgress() {
     const progressBar = document.getElementById('scroll-progress');
+    
+    if (!progressBar) {
+        console.warn('Scroll progress bar not found');
+        return;
+    }
     
     window.addEventListener('scroll', () => {
         const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
@@ -755,6 +800,13 @@ function initScrollProgress() {
 // 鼠標跟隨效果
 function initCursorFollower() {
     const cursorFollower = document.getElementById('cursor-follower');
+    
+    // 如果 cursorFollower 不存在，直接返回
+    if (!cursorFollower) {
+        console.warn('Cursor follower element not found');
+        return;
+    }
+    
     let mouseX = 0, mouseY = 0;
     let followerX = 0, followerY = 0;
     
@@ -1309,9 +1361,18 @@ function init3DCardEffect() {
 // Three.js 3D 背景動畫
 // ========================================
 function initThreeJS() {
-    if (typeof THREE === 'undefined') return;
+    if (typeof THREE === 'undefined') {
+        console.warn('Three.js not loaded');
+        return;
+    }
     
     const container = document.getElementById('three-container');
+    
+    if (!container) {
+        console.warn('Three.js container not found');
+        return;
+    }
+    
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
@@ -1353,12 +1414,24 @@ function initThreeJS() {
 function initChatbot() {
     const toggle = document.getElementById('chatbot-toggle');
     const panel = document.getElementById('chatbot-panel');
+    
+    // 添加更好的錯誤處理
+    if (!toggle || !panel) {
+        console.warn('Chatbot elements not found');
+        return;
+    }
+    
     const closeBtn = panel.querySelector('.chatbot-close');
     const minimizeBtn = panel.querySelector('.chatbot-minimize');
     const input = document.getElementById('chatbot-input');
     const sendBtn = document.getElementById('chatbot-send');
     const messagesContainer = document.getElementById('chatbot-messages');
     const quickQuestions = document.querySelectorAll('.quick-question');
+    
+    if (!closeBtn || !minimizeBtn || !input || !sendBtn || !messagesContainer) {
+        console.warn('Some chatbot elements are missing');
+        return;
+    }
     
     toggle.addEventListener('click', () => {
         panel.classList.toggle('active');
@@ -1427,13 +1500,13 @@ function initChatbot() {
         const msg = message.toLowerCase();
         
         if (msg.includes('技能') || msg.includes('skill')) {
-            return '我精通前端開發（HTML、CSS、JavaScrip、React）、後端開發（Node.js、Python）以及資料庫管理（MySQL、MongoDB）。我也熟悉 Git 版本控制和 DevOps 工具。';
+            return '我精通前端開發（HTML、CSS、JavaScript、React）、後端開發（Node.js、Python）以及資料庫管理（MySQL、MongoDB）。我也熟悉 Git 版本控制和 DevOps 工具。';
         } else if (msg.includes('經歷') || msg.includes('experience')) {
             return '我有5年以上的開發經驗，曾在多家科技公司工作，參與過大型電商平台、企業管理系統等專案開發。';
         } else if (msg.includes('專案') || msg.includes('project')) {
             return '我完成了超過50個專案，包括電商平台、社交媒體應用、數據分析平台等。您可以查看我的作品集區塊了解更多細節！';
         } else if (msg.includes('聯絡') || msg.includes('contact')) {
-            return '您可以通過頁面下方的聯絡表單與我聯繫，或直接發送郵件。我會盡快回覆您！';
+            return '您可以通過以下方式聯絡我：<br>📧 Email: ycsimpson@gmail.com<br>📞 電話: 0911-588-916<br>💼 LinkedIn: linkedin.com/in/孟麟-高-b88773191<br>🐙 GitHub: github.com/jerry98166<br>也歡迎使用頁面下方的聯絡表單！';
         } else if (msg.includes('學歷') || msg.includes('education')) {
             return '我畢業於知名大學計算機科學系，擁有學士學位，並持續學習最新的技術和框架。';
         } else {
@@ -1448,11 +1521,29 @@ function initChatbot() {
 function initTerminal() {
     const toggle = document.getElementById('terminal-toggle');
     const panel = document.getElementById('terminal-panel');
+    
+    // 添加錯誤處理
+    if (!toggle || !panel) {
+        console.warn('Terminal elements not found');
+        return;
+    }
+    
     const closeBtn = panel.querySelector('.terminal-close');
     const minimizeBtn = panel.querySelector('.terminal-minimize');
     const input = document.getElementById('terminal-input');
     const body = document.getElementById('terminal-body');
+    
+    if (!closeBtn || !minimizeBtn || !input || !body) {
+        console.warn('Some terminal elements are missing');
+        return;
+    }
+    
     const output = body.querySelector('.terminal-output');
+    
+    if (!output) {
+        console.warn('Terminal output element not found');
+        return;
+    }
     
     const commands = {
         help: () => `Available commands:
@@ -1487,10 +1578,13 @@ Interests: Web Development, AI, Open Source`,
 4. Portfolio Website - You're looking at it!`,
         
         contact: () => `Contact Information:
-Email: contact@example.com
-GitHub: github.com/menglin
-LinkedIn: linkedin.com/in/menglin
-Twitter: @menglin_dev`,
+Email: ycsimpson@gmail.com
+Phone: 0911-588-916
+GitHub: github.com/jerry98166
+LinkedIn: linkedin.com/in/孟麟-高-b88773191
+X (Twitter): x.com/Jerry59877
+Instagram: instagram.com/jerry98166
+Facebook: facebook.com/allen.jerry.357827`,
         
         experience: () => `Work Experience:
 • Senior Developer at Tech Corp (2021-Present)
@@ -1579,6 +1673,12 @@ function initGuestbook() {
     const form = document.getElementById('guestbook-form');
     const messagesContainer = document.querySelector('.messages-container');
     
+    // 添加錯誤處理
+    if (!form || !messagesContainer) {
+        console.warn('Guestbook elements not found');
+        return;
+    }
+    
     // 從 localStorage 載入留言
     loadMessages();
     
@@ -1598,6 +1698,9 @@ function initGuestbook() {
             });
             
             form.reset();
+            
+            // 顯示成功提示
+            showNotification('留言已成功發送！', 'success');
         }
     });
     
@@ -1609,6 +1712,10 @@ function initGuestbook() {
         
         // 顯示留言
         displayMessage(data);
+        
+        // 記錄到控制台用於調試
+        console.log('Message saved:', data);
+        console.log('Total messages:', messages.length);
     }
     
     function displayMessage(data) {
@@ -1637,12 +1744,39 @@ function initGuestbook() {
     
     function loadMessages() {
         const messages = getMessages();
+        console.log('Loading messages:', messages.length);
         messages.forEach(msg => displayMessage(msg));
     }
     
     function getMessages() {
         const stored = localStorage.getItem('guestbook_messages');
         return stored ? JSON.parse(stored) : [];
+    }
+    
+    function showNotification(message, type) {
+        // 簡單的通知功能
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        notification.style.cssText = `
+            position: fixed;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: ${type === 'success' ? '#10b981' : '#ef4444'};
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            animation: slideDown 0.3s ease;
+        `;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.animation = 'slideUp 0.3s ease';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
     }
     
     function escapeHtml(text) {
@@ -1658,6 +1792,12 @@ function initGuestbook() {
 function initOnlineStatus() {
     const statusDot = document.querySelector('.status-dot');
     const statusText = document.querySelector('.status-text');
+    
+    // 添加錯誤處理
+    if (!statusDot || !statusText) {
+        console.warn('Online status elements not found');
+        return;
+    }
     
     // 模擬在線狀態變化
     setInterval(() => {
@@ -1700,39 +1840,78 @@ function logTerminalCommand(command) {
     localStorage.setItem('terminal_log', JSON.stringify(log));
 }
 
+
 // ========================================
-// 更新 DOMContentLoaded
+// 滾動漸顯動畫 (Scroll Reveal for Rich UI)
 // ========================================
-document.addEventListener('DOMContentLoaded', function() {
-    // 初始化所有原有功能
-    initParticles();
-    initNavigation();
-    initThemeToggle();
-    initBackToTop();
-    initTypingAnimation();
-    initScrollAnimations();
-    initProjectFilters();
-    initContactForm();
-    initStatCounters();
-    initSkillBars();
-    initPreloader();
-    initScrollProgress();
-    initCursorFollower();
-    initLanguageToggle();
-    initMusicPlayer();
-    initPrintResume();
-    initVisitorCounter();
-    initLiveClock();
-    initSkillsRadarChart();
-    initTypingGame();
-    initSocialShare();
-    initAchievements();
-    init3DCardEffect();
+function initScrollReveal() {
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.15
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('revealed');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    const cards = document.querySelectorAll('.glass-card');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        card.style.transition = 'all 0.6s cubic-bezier(0.5, 0, 0, 1)';
+        card.style.transitionDelay = `${(index % 5) * 0.1}s`;
+        observer.observe(card);
+    });
+
+    // 動態添加 revealed 類別的樣式
+    const style = document.createElement('style');
+    style.textContent = `
+        .glass-card.revealed {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// 確保在頁面加載完成後執行
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(initScrollReveal, 500); 
+});
+
+
+// ========================================
+// 3D 懸停傾斜特效 (3D Tilt Effect for Glass Cards)
+// ========================================
+function initTiltEffect() {
+    const cards = document.querySelectorAll('.glass-card');
     
-    // 初始化新功能
-    initThreeJS();
-    initChatbot();
-    initTerminal();
-    initGuestbook();
-    initOnlineStatus();
+    cards.forEach(card => {
+        card.addEventListener('mousemove', e => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left; // 鼠標在卡片內的 X 座標
+            const y = e.clientY - rect.top;  // 鼠標在卡片內的 Y 座標
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const rotateX = ((y - centerY) / centerY) * -5; // 最大傾斜 5 度
+            const rotateY = ((x - centerX) / centerX) * 5;
+            
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-5px)`;
+        });
+        
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = `perspective(1000px) rotateX(0) rotateY(0) translateY(0)`;
+        });
+    });
+}
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(initTiltEffect, 500); 
 });

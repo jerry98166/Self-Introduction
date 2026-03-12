@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>學歷背景 - 高孟麟 | 全端工程師</title>
+    <meta name="description" content="高孟麟的教育經歷和專業培訓。">
+    <link rel="icon" type="image/png" href="../favicon-32x32.png">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="preloader" class="preloader">
+        <div class="preloader-content">
+            <div class="loader"></div>
+            <p class="loading-text">載入中...</p>
+        </div>
+    </div>
+
+    <div id="scroll-progress" class="scroll-progress"></div>
+
+    <!-- 鼠標軌跡效果 -->
+    <div id="cursor-follower" class="cursor-follower"></div>
+    <!-- 粒子背景 -->
+    <canvas id="particles-canvas"></canvas>
+    <!-- Three.js 3D 背景 -->
+    <div id="three-container"></div>
+
+    <button id="theme-toggle" class="theme-toggle">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <button id="language-toggle" class="language-toggle">
+        <span class="lang-text">EN</span>
+    </button>
+
+    <button id="music-toggle" class="music-toggle" aria-label="音樂播放器">
+        <i class="fas fa-music"></i>
+    </button>
+
+    <button id="print-resume" class="print-resume" aria-label="列印履歷">
+        <i class="fas fa-print"></i>
+    </button>
+
+    <button id="back-to-top" class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <button id="chatbot-toggle" class="chatbot-toggle" aria-label="AI 聊天機器人">
+        <i class="fas fa-robot"></i>
+    </button>
+
+    <button id="terminal-toggle" class="terminal-toggle" aria-label="互動終端機">
+        <i class="fas fa-terminal"></i>
+    </button>
+
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <a href="../index.html" class="logo">
+                    <span class="logo-text">My Portfolio</span>
+                </a>
+                <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="../index.html" class="nav-link">首頁</a></li>
+                    <li><a href="about.html" class="nav-link">關於我</a></li>
+                    <li><a href="skills.html" class="nav-link">技能</a></li>
+                    <li><a href="experience.html" class="nav-link">經歷</a></li>
+                    <li><a href="projects.html" class="nav-link">作品集</a></li>
+                    <li><a href="education.html" class="nav-link active">學歷</a></li>
+                    <li><a href="typing-game.html" class="nav-link">打字遊戲</a></li>
+                    <li><a href="achievements.html" class="nav-link">成就徽章</a></li>
+                    <li><a href="lab.html" class="nav-link nav-lab">🧪 功能實驗室</a></li>
+                    <li><a href="admin.html" class="nav-link nav-admin">⚙️ 管理後台</a></li>
+                    <li><a href="../index.html#contact" class="nav-link">聯絡我</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 學歷 -->
+    <section id="education" class="education section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">學歷背景</h2>
+                <div class="section-divider"></div>
+                <p class="section-description">我的教育經歷和專業培訓</p>
+            </div>
+            <div class="education-grid">
+                <div class="education-card glass-card hover-glow">
+                    <div class="education-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <div class="education-info">
+                        <h3 class="education-degree">電機工程碩士</h3>
+                        <h4 class="education-school">中原大學</h4>
+                        <div class="education-date">2017 - 2019</div>
+                        <p class="education-description">
+                            專注於電機工程領域的研究與實踐，在電力系統、控制系統和電子電路等領域深入學習。
+                        </p>
+                        <div class="education-achievements">
+                            <div class="achievement">
+                                <i class="fas fa-trophy"></i>
+                                <span>優秀論文獎</span>
+                            </div>
+                            <div class="achievement">
+                                <i class="fas fa-star"></i>
+                                <span>GPA: 4.0/4.0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="education-card glass-card hover-glow">
+                    <div class="education-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="education-info">
+                        <h3 class="education-degree">電機工程學士</h3>
+                        <h4 class="education-school">中原大學</h4>
+                        <div class="education-date">2013 - 2017</div>
+                        <p class="education-description">
+                            學習電力系統、電子電路、控制系統等專業知識，奠定了堅實的電機工程基礎。
+                        </p>
+                        <div class="education-achievements">
+                            <div class="achievement">
+                                <i class="fas fa-award"></i>
+                                <span>系所成績前 10%</span>
+                            </div>
+                            <div class="achievement">
+                                <i class="fas fa-users"></i>
+                                <span>學生會技術長</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="education-card glass-card hover-glow">
+                    <div class="education-icon">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                    <div class="education-info">
+                        <h3 class="education-degree">專業證照</h3>
+                        <h4 class="education-school">多家國際認證機構</h4>
+                        <div class="education-date">2019 - 2024</div>
+                        <p class="education-description">
+                            持續學習並取得多項專業認證，保持技術競爭力。
+                        </p>
+                        <div class="education-achievements">
+                            <div class="achievement">
+                                <i class="fas fa-check-circle"></i>
+                                <span>AWS Certified Developer</span>
+                            </div>
+                            <div class="achievement">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Google Cloud Certified</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 證書展示 -->
+            <div class="certificates extra-section">
+                <h3 class="certificates-title">專業認證</h3>
+                <div class="certificates-grid">
+                    <div class="certificate-item hover-glow">
+                        <i class="fab fa-aws"></i>
+                        <span>AWS Certified Solutions Architect</span>
+                    </div>
+                    <div class="certificate-item hover-glow">
+                        <i class="fab fa-google"></i>
+                        <span>Google Cloud Professional</span>
+                    </div>
+                    <div class="certificate-item hover-glow">
+                        <i class="fab fa-microsoft"></i>
+                        <span>Microsoft Azure Developer</span>
+                    </div>
+                    <div class="certificate-item hover-glow">
+                        <i class="fas fa-code"></i>
+                        <span>Full Stack Web Developer</span>
+                    </div>
+                    <div class="certificate-item hover-glow">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Cybersecurity Fundamentals</span>
+                    </div>
+                    <div class="certificate-item hover-glow">
+                        <i class="fas fa-project-diagram"></i>
+                        <span>Agile &amp; Scrum Master</span>
+                    </div>
+                    <div class="certificate-item hover-glow">
+                        <i class="fab fa-docker"></i>
+                        <span>Docker Certified Associate</span>
+                    </div>
+                    <div class="certificate-item hover-glow">
+                        <i class="fas fa-database"></i>
+                        <span>MongoDB Professional</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 持續進修 -->
+            <div class="extra-section">
+                <h3 class="certificates-title">線上課程 &amp; 持續進修</h3>
+                <div class="services-grid" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr));">
+                    <div class="service-card hover-glow">
+                        <div class="service-card-icon"><i class="fab fa-react"></i></div>
+                        <h4>React 進階開發</h4>
+                        <p>Udemy · 2023 · 40 小時</p>
+                    </div>
+                    <div class="service-card hover-glow">
+                        <div class="service-card-icon" style="background:linear-gradient(135deg,#3776ab,#ffd343);"><i class="fab fa-python"></i></div>
+                        <h4>Machine Learning A-Z</h4>
+                        <p>Coursera · 2022 · 45 小時</p>
+                    </div>
+                    <div class="service-card hover-glow">
+                        <div class="service-card-icon" style="background:linear-gradient(135deg,#0db7ed,#384d54);"><i class="fab fa-docker"></i></div>
+                        <h4>Docker &amp; Kubernetes</h4>
+                        <p>Linux Foundation · 2022 · 35 小時</p>
+                    </div>
+                    <div class="service-card hover-glow">
+                        <div class="service-card-icon" style="background:linear-gradient(135deg,#10b981,#059669);"><i class="fas fa-lock"></i></div>
+                        <h4>系統安全設計</h4>
+                        <p>SANS Institute · 2023 · 20 小時</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI 聊天機器人面板 -->
+    <div id="chatbot-panel" class="chatbot-panel">
+        <div class="chatbot-header">
+            <div class="chatbot-title">
+                <i class="fas fa-robot"></i>
+                <span>AI 助手</span>
+            </div>
+            <div class="chatbot-actions">
+                <button class="chatbot-minimize"><i class="fas fa-minus"></i></button>
+                <button class="chatbot-close"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+        <div class="chatbot-body">
+            <div class="chatbot-messages" id="chatbot-messages">
+                <div class="chat-message bot-message">
+                    <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                    <div class="message-content"><p>您好！我是 AI 助手。</p></div>
+                </div>
+            </div>
+            <div class="chatbot-quick-questions">
+                <button class="quick-question" data-question="技能">技能專長</button>
+                <button class="quick-question" data-question="經歷">工作經歷</button>
+                <button class="quick-question" data-question="專案">專案作品</button>
+                <button class="quick-question" data-question="聯絡">聯絡方式</button>
+            </div>
+        </div>
+        <div class="chatbot-footer">
+            <input type="text" id="chatbot-input" placeholder="輸入您的問題...">
+            <button id="chatbot-send" class="btn-send"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- 互動終端機面板 -->
+    <div id="terminal-panel" class="terminal-panel">
+        <div class="terminal-header">
+            <div class="terminal-title"><i class="fas fa-terminal"></i><span>Terminal v1.0.0</span></div>
+            <div class="terminal-actions">
+                <button class="terminal-minimize"><i class="fas fa-minus"></i></button>
+                <button class="terminal-close"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+        <div class="terminal-body" id="terminal-body">
+            <div class="terminal-output">
+                <div class="terminal-line">Welcome to Portfolio Terminal v1.0.0</div>
+                <div class="terminal-line">Type 'help' for available commands.</div>
+                <div class="terminal-line">────────────────────────────────────────</div>
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span class="terminal-prompt">visitor@portfolio:~$</span>
+            <input type="text" id="terminal-input" class="terminal-input" autofocus>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 高孟麟. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>打字速度測試 - 高孟麟 | 全端工程師</title>
+    <meta name="description" content="測試您的打字速度和準確度！">
+    <link rel="icon" type="image/png" href="../favicon-32x32.png">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="preloader" class="preloader">
+        <div class="preloader-content">
+            <div class="loader"></div>
+            <p class="loading-text">載入中...</p>
+        </div>
+    </div>
+
+    <div id="scroll-progress" class="scroll-progress"></div>
+
+    <!-- 鼠標軌跡效果 -->
+    <div id="cursor-follower" class="cursor-follower"></div>
+    <!-- 粒子背景 -->
+    <canvas id="particles-canvas"></canvas>
+    <!-- Three.js 3D 背景 -->
+    <div id="three-container"></div>
+
+    <button id="theme-toggle" class="theme-toggle">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <button id="language-toggle" class="language-toggle">
+        <span class="lang-text">EN</span>
+    </button>
+
+    <button id="music-toggle" class="music-toggle" aria-label="音樂播放器">
+        <i class="fas fa-music"></i>
+    </button>
+
+    <button id="print-resume" class="print-resume" aria-label="列印履歷">
+        <i class="fas fa-print"></i>
+    </button>
+
+    <button id="back-to-top" class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <button id="chatbot-toggle" class="chatbot-toggle" aria-label="AI 聊天機器人">
+        <i class="fas fa-robot"></i>
+    </button>
+
+    <button id="terminal-toggle" class="terminal-toggle" aria-label="互動終端機">
+        <i class="fas fa-terminal"></i>
+    </button>
+
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <a href="../index.html" class="logo">
+                    <span class="logo-text">My Portfolio</span>
+                </a>
+                <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="../index.html" class="nav-link">首頁</a></li>
+                    <li><a href="about.html" class="nav-link">關於我</a></li>
+                    <li><a href="skills.html" class="nav-link">技能</a></li>
+                    <li><a href="experience.html" class="nav-link">經歷</a></li>
+                    <li><a href="projects.html" class="nav-link">作品集</a></li>
+                    <li><a href="education.html" class="nav-link">學歷</a></li>
+                    <li><a href="typing-game.html" class="nav-link active">打字遊戲</a></li>
+                    <li><a href="achievements.html" class="nav-link">成就徽章</a></li>
+                    <li><a href="lab.html" class="nav-link nav-lab">🧪 功能實驗室</a></li>
+                    <li><a href="admin.html" class="nav-link nav-admin">⚙️ 管理後台</a></li>
+                    <li><a href="../index.html#contact" class="nav-link">聯絡我</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 打字速度測試遊戲 -->
+    <section id="typing-game" class="typing-game section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title" data-zh="打字速度測試" data-en="Typing Speed Test">打字速度測試</h2>
+                <div class="section-divider"></div>
+                <p class="section-description" data-zh="測試您的打字速度和準確度！" data-en="Test your typing speed and accuracy!">測試您的打字速度和準確度！</p>
+            </div>
+            <div class="typing-game-content glass-card hover-glow">
+                <!-- 難度選擇器 -->
+                <div class="difficulty-selector">
+                    <button class="diff-btn active" data-time="60" data-mode="easy">🟢 簡單 (60秒)</button>
+                    <button class="diff-btn" data-time="30" data-mode="medium">🟡 中等 (30秒)</button>
+                    <button class="diff-btn" data-time="15" data-mode="hard">🔴 困難 (15秒)</button>
+                </div>
+
+                <!-- 個人最佳紀錄 -->
+                <div class="best-score-display">
+                    <div class="best-score-item">
+                        <div class="label">最佳 WPM</div>
+                        <div class="value" id="best-wpm-display">—</div>
+                    </div>
+                    <div class="best-score-item">
+                        <div class="label">最高準確度</div>
+                        <div class="value" id="best-accuracy-display">—</div>
+                    </div>
+                    <div class="best-score-item">
+                        <div class="label">挑戰次數</div>
+                        <div class="value" id="play-count-display">0</div>
+                    </div>
+                </div>
+                <div class="game-stats">
+                    <div class="stat-box">
+                        <div class="stat-label" data-zh="時間" data-en="Time">時間</div>
+                        <div class="stat-value" id="game-time">60</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label" data-zh="WPM" data-en="WPM">WPM</div>
+                        <div class="stat-value" id="game-wpm">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label" data-zh="準確度" data-en="Accuracy">準確度</div>
+                        <div class="stat-value" id="game-accuracy">100%</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label" data-zh="錯誤" data-en="Errors">錯誤</div>
+                        <div class="stat-value" id="game-errors">0</div>
+                    </div>
+                </div>
+                <div class="game-area">
+                    <div class="text-display" id="text-display"></div>
+                    <textarea class="text-input" id="text-input" placeholder="點擊這裡開始打字..." disabled></textarea>
+                </div>
+                <div class="game-controls">
+                    <button class="btn btn-primary" id="start-game-btn" data-zh="開始遊戲" data-en="Start Game">
+                        <i class="fas fa-play"></i> 開始遊戲
+                    </button>
+                    <button class="btn btn-secondary" id="reset-game-btn" data-zh="重新開始" data-en="Reset">
+                        <i class="fas fa-redo"></i> 重新開始
+                    </button>
+                </div>
+                <div class="game-results" id="game-results" style="display: none;">
+                    <h3 data-zh="遊戲結束！" data-en="Game Over!">遊戲結束！</h3>
+                    <div class="results-content">
+                        <p><span data-zh="您的打字速度：" data-en="Your WPM: ">您的打字速度：</span><strong id="final-wpm">0</strong> WPM</p>
+                        <p><span data-zh="準確度：" data-en="Accuracy: ">準確度：</span><strong id="final-accuracy">0</strong>%</p>
+                        <p><span data-zh="總錯誤數：" data-en="Total Errors: ">總錯誤數：</span><strong id="final-errors">0</strong></p>
+                    </div>
+                </div>
+
+                <!-- 打字小技巧 -->
+                <div class="tips-card">
+                    <h4><i class="fas fa-lightbulb"></i> 提升打字速度的技巧</h4>
+                    <ul class="tips-list">
+                        <li>保持正確的手部姿勢，雙手放在 Home Row（ASDF / JKL;）</li>
+                        <li>不要低頭看鍵盤，練習盲打是提速的關鍵</li>
+                        <li>放鬆肩膀和手腕，避免長時間緊繃造成疲勞</li>
+                        <li>專注於準確度，速度會隨練習自然提升</li>
+                        <li>每天練習 10-15 分鐘比一次練習 2 小時更有效</li>
+                        <li>使用所有手指，均衡分配每個按鍵的責任</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI 聊天機器人面板 -->
+    <div id="chatbot-panel" class="chatbot-panel">
+        <div class="chatbot-header">
+            <div class="chatbot-title"><i class="fas fa-robot"></i><span>AI 助手</span></div>
+            <div class="chatbot-actions">
+                <button class="chatbot-minimize"><i class="fas fa-minus"></i></button>
+                <button class="chatbot-close"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+        <div class="chatbot-body">
+            <div class="chatbot-messages" id="chatbot-messages">
+                <div class="chat-message bot-message">
+                    <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                    <div class="message-content"><p>您好！我是 AI 助手。</p></div>
+                </div>
+            </div>
+            <div class="chatbot-quick-questions">
+                <button class="quick-question" data-question="技能">技能專長</button>
+                <button class="quick-question" data-question="經歷">工作經歷</button>
+                <button class="quick-question" data-question="專案">專案作品</button>
+                <button class="quick-question" data-question="聯絡">聯絡方式</button>
+            </div>
+        </div>
+        <div class="chatbot-footer">
+            <input type="text" id="chatbot-input" placeholder="輸入您的問題...">
+            <button id="chatbot-send" class="btn-send"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- 互動終端機面板 -->
+    <div id="terminal-panel" class="terminal-panel">
+        <div class="terminal-header">
+            <div class="terminal-title"><i class="fas fa-terminal"></i><span>Terminal v1.0.0</span></div>
+            <div class="terminal-actions">
+                <button class="terminal-minimize"><i class="fas fa-minus"></i></button>
+                <button class="terminal-close"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+        <div class="terminal-body" id="terminal-body">
+            <div class="terminal-output">
+                <div class="terminal-line">Welcome to Portfolio Terminal v1.0.0</div>
+                <div class="terminal-line">Type 'help' for available commands.</div>
+                <div class="terminal-line">────────────────────────────────────────</div>
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span class="terminal-prompt">visitor@portfolio:~$</span>
+            <input type="text" id="terminal-input" class="terminal-input" autofocus>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 高孟麟. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+    <script>
+        // ── Difficulty selector ──────────────────────────────────────────────
+        const diffBtns = document.querySelectorAll('.diff-btn');
+        diffBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                diffBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const newTime = parseInt(this.dataset.time);
+                // Update the visible timer if game not started
+                const gameTimeEl = document.getElementById('game-time');
+                if (gameTimeEl) gameTimeEl.textContent = newTime;
+                // Store for game to pick up
+                window.selectedGameTime = newTime;
+            });
+        });
+        window.selectedGameTime = 60; // default
+
+        // ── Best score tracker ───────────────────────────────────────────────
+        function updateBestScoreDisplay() {
+            const best = JSON.parse(localStorage.getItem('typingBest') || '{}');
+            const count = parseInt(localStorage.getItem('typingPlayCount') || '0');
+            document.getElementById('best-wpm-display').textContent = best.wpm || '—';
+            document.getElementById('best-accuracy-display').textContent = best.acc ? best.acc + '%' : '—';
+            document.getElementById('play-count-display').textContent = count;
+        }
+        updateBestScoreDisplay();
+
+        // Hook into results to save best score
+        const orig = window.showResults;
+        document.addEventListener('gameOver', function(e) {
+            const wpm = parseInt(document.getElementById('final-wpm').textContent);
+            const acc = parseInt(document.getElementById('final-accuracy').textContent);
+            const best = JSON.parse(localStorage.getItem('typingBest') || '{}');
+            if (!best.wpm || wpm > best.wpm) {
+                best.wpm = wpm;
+                best.acc = acc;
+                localStorage.setItem('typingBest', JSON.stringify(best));
+            }
+            const count = parseInt(localStorage.getItem('typingPlayCount') || '0');
+            localStorage.setItem('typingPlayCount', count + 1);
+            updateBestScoreDisplay();
+        });
+    </script>
+</body>
+</html>

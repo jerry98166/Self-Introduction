@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <!-- ========== 基礎 Meta 標籤 ========== -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <!-- ========== SEO Met標籤 ========== -->
+    <title>關於我 - 高孟麟 | 全端工程師</title>
+    <meta name="description" content="了解更多關於高孟麟的背景和故事，一位對科技充滿熱情的全端工程師。">
+    <meta name="keywords" content="關於,背景,全端工程師,高孟麟,個人簡介">
+    <meta name="author" content="高孟麟">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://yourwebsite.com/pages/about.html">
+    
+    <!-- ========== Favicon ========== -->
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <meta name="theme-color" content="#6366f1">
+    
+    <!-- ========== CSS 樣式表 ========== -->
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 加載畫面 -->
+    <div id="preloader" class="preloader">
+        <div class="preloader-content">
+            <div class="loader"></div>
+            <p class="loading-text" data-zh="載入中..." data-en="Loading...">載入中...</p>
+        </div>
+    </div>
+
+    <!-- 滾動進度條 -->
+    <div id="scroll-progress" class="scroll-progress"></div>
+
+    <!-- 鼠標軌跡效果 -->
+    <div id="cursor-follower" class="cursor-follower"></div>
+    <!-- 粒子背景 -->
+    <canvas id="particles-canvas"></canvas>
+    <!-- Three.js 3D 背景 -->
+    <div id="three-container"></div>
+
+    <!-- 深色/淺色模式切換按鈕 -->
+    <button id="theme-toggle" class="theme-toggle" aria-label="切換主題">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <!-- 語言切換按鈕 -->
+    <button id="language-toggle" class="language-toggle" aria-label="切換語言">
+        <span class="lang-text">EN</span>
+    </button>
+
+    <!-- 音樂播放器按鈕 -->
+    <button id="music-toggle" class="music-toggle" aria-label="音樂播放器">
+        <i class="fas fa-music"></i>
+    </button>
+
+    <!-- 列印履歷按鈕 -->
+    <button id="print-resume" class="print-resume" aria-label="列印履歷">
+        <i class="fas fa-print"></i>
+    </button>
+
+    <!-- 回到頂部按鈕 -->
+    <button id="back-to-top" class="back-to-top" aria-label="回到頂部">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- AI 聊天機器人按鈕 -->
+    <button id="chatbot-toggle" class="chatbot-toggle" aria-label="AI 聊天機器人">
+        <i class="fas fa-robot"></i>
+    </button>
+
+    <!-- 互動終端機按鈕 -->
+    <button id="terminal-toggle" class="terminal-toggle" aria-label="互動終端機">
+        <i class="fas fa-terminal"></i>
+    </button>
+
+    <!-- 導航欄 -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <a href="../index.html" class="logo">
+                    <span class="logo-text">My Portfolio</span>
+                </a>
+                <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="選單">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="../index.html" class="nav-link" data-zh="首頁" data-en="Home">首頁</a></li>
+                    <li><a href="about.html" class="nav-link active" data-zh="關於我" data-en="About">關於我</a></li>
+                    <li><a href="skills.html" class="nav-link" data-zh="技能" data-en="Skills">技能</a></li>
+                    <li><a href="experience.html" class="nav-link" data-zh="經歷" data-en="Experience">經歷</a></li>
+                    <li><a href="projects.html" class="nav-link" data-zh="作品集" data-en="Projects">作品集</a></li>
+                    <li><a href="education.html" class="nav-link" data-zh="學歷" data-en="Education">學歷</a></li>
+                    <li><a href="typing-game.html" class="nav-link" data-zh="打字遊戲" data-en="Typing Game">打字遊戲</a></li>
+                    <li><a href="achievements.html" class="nav-link" data-zh="成就徽章" data-en="Achievements">成就徽章</a></li>
+                    <li><a href="lab.html" class="nav-link nav-lab" data-zh="🧪 功能實驗室" data-en="🧪 Feature Lab">🧪 功能實驗室</a></li>
+                    <li><a href="admin.html" class="nav-link nav-admin" data-zh="⚙️ 管理後台" data-en="⚙️ Admin Panel">⚙️ 管理後台</a></li>
+                    <li><a href="../index.html#contact" class="nav-link" data-zh="聯絡我" data-en="Contact">聯絡我</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 關於我 -->
+    <section id="about" class="about section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">關於我</h2>
+                <div class="section-divider"></div>
+                <p class="section-description">了解更多關於我的背景和故事</p>
+            </div>
+            <div class="about-content glass-card hover-glow">
+                <div class="about-image">
+                    <div class="about-image-wrapper">
+                        <picture>
+                            <source srcset="../images/profile.webp" type="image/webp">
+                            <img src="../images/profile.jpg" alt="高孟麟的工作照片" class="about-profile-image" width="600" height="800" loading="lazy">
+                        </picture>
+                    </div>
+                </div>
+                <div class="about-text">
+                    <h3 class="about-subtitle">我是一位充滿熱情的開發者</h3>
+                    <p class="about-description">
+                        大家好！我是高孟麟，一位對科技充滿熱情的開發者。我專注於創建創新且用戶友好的數位解決方案。
+                        憑藉多年的經驗，我在前端開發、後端架構和系統設計方面積累了豐富的知識。
+                    </p>
+                    <p class="about-description">
+                        我相信技術能改變世界，並致力於透過程式碼創造有意義的影響。
+                        在工作之餘，我喜歡學習新技術、參與開源專案，並分享我的知識給社群。
+                    </p>
+                    <div class="about-stats">
+                        <div class="stat-item">
+                            <div class="stat-number" data-target="5">0</div>
+                            <div class="stat-label">年經驗</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" data-target="50">0</div>
+                            <div class="stat-label">完成專案</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" data-target="30">0</div>
+                            <div class="stat-label">滿意客戶</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" data-target="100">0</div>
+                            <div class="stat-label">技術證照</div>
+                        </div>
+                    </div>
+                    <div class="about-highlights">
+                        <div class="highlight-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>快速學習能力</span>
+                        </div>
+                        <div class="highlight-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>團隊協作精神</span>
+                        </div>
+                        <div class="highlight-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>問題解決能力</span>
+                        </div>
+                        <div class="highlight-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>創新思維</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── 我能做什麼 ── -->
+            <div class="extra-section">
+                <h3 class="subsection-title">我能做什麼</h3>
+                <div class="services-grid">
+                    <div class="service-card hover-glow">
+                        <div class="service-card-icon"><i class="fas fa-laptop-code"></i></div>
+                        <h4>網站開發</h4>
+                        <p>從設計到部署，打造高效能、響應式的現代化 Web 應用程式，確保最佳使用者體驗。</p>
+                    </div>
+                    <div class="service-card hover-glow">
+                        <div class="service-card-icon"><i class="fas fa-mobile-alt"></i></div>
+                        <h4>應用程式開發</h4>
+                        <p>跨平台移動應用與 PWA 開發，結合原生效能與 Web 的靈活性。</p>
+                    </div>
+                    <div class="service-card hover-glow">
+                        <div class="service-card-icon"><i class="fas fa-paint-brush"></i></div>
+                        <h4>UI/UX 設計</h4>
+                        <p>以使用者為核心，設計直觀且美觀的介面，讓每一次互動都令人愉悅。</p>
+                    </div>
+                    <div class="service-card hover-glow">
+                        <div class="service-card-icon"><i class="fas fa-database"></i></div>
+                        <h4>系統架構</h4>
+                        <p>規劃可擴展的後端架構與資料庫設計，支撐大規模的企業應用場景。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── 核心價值觀 ── -->
+            <div class="extra-section">
+                <h3 class="subsection-title">核心理念</h3>
+                <div class="services-grid">
+                    <div class="service-card hover-glow" style="border-left: 3px solid #6366f1;">
+                        <div class="service-card-icon" style="background: linear-gradient(135deg,#6366f1,#a78bfa);"><i class="fas fa-bolt"></i></div>
+                        <h4>持續進化</h4>
+                        <p>技術日新月異，我積極學習新知、保持對前沿技術的高度敏感度。</p>
+                    </div>
+                    <div class="service-card hover-glow" style="border-left: 3px solid #10b981;">
+                        <div class="service-card-icon" style="background: linear-gradient(135deg,#10b981,#34d399);"><i class="fas fa-users"></i></div>
+                        <h4>協作共贏</h4>
+                        <p>相信優秀的產品源於高效的團隊協作，注重溝通與跨部門合作。</p>
+                    </div>
+                    <div class="service-card hover-glow" style="border-left: 3px solid #f59e0b;">
+                        <div class="service-card-icon" style="background: linear-gradient(135deg,#f59e0b,#fbbf24);"><i class="fas fa-star"></i></div>
+                        <h4>追求卓越</h4>
+                        <p>對程式碼品質有極高要求，從不滿足於「能用就好」，力求每個細節都精益求精。</p>
+                    </div>
+                    <div class="service-card hover-glow" style="border-left: 3px solid #ef4444;">
+                        <div class="service-card-icon" style="background: linear-gradient(135deg,#ef4444,#f87171);"><i class="fas fa-heart"></i></div>
+                        <h4>熱情驅動</h4>
+                        <p>對技術的熱情是我最大的動力，它讓我能夠在複雜問題中找到創新解法。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI 聊天機器人面板 -->
+    <div id="chatbot-panel" class="chatbot-panel">
+        <div class="chatbot-header">
+            <div class="chatbot-title">
+                <i class="fas fa-robot"></i>
+                <span data-zh="AI 助手" data-en="AI Assistant">AI 助手</span>
+            </div>
+            <div class="chatbot-actions">
+                <button class="chatbot-minimize" aria-label="最小化">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button class="chatbot-close" aria-label="關閉">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="chatbot-body">
+            <div class="chatbot-messages" id="chatbot-messages">
+                <div class="chat-message bot-message">
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        <p data-zh="您好！我是 AI 助手。您想了解關於高孟麟的什麼資訊呢？" data-en="Hello! I'm the AI assistant. What would you like to know about Menglin?">您好！我是 AI 助手。您想了解關於高孟麟的什麼資訊呢？</p>
+                    </div>
+                </div>
+            </div>
+            <div class="chatbot-quick-questions">
+                <button class="quick-question" data-question="技能">技能專長</button>
+                <button class="quick-question" data-question="經歷">工作經歷</button>
+                <button class="quick-question" data-question="專案">專案作品</button>
+                <button class="quick-question" data-question="聯絡">聯絡方式</button>
+            </div>
+        </div>
+        <div class="chatbot-footer">
+            <input type="text" id="chatbot-input" placeholder="輸入您的問題..." data-zh-placeholder="輸入您的問題..." data-en-placeholder="Ask me anything...">
+            <button id="chatbot-send" class="btn-send">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- 互動終端機面板 -->
+    <div id="terminal-panel" class="terminal-panel">
+        <div class="terminal-header">
+            <div class="terminal-title">
+                <i class="fas fa-terminal"></i>
+                <span>Terminal v1.0.0</span>
+            </div>
+            <div class="terminal-actions">
+                <button class="terminal-minimize" aria-label="最小化">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button class="terminal-close" aria-label="關閉">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="terminal-body" id="terminal-body">
+            <div class="terminal-output">
+                <div class="terminal-line">Welcome to Portfolio Terminal v1.0.0</div>
+                <div class="terminal-line">Type 'help' for available commands.</div>
+                <div class="terminal-line">────────────────────────────────────────</div>
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span class="terminal-prompt">visitor@portfolio:~$</span>
+            <input type="text" id="terminal-input" class="terminal-input" autofocus>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3 class="footer-title">關於本站</h3>
+                    <p class="footer-text">
+                        這是一個展示我個人技能、經驗和作品的網站。
+                        希望透過這個平台與更多人分享交流。
+                    </p>
+                    <div class="footer-social">
+                        <a href="https://github.com/jerry98166" target="_blank" class="social-link" aria-label="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/in/%E5%AD%9F%E9%BA%9F-%E9%AB%98-b88773191/" target="_blank" class="social-link" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="https://x.com/Jerry59877" target="_blank" class="social-link" aria-label="X/Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="https://www.youtube.com/@%E9%AB%98%E5%AD%9F%E9%BA%9F-u1b" target="_blank" class="social-link" aria-label="YouTube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                        <a href="mailto:ycsimpson@gmail.com" class="social-link" aria-label="Email">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3 class="footer-title">快速連結</h3>
+                    <ul class="footer-links">
+                        <li><a href="../index.html">首頁</a></li>
+                        <li><a href="about.html">關於我</a></li>
+                        <li><a href="skills.html">技能</a></li>
+                        <li><a href="projects.html">作品集</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3 class="footer-title">服務項目</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">網站開發</a></li>
+                        <li><a href="#">應用程式開發</a></li>
+                        <li><a href="#">UI/UX 設計</a></li>
+                        <li><a href="#">技術諮詢</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3 class="footer-title">聯絡方式</h3>
+                    <p class="footer-text">
+                        有任何問題或合作機會，歡迎隨時與我聯繫。
+                    </p>
+                    <div class="footer-contact">
+                        <p><i class="fas fa-envelope"></i> ycsimpson@gmail.com</p>
+                        <p><i class="fas fa-phone"></i> 0911-588-916</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 高孟麟. All rights reserved.</p>
+                <p>Made with <i class="fas fa-heart"></i> and <i class="fas fa-coffee"></i></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>
