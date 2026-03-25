@@ -5,14 +5,14 @@ User-agent: *
 Allow: /
 
 # 不允許爬取的目錄
-Disallow: /admin/
+Disallow: /pages/admin.html
 Disallow: /private/
 Disallow: /temp/
 Disallow: /*.json$
 Disallow: /*.txt$
 
 # Sitemap 位置
-Sitemap: https://yourwebsite.com/sitemap.xml
+Sitemap: /sitemap.xml
 
 # 特定爬蟲規則
 User-agent: Googlebot
