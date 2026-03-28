@@ -710,7 +710,11 @@ function debounce(func, delay) {
 // ========================================
 console.log('%c👋 歡迎來到我的網站！', 'font-size: 20px; font-weight: bold; color: #6366f1;');
 console.log('%c如果你對這個網站的程式碼感興趣，歡迎與我聯繫！', 'font-size: 14px; color: #6b7280;');
+<<<<<<< HEAD
 console.log('%c📧 11028201@cycu.org.tw', 'font-size: 14px; color: #6366f1;');
+=======
+console.log('%c📧 ycsimpson@gmail.com', 'font-size: 14px; color: #6366f1;');
+>>>>>>> d60f12a13065b187ab168a3d9d65ae039f4176f6
 
 // ========================================
 // 追蹤使用者互動（Google Analytics 等）
