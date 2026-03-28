@@ -1677,6 +1677,15 @@ function initChatbot() {
         }, 800);
     }
     
+    function escapeHtml(value) {
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
     function addMessage(text, type) {
         const messageDiv = document.createElement('div');
         messageDiv.className = `chat-message ${type}-message`;
@@ -1687,7 +1696,10 @@ function initChatbot() {
         
         const content = document.createElement('div');
         content.className = 'message-content';
-        content.innerHTML = `<p>${text}</p>`;
+        const safeText = escapeHtml(text)
+            .replace(/&lt;br\s*\/??&gt;/gi, '<br>')
+            .replace(/\n/g, '<br>');
+        content.innerHTML = `<p>${safeText}</p>`;
         
         messageDiv.appendChild(avatar);
         messageDiv.appendChild(content);

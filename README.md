@@ -1,6 +1,8 @@
 # 🚀 個人作品集網站 | Personal Portfolio Website
 
-一個功能豐富、視覺驚豔的個人作品集網站，展示 **14+ 個進階功能**，包含 AI、3D、WebGL、音訊處理等前沿技術。
+🌐 線上網站：<https://jerry98166.github.io/Self-Introduction/>
+
+一個功能豐富、視覺驚豔的個人作品集網站，展示 **60 個進階功能**，包含 AI、3D、WebGL、音訊處理等前沿技術。
 
 ## 📋 專案簡介
 
@@ -22,7 +24,7 @@
 - ✅ 在線狀態顯示
 - ✅ 音樂播放器
 
-### 🧪 功能實驗室（14個進階功能）
+### 🧪 功能實驗室（60個進階功能）
 
 #### AI & 機器學習
 1. 🤖 **AI 面試模擬器** - 智慧面試問答系統
@@ -142,11 +144,10 @@ python -m SimpleHTTPServer 8000
 2. 功能實驗室：點擊導覽列的 "🧪 功能實驗室" 或直接造訪 `lab.html`
 3. 管理後台：點擊導覽列的 "⚙️ 管理後台" 或直接造訪 `admin.html`
 
-<<<<<<< HEAD
-### 4. 功能健康检查（推荐）
-每次修改后，建议运行一次健康检查脚本，自动验证：
-- HTML 本地链接/资源是否存在
-- 功能实验室条目是否与功能注册表一致
+### 4. 功能健康檢查（推薦）
+每次修改後，建議執行健康檢查腳本，自動驗證：
+- HTML 本地連結/資源是否存在
+- 功能實驗室條目是否與功能註冊表一致
 
 ```bash
 node tools/health-check.js
@@ -158,12 +159,9 @@ node tools/health-check.js
 npm run health-check
 ```
 
-输出 `Result: PASSED` 代表目前核心链接与功能映射正常。
+輸出 `Result: PASSED` 代表目前核心連結與功能映射正常。
 
-## 🛠️ 技术栈
-=======
 ## 🛠️ 技術棧
->>>>>>> d60f12a13065b187ab168a3d9d65ae039f4176f6
 
 ### 前端框架
 - **HTML5** - 語義化標記
@@ -209,11 +207,11 @@ npm run health-check
 
 專案文件位於 `docs/` 目錄：
 
-- **[開始使用.md](docs/開始使用.md)** - 30秒快速上手
-- **[快速開始指南.md](docs/快速開始指南.md)** - 詳細使用教學
-- **[功能實驗室文檔.md](docs/功能實驗室文檔.md)** - 所有功能列表
-- **[功能完成總結報告.md](docs/功能完成總結報告.md)** - 完整技術報告
-- **[新增功能報告.md](docs/新增功能報告.md)** - 最新功能說明
+- **[文件導覽](docs/README.md)** - 文件索引與分類說明
+- **[開始使用.md](docs/guides/開始使用.md)** - 30秒快速上手
+- **[快速開始指南.md](docs/guides/快速開始指南.md)** - 詳細使用教學
+- **[功能實驗室文檔.md](docs/guides/功能實驗室文檔.md)** - 所有功能列表
+- **[功能完成總結報告.md](docs/reports/功能完成總結報告.md)** - 完整技術報告
 
 ## 🎯 效能指標
 
@@ -282,14 +280,9 @@ MIT License - 自由使用和修改
 ## 👨‍💻 作者
 
 **高孟麟**
-<<<<<<< HEAD
-- 网站: [Portfolio](https://your-website.com)
+- 網站: <https://jerry98166.github.io/Self-Introduction/>
 - Email: 11028201@cycu.org.tw
-=======
-- 網站: [Portfolio](https://your-website.com)
-- Email: your-email@example.com
->>>>>>> d60f12a13065b187ab168a3d9d65ae039f4176f6
-- GitHub: [@yourusername](https://github.com/yourusername)
+- GitHub: [@jerry98166](https://github.com/jerry98166)
 
 ---
 

@@ -752,7 +752,10 @@
             const append = (role, msg) => {
                 const row = document.createElement('div');
                 row.className = 'chat-item';
-                row.innerHTML = `<b>${role}：</b>${msg}`;
+                const roleNode = document.createElement('b');
+                roleNode.textContent = `${role}：`;
+                row.appendChild(roleNode);
+                row.append(msg);
                 box.appendChild(row);
                 box.scrollTop = box.scrollHeight;
             };

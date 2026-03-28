@@ -2,50 +2,154 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📝 Markdown 編輯器</title>
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #1e1e1e;
-            color: white;
-            height: 100vh;
-            overflow: hidden;
+        :root {
+            --bg: #0f172a;
+            --panel: #1e293b;
+            --panel-soft: #334155;
+            --text: #e2e8f0;
+            --muted: #94a3b8;
+            --accent: #22d3ee;
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: "Noto Sans TC", "Segoe UI", sans-serif;
+            background: radial-gradient(circle at 15% -10%, #0ea5e9 0, transparent 35%), var(--bg);
+            color: var(--text);
+            height: 100vh;
+            padding: 18px;
+        }
+
         .container {
             display: grid;
-            grid-template-columns: 1fr             grid-template-columns: 1fr             grid-template-columns: 1fr             grid-template-columns: 1fr             grid-template-columns: 1fr             grid-template-columns: 1fr             grid-template-columns: 1fr             grid-template-columns: 1fr             grid-template-columns: 1fr             grid-template-columns: 1fr             grid-template-columns: 1fr             grid-template-columns: 1fr             grid-template-columns: 1fr             grid-template-col, m            grid-templfont-size: 16px;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            height: calc(100vh - 36px);
+            max-width: 1320px;
+            margin: 0 auto;
+        }
+
+        .panel {
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            border-radius: 16px;
+            background: color-mix(in srgb, var(--panel) 88%, black 12%);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .panel-header {
+            padding: 14px 18px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-header h2 {
+            font-size: 1.05rem;
+        }
+
+        .hint {
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        .editor-panel,
+        .preview-panel {
+            min-height: 0;
+        }
+
+        textarea {
+            width: 100%;
+            flex: 1;
+            background: var(--panel);
+            color: var(--text);
+            border: none;
+            outline: none;
+            padding: 18px;
+            font-size: 16px;
+            line-height: 1.65;
             resize: none;
         }
+
         .preview-panel {
-            background: #2d2d2d;
-            padding: 40px;
+            min-height: 0;
         }
+
+        .markdown-wrap {
+            flex: 1;
+            overflow: auto;
+            padding: 18px;
+        }
+
         .markdown-body { line-height: 1.6; }
-        .markdown-body h1 { font-size: 2em; margin: 20px 0; }
-        .markdown-body h2 { font-size: 1.5em; margin: 15px 0; }
+        .markdown-body h1 { font-size: 1.8em; margin: 18px 0; }
+        .markdown-body h2 { font-size: 1.4em; margin: 14px 0; }
         .markdown-body code {
-            background: #1e1e1e;
+            background: #0f172a;
             padding: 2px 6px;
             border-radius: 3px;
         }
+        .markdown-body pre {
+            overflow: auto;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 12px;
+            margin: 12px 0;
+        }
+        .markdown-body a {
+            color: var(--accent);
+        }
+
         .back-btn {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 10px 20px;
-            background: #667eea;
+            top: 24px;
+            right: 24px;
+            padding: 10px 16px;
+            background: linear-gradient(135deg, #06b6d4, #0ea5e9);
             color: white;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 999px;
             z-index: 1000;
+            font-weight: 700;
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+                height: auto;
+                min-height: calc(100vh - 36px);
+            }
+
+            .panel {
+                min-height: 360px;
+            }
+
+            .back-btn {
+                position: static;
+                display: inline-block;
+                margin-bottom: 12px;
+            }
         }
     </style>
 </head>
 <body>
+    <a href="../pages/lab.html" class="back-btn">返回功能實驗室</a>
     <div class="container">
-        <div class="editor-panel">
-            <h2 style="margin-bottom: 20px;">✍️ Markdown 編輯器</h2>
+        <section class="panel editor-panel">
+            <div class="panel-header">
+                <h2>✍️ Markdown 編輯器</h2>
+                <span class="hint">左側輸入，右側即時預覽</span>
+            </div>
             <textarea id="mdInput" placeholder="# 開始輸入 Markdown...
 
 ## 標題範例
@@ -56,21 +160,40 @@
 *斜體文字*
 
 \`程式碼\`"></textarea>
-        </div>
-        <div class="preview-panel">
-            <h2 style="margin-bottom: 20px;">👁️ 即時預覽</h2>
-            <div class="markdown-body" id="preview"></div>
-        </div>
+        </section>
+        <section class="panel preview-panel">
+            <div class="panel-header">
+                <h2>👁️ 即時預覽</h2>
+                <span class="hint">已啟用安全淨化</span>
+            </div>
+            <div class="markdown-wrap">
+                <div class="markdown-body" id="preview"></div>
+            </div>
+        </section>
     </div>
-    <a href="../pages/lab.html" class="back-btn">← 返回</a>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
     <script>
         const input = document.getElementById('mdInput');
         const preview = document.getElementById('preview');
+        const initialText = `# Markdown 編輯器\n\n歡迎使用安全預覽模式。\n\n- 支援標準 Markdown\n- 已過濾潛在惡意腳本\n\n\`console.log("Hello")\``;
+
+        input.value = initialText;
         
-        input.addEventListener('input', () => {
-            preview.innerHTML = marked.parse(input.value);
-        });
+        function renderPreview() {
+            const rawHtml = marked.parse(input.value, {
+                breaks: true,
+                gfm: true,
+                headerIds: false,
+                mangle: false
+            });
+            preview.innerHTML = DOMPurify.sanitize(rawHtml, {
+                USE_PROFILES: { html: true }
+            });
+        }
+
+        input.addEventListener('input', renderPreview);
+        renderPreview();
     </script>
 </body>
 </html>

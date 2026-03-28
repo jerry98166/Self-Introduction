@@ -1,0 +1,10 @@
+# macOS
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temporary files
+*.tmp
+*.swp
