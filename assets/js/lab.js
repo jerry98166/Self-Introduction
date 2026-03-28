@@ -4,6 +4,7 @@ const FeatureLab = {
     
     init() {
         this.registerAllFeatures();
+        this.syncFeatureBadges();
         this.updateStats();
     },
     
@@ -217,39 +218,67 @@ const FeatureLab = {
         };
 
         const plannedFeatures = {
-            'ai-navigation': { name: 'AI 智能導覽', description: 'AI 根據訪客行為推薦最適合的內容路徑', status: 'beta' },
-            'emotion-analysis': { name: '情緒分析儀表板', description: '分析互動訊息中的情緒趨勢並視覺化', status: 'beta' },
-            'auto-summary': { name: 'AI 自動摘要', description: '將頁面內容轉換為快速摘要與重點清單', status: 'beta' },
-            'face-interaction': { name: '人臉互動系統', description: '透過鏡頭偵測訪客表情並給予互動回饋', status: 'beta' },
-            'code-review': { name: '程式碼智能審查', description: '自動檢查程式碼品質並提供改善建議', status: 'beta' },
-            'encrypted-message': { name: '加密留言板', description: '提供端對端加密留言與安全分享機制', status: 'beta' },
-            'packet-visualization': { name: '封包視覺化', description: '將請求流量與資料交換轉為互動圖表', status: 'beta' },
-            'skill-battle': { name: '技能對戰模擬', description: '用互動對戰方式呈現技能樹與等級成長', status: 'beta' },
-            'multiplayer-canvas': { name: '多人協作畫布', description: '多人即時繪圖與訊息同步互動', status: 'beta' },
-            'time-capsule': { name: '時間膠囊', description: '記錄里程碑並在指定時間解鎖回顧內容', status: 'beta' },
-            'learning-heatmap': { name: '學習熱力圖', description: '追蹤學習主題投入時間與進度熱點', status: 'beta' },
-            'skill-growth': { name: '技能成長曲線', description: '以圖表呈現技能成熟度與成長速度', status: 'beta' },
-            'usage-heatmap': { name: '網站使用熱力圖', description: '可視化訪客互動區域與點擊分布', status: 'beta' },
-            'wakatime-dashboard': { name: 'WakaTime 儀表板', description: '整合開發時間分布與語言統計', status: 'beta' },
-            'live-chat': { name: '即時聊天室', description: '訪客與管理者的即時訊息互動模組', status: 'beta' },
-            'business-card': { name: '電子商務名片', description: '可互動的商品化名片與服務入口', status: 'beta' },
-            'code-collab': { name: '程式碼共編', description: '線上多人共同編輯與即時預覽環境', status: 'beta' },
-            'version-museum': { name: '網站版本博物館', description: '展示不同版本的演進與設計差異', status: 'beta' },
-            'ar-card': { name: 'AR 名片', description: '結合擴增實境的互動式個人名片', status: 'beta' },
-            'eye-tracking': { name: '眼動追蹤', description: '偵測視線焦點並優化使用者體驗', status: 'beta' },
-            'quantum-art': { name: '量子亂數藝術', description: '利用亂數種子產生生成式視覺作品', status: 'beta' },
-            'digital-twin': { name: '數位雙生', description: '建立個人技術能力與職涯的動態映射', status: 'coming' },
-            'push-notification': { name: '推播通知', description: '訂閱站內通知並即時接收更新', status: 'beta' },
-            'premium-content': { name: '付費內容解鎖', description: '分級內容權限與訂閱解鎖流程', status: 'beta' },
-            'booking-system': { name: '預約系統', description: '提供會議或諮詢時段預約流程', status: 'beta' },
-            'dynamic-pricing': { name: '動態定價名片', description: '依服務組合動態計算估價與方案', status: 'beta' }
+            'ai-navigation': { name: 'AI 智能導覽', description: 'AI 根據訪客行為推薦最適合的內容路徑', status: 'ready' },
+            'emotion-analysis': { name: '情緒分析儀表板', description: '分析互動訊息中的情緒趨勢並視覺化', status: 'ready' },
+            'auto-summary': { name: 'AI 自動摘要', description: '將頁面內容轉換為快速摘要與重點清單', status: 'ready' },
+            'face-interaction': { name: '人臉互動系統', description: '透過鏡頭偵測訪客表情並給予互動回饋', status: 'ready' },
+            'code-review': { name: '程式碼智能審查', description: '自動檢查程式碼品質並提供改善建議', status: 'ready' },
+            'encrypted-message': { name: '加密留言板', description: '提供端對端加密留言與安全分享機制', status: 'ready' },
+            'packet-visualization': { name: '封包視覺化', description: '將請求流量與資料交換轉為互動圖表', status: 'ready' },
+            'skill-battle': { name: '技能對戰模擬', description: '用互動對戰方式呈現技能樹與等級成長', status: 'ready' },
+            'multiplayer-canvas': { name: '多人協作畫布', description: '多人即時繪圖與訊息同步互動', status: 'ready' },
+            'time-capsule': { name: '時間膠囊', description: '記錄里程碑並在指定時間解鎖回顧內容', status: 'ready' },
+            'learning-heatmap': { name: '學習熱力圖', description: '追蹤學習主題投入時間與進度熱點', status: 'ready' },
+            'skill-growth': { name: '技能成長曲線', description: '以圖表呈現技能成熟度與成長速度', status: 'ready' },
+            'usage-heatmap': { name: '網站使用熱力圖', description: '可視化訪客互動區域與點擊分布', status: 'ready' },
+            'wakatime-dashboard': { name: 'WakaTime 儀表板', description: '整合開發時間分布與語言統計', status: 'ready' },
+            'live-chat': { name: '即時聊天室', description: '訪客與管理者的即時訊息互動模組', status: 'ready' },
+            'business-card': { name: '電子商務名片', description: '可互動的商品化名片與服務入口', status: 'ready' },
+            'code-collab': { name: '程式碼共編', description: '線上多人共同編輯與即時預覽環境', status: 'ready' },
+            'version-museum': { name: '網站版本博物館', description: '展示不同版本的演進與設計差異', status: 'ready' },
+            'ar-card': { name: 'AR 名片', description: '結合擴增實境的互動式個人名片', status: 'ready' },
+            'eye-tracking': { name: '眼動追蹤', description: '偵測視線焦點並優化使用者體驗', status: 'ready' },
+            'quantum-art': { name: '量子亂數藝術', description: '利用亂數種子產生生成式視覺作品', status: 'ready' },
+            'digital-twin': { name: '數位雙生', description: '建立個人技術能力與職涯的動態映射', status: 'ready' },
+            'push-notification': { name: '推播通知', description: '訂閱站內通知並即時接收更新', status: 'ready' },
+            'premium-content': { name: '付費內容解鎖', description: '分級內容權限與訂閱解鎖流程', status: 'ready' },
+            'booking-system': { name: '預約系統', description: '提供會議或諮詢時段預約流程', status: 'ready' },
+            'dynamic-pricing': { name: '動態定價名片', description: '依服務組合動態計算估價與方案', status: 'ready' }
         };
 
         Object.entries(plannedFeatures).forEach(([id, feature]) => {
             this.features[id] = {
                 ...feature,
-                launch: () => this.launchPlannedFeature(id)
+                launch: () => openFeaturePage(`${id}.html`)
             };
+        });
+    },
+
+    syncFeatureBadges() {
+        const items = document.querySelectorAll('.feature-item');
+        items.forEach((item) => {
+            const onclick = item.getAttribute('onclick') || '';
+            const match = onclick.match(/openFeature\('([^']+)'\)/);
+            if (!match) return;
+
+            const featureId = match[1];
+            const feature = this.features[featureId];
+            if (!feature) return;
+
+            const badge = item.querySelector('.feature-badge');
+            if (!badge) return;
+
+            badge.classList.remove('badge-ready', 'badge-beta', 'badge-coming');
+            if (feature.status === 'ready') {
+                badge.classList.add('badge-ready');
+                badge.textContent = '已就緒';
+            } else if (feature.status === 'beta') {
+                badge.classList.add('badge-beta');
+                badge.textContent = '測試中';
+            } else {
+                badge.classList.add('badge-coming');
+                badge.textContent = '開發中';
+            }
         });
     },
     
@@ -463,11 +492,7 @@ FeatureLab.launchRecommendationWall = function() {
 };
 
 FeatureLab.launchPlannedFeature = function(featureId) {
-    const feature = this.features[featureId];
-    if (!feature) return;
-
-    const statusText = feature.status === 'coming' ? '開發中' : '測試中';
-    alert(`${feature.name} 目前為${statusText}階段，已納入後續開發排程。`);
+    openFeaturePage(`${featureId}.html`);
 };
 
 // 初始化

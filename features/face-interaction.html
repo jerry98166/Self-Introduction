@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人臉互動系統 | Feature Suite</title>
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="icon" type="image/png" href="../favicon-32x32.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-1: #0b1020;
+            --bg-2: #16213a;
+            --card: rgba(255, 255, 255, 0.08);
+            --text: #e2e8f0;
+            --subtext: #94a3b8;
+            --accent: #38bdf8;
+            --accent-2: #22d3ee;
+            --ok: #10b981;
+            --warn: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Poppins", "Noto Sans TC", sans-serif;
+            min-height: 100vh;
+            color: var(--text);
+            background: radial-gradient(circle at 20% -10%, #1d4ed8 0, transparent 40%),
+                        radial-gradient(circle at 95% 20%, #0891b2 0, transparent 35%),
+                        linear-gradient(140deg, var(--bg-1), var(--bg-2));
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #fff;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 999px;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .hero {
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 20px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            margin-bottom: 18px;
+        }
+
+        .hero h1 {
+            font-size: clamp(1.4rem, 3vw, 2rem);
+            margin-bottom: 6px;
+        }
+
+        .hero p {
+            color: var(--subtext);
+            line-height: 1.7;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 14px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 16px;
+            padding: 16px;
+            backdrop-filter: blur(8px);
+        }
+
+        .card h2 {
+            font-size: 1.05rem;
+            margin-bottom: 10px;
+        }
+
+        .span-4 { grid-column: span 4; }
+        .span-8 { grid-column: span 8; }
+        .span-12 { grid-column: span 12; }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: 0;
+            border-radius: 10px;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .btn-primary {
+            color: #0f172a;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        }
+
+        .btn-secondary {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.24);
+        }
+
+        input[type="range"], input[type="text"], textarea, select {
+            width: 100%;
+            padding: 9px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            background: rgba(15, 23, 42, 0.45);
+            color: #fff;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .muted {
+            color: var(--subtext);
+            font-size: 0.9rem;
+        }
+
+        .kpi {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .kpi-item {
+            background: rgba(15, 23, 42, 0.45);
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .kpi-item strong {
+            font-size: 1.25rem;
+            display: block;
+            margin-top: 4px;
+        }
+
+        .check-list {
+            display: grid;
+            gap: 8px;
+        }
+
+        .check-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.45);
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .heatmap {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 4px;
+            margin-top: 12px;
+        }
+
+        .heat {
+            aspect-ratio: 1/1;
+            border-radius: 4px;
+            background: #0f172a;
+        }
+
+        .chat-box {
+            max-height: 240px;
+            overflow: auto;
+            border-radius: 10px;
+            background: rgba(15, 23, 42, 0.45);
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .chat-item {
+            margin-bottom: 8px;
+            font-size: 0.92rem;
+            line-height: 1.5;
+        }
+
+        .chat-item b {
+            color: var(--accent);
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 8px;
+        }
+
+        .result-box {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            background: rgba(15, 23, 42, 0.45);
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+
+        .timeline {
+            margin-top: 10px;
+            display: grid;
+            gap: 8px;
+        }
+
+        .event {
+            background: rgba(15, 23, 42, 0.45);
+            border-left: 3px solid var(--accent);
+            border-radius: 8px;
+            padding: 9px 10px;
+        }
+
+        @media (max-width: 900px) {
+            .span-4, .span-8, .span-12 {
+                grid-column: span 12;
+            }
+
+            .kpi {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-bar">
+            <a class="back-btn" href="../pages/lab.html"><i class="fas fa-arrow-left"></i> 返回功能實驗室</a>
+            <span class="muted" id="feature-id-text"></span>
+        </div>
+
+        <section class="hero">
+            <h1 id="feature-title">功能載入中...</h1>
+            <p id="feature-description"></p>
+            <div class="kpi">
+                <div class="kpi-item">穩定度<strong id="kpi-stability">--</strong></div>
+                <div class="kpi-item">互動度<strong id="kpi-interactive">--</strong></div>
+                <div class="kpi-item">完成度<strong id="kpi-completion">100%</strong></div>
+            </div>
+        </section>
+
+        <div class="grid">
+            <section class="card span-4">
+                <h2><i class="fas fa-sliders"></i> 模擬控制台</h2>
+                <p class="muted">可調整負載強度與情境模式，快速驗證功能穩定性。</p>
+                <div style="margin-top: 12px;">
+                    <label>負載強度 <span id="load-value">50</span>%</label>
+                    <input type="range" id="load-slider" min="10" max="100" value="50">
+                </div>
+                <div style="margin-top: 10px;">
+                    <label>情境模式</label>
+                    <select id="scenario-select">
+                        <option value="standard">標準流量</option>
+                        <option value="peak">尖峰流量</option>
+                        <option value="edge">邊界測試</option>
+                    </select>
+                </div>
+                <div class="controls" style="margin-top: 12px;">
+                    <button class="btn btn-primary" id="run-sim-btn">執行模擬</button>
+                    <button class="btn btn-secondary" id="reset-sim-btn">重置</button>
+                </div>
+                <div class="result-box" id="sim-output">尚未執行模擬。</div>
+            </section>
+
+            <section class="card span-8" id="dynamic-playground">
+                <h2><i class="fas fa-flask"></i> 互動測試區</h2>
+                <p class="muted">依照功能類型提供對應的可操作示範。</p>
+                <div id="dynamic-content" style="margin-top: 12px;"></div>
+            </section>
+
+            <section class="card span-12">
+                <h2><i class="fas fa-check-double"></i> 完成項目清單</h2>
+                <div class="check-list" id="task-list"></div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        const FEATURE_MAP = {
+            'ai-navigation': { name: 'AI 智能導覽', description: '依訪客偏好與瀏覽路徑推薦內容。', type: 'route' },
+            'emotion-analysis': { name: '情緒分析儀表板', description: '分析語句情緒並回傳建議行動。', type: 'emotion' },
+            'auto-summary': { name: 'AI 自動摘要', description: '把長文字壓縮成重點摘要。', type: 'summary' },
+            'face-interaction': { name: '人臉互動系統', description: '模擬表情事件與互動回饋流程。', type: 'face' },
+            'code-review': { name: '程式碼智能審查', description: '即時掃描程式碼風險與優化建議。', type: 'code-review' },
+            'encrypted-message': { name: '加密留言板', description: '提供訊息加解密與指紋檢核。', type: 'encrypt' },
+            'packet-visualization': { name: '封包視覺化', description: '把封包流量轉成可讀圖形。', type: 'packet' },
+            'skill-battle': { name: '技能對戰模擬', description: '技能點數對戰並計算勝率。', type: 'battle' },
+            'multiplayer-canvas': { name: '多人協作畫布', description: '同步繪圖與共編流程模擬。', type: 'canvas' },
+            'time-capsule': { name: '時間膠囊', description: '建立里程碑並設定解鎖時間。', type: 'capsule' },
+            'learning-heatmap': { name: '學習熱力圖', description: '學習主題投入時間熱區分析。', type: 'learning-heatmap' },
+            'skill-growth': { name: '技能成長曲線', description: '以週期資料繪製成長曲線。', type: 'growth' },
+            'usage-heatmap': { name: '網站使用熱力圖', description: '記錄點擊熱區與互動分布。', type: 'usage' },
+            'wakatime-dashboard': { name: 'WakaTime 儀表板', description: '統計語言時數與效率。', type: 'wakatime' },
+            'live-chat': { name: '即時聊天室', description: '訪客與管理端的即時訊息模擬。', type: 'chat' },
+            'business-card': { name: '電子商務名片', description: '互動式服務名片與方案導購。', type: 'biz-card' },
+            'code-collab': { name: '程式碼共編', description: '多人編輯衝突與合併示範。', type: 'collab' },
+            'version-museum': { name: '網站版本博物館', description: '版本演進與差異比較展示。', type: 'museum' },
+            'ar-card': { name: 'AR 名片', description: 'AR 入口與互動內容預覽。', type: 'ar-card' },
+            'eye-tracking': { name: '眼動追蹤', description: '焦點區域觀測與可用性建議。', type: 'eye' },
+            'quantum-art': { name: '量子亂數藝術', description: '亂數種子驅動的生成藝術。', type: 'quantum' },
+            'digital-twin': { name: '數位雙生', description: '技能狀態映射與成長預測。', type: 'twin' },
+            'push-notification': { name: '推播通知', description: '通知訂閱、發送與回執模擬。', type: 'push' },
+            'premium-content': { name: '付費內容解鎖', description: '分級權限與內容解鎖流程。', type: 'premium' },
+            'booking-system': { name: '預約系統', description: '時段檢查、預約與取消流程。', type: 'booking' },
+            'dynamic-pricing': { name: '動態定價名片', description: '依條件即時計價與方案輸出。', type: 'pricing' }
+        };
+
+        const TASKS = ['核心流程完成', '互動介面完成', '資料處理完成', '可重複測試完成'];
+        const featureId = 'face-interaction';
+        const current = FEATURE_MAP[featureId] || FEATURE_MAP['ai-navigation'];
+
+        const featureTitle = document.getElementById('feature-title');
+        const featureDescription = document.getElementById('feature-description');
+        const featureIdText = document.getElementById('feature-id-text');
+        const dynamicContent = document.getElementById('dynamic-content');
+
+        featureTitle.textContent = current.name;
+        featureDescription.textContent = current.description;
+        featureIdText.textContent = `Feature ID: ${featureId}`;
+
+        const taskList = document.getElementById('task-list');
+        const taskKey = `feature-suite-tasks:${featureId}`;
+        const savedTasks = JSON.parse(localStorage.getItem(taskKey) || '[]');
+        TASKS.forEach((task, idx) => {
+            const row = document.createElement('label');
+            row.className = 'check-row';
+            row.innerHTML = `<input type="checkbox" data-task="${idx}" ${savedTasks.includes(idx) ? 'checked' : ''}><span>${task}</span>`;
+            taskList.appendChild(row);
+        });
+
+        taskList.addEventListener('change', () => {
+            const checked = Array.from(taskList.querySelectorAll('input:checked')).map(el => Number(el.dataset.task));
+            localStorage.setItem(taskKey, JSON.stringify(checked));
+            document.getElementById('kpi-completion').textContent = `${Math.round((checked.length / TASKS.length) * 100)}%`;
+        });
+
+        const loadSlider = document.getElementById('load-slider');
+        const loadValue = document.getElementById('load-value');
+        const scenarioSelect = document.getElementById('scenario-select');
+        const simOutput = document.getElementById('sim-output');
+
+        loadSlider.addEventListener('input', () => {
+            loadValue.textContent = loadSlider.value;
+        });
+
+        document.getElementById('run-sim-btn').addEventListener('click', () => {
+            const intensity = Number(loadSlider.value);
+            const scenario = scenarioSelect.value;
+            const stability = Math.max(72, 100 - Math.floor(intensity * 0.22) - (scenario === 'peak' ? 7 : scenario === 'edge' ? 10 : 0));
+            const interactivity = Math.min(99, 74 + Math.floor(intensity * 0.2) + (scenario === 'peak' ? 4 : 0));
+            document.getElementById('kpi-stability').textContent = `${stability}%`;
+            document.getElementById('kpi-interactive').textContent = `${interactivity}%`;
+            simOutput.textContent = `模擬完成\n功能：${current.name}\n模式：${scenario}\n負載：${intensity}%\n穩定度：${stability}%\n互動度：${interactivity}%`;
+        });
+
+        document.getElementById('reset-sim-btn').addEventListener('click', () => {
+            loadSlider.value = 50;
+            loadValue.textContent = '50';
+            scenarioSelect.value = 'standard';
+            simOutput.textContent = '尚未執行模擬。';
+            document.getElementById('kpi-stability').textContent = '--';
+            document.getElementById('kpi-interactive').textContent = '--';
+        });
+
+        function createSection(html) {
+            const wrap = document.createElement('div');
+            wrap.innerHTML = html;
+            return wrap;
+        }
+
+        function renderRoute() {
+            const el = createSection(`
+                <p class="muted">選擇你的目標，系統會推薦導覽路徑。</p>
+                <div class="controls" style="margin-top:10px;">
+                    <button class="btn btn-secondary" data-goal="project">找專案</button>
+                    <button class="btn btn-secondary" data-goal="skill">找技能</button>
+                    <button class="btn btn-secondary" data-goal="hire">找合作方式</button>
+                </div>
+                <div class="result-box" id="route-output">尚未選擇目標。</div>
+            `);
+            const map = {
+                project: '推薦路徑：作品集 → 功能實驗室 → 專案詳情',
+                skill: '推薦路徑：技能頁 → 經歷頁 → 成就頁',
+                hire: '推薦路徑：關於我 → 作品集 → 聯絡我'
+            };
+            el.querySelectorAll('[data-goal]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    el.querySelector('#route-output').textContent = map[btn.dataset.goal];
+                });
+            });
+            return el;
+        }
+
+        function renderEmotion() {
+            const el = createSection(`
+                <textarea id="emo-input">今天專案很順利，感覺很有成就感！</textarea>
+                <div class="controls" style="margin-top:10px;"><button class="btn btn-primary" id="emo-run">分析情緒</button></div>
+                <div class="result-box" id="emo-output">等待分析。</div>
+            `);
+            el.querySelector('#emo-run').addEventListener('click', () => {
+                const text = el.querySelector('#emo-input').value;
+                const positive = ['好', '順利', '開心', '喜歡', '成就', '棒'];
+                const negative = ['差', '累', '煩', '錯誤', '糟', '壓力'];
+                const p = positive.filter(w => text.includes(w)).length;
+                const n = negative.filter(w => text.includes(w)).length;
+                const mood = p >= n ? '正向' : '偏負向';
+                el.querySelector('#emo-output').textContent = `情緒判定：${mood}\n正向詞：${p} / 負向詞：${n}`;
+            });
+            return el;
+        }
+
+        function renderSummary() {
+            const el = createSection(`
+                <textarea id="sum-input">請輸入想摘要的內容。建議至少三句。</textarea>
+                <div class="controls" style="margin-top:10px;"><button class="btn btn-primary" id="sum-run">產生摘要</button></div>
+                <div class="result-box" id="sum-output">等待輸入。</div>
+            `);
+            el.querySelector('#sum-run').addEventListener('click', () => {
+                const src = el.querySelector('#sum-input').value.trim();
+                const sentences = src.split(/[。！？.!?]/).map(s => s.trim()).filter(Boolean);
+                const summary = sentences.slice(0, 2).join('。');
+                el.querySelector('#sum-output').textContent = summary ? `摘要：${summary}。` : '請輸入更完整內容。';
+            });
+            return el;
+        }
+
+        function renderFace() {
+            const el = createSection(`
+                <p class="muted">模擬人臉表情事件觸發。</p>
+                <div class="controls" style="margin-top:10px;">
+                    <button class="btn btn-secondary" data-face="smile">偵測笑容</button>
+                    <button class="btn btn-secondary" data-face="focus">偵測專注</button>
+                    <button class="btn btn-secondary" data-face="tired">偵測疲勞</button>
+                </div>
+                <div class="timeline" id="face-log"></div>
+            `);
+            const msg = {
+                smile: '笑容事件：顯示歡迎動畫',
+                focus: '專注事件：突出顯示核心內容',
+                tired: '疲勞事件：啟用柔和模式'
+            };
+            const log = el.querySelector('#face-log');
+            el.querySelectorAll('[data-face]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const row = document.createElement('div');
+                    row.className = 'event';
+                    row.textContent = `${new Date().toLocaleTimeString()} - ${msg[btn.dataset.face]}`;
+                    log.prepend(row);
+                });
+            });
+            return el;
+        }
+
+        function renderCodeReview() {
+            const el = createSection(`
+                <textarea id="review-code">var data = fetch('/api');\nconsole.log(data)</textarea>
+                <div class="controls" style="margin-top:10px;"><button class="btn btn-primary" id="review-run">掃描</button></div>
+                <div class="result-box" id="review-output">尚未掃描。</div>
+            `);
+            el.querySelector('#review-run').addEventListener('click', () => {
+                const code = el.querySelector('#review-code').value;
+                const findings = [];
+                if (/\bvar\b/.test(code)) findings.push('建議改用 let/const。');
+                if (/console\./.test(code)) findings.push('正式環境建議移除 console。');
+                if (/fetch\([^)]*\)\s*;?\s*$/.test(code)) findings.push('缺少 await 或 then 錯誤處理。');
+                el.querySelector('#review-output').textContent = findings.length ? findings.join('\n') : '未發現明顯問題。';
+            });
+            return el;
+        }
+
+        function renderEncrypt() {
+            const el = createSection(`
+                <input id="enc-input" type="text" value="Hello Portfolio" />
+                <div class="controls" style="margin-top:10px;">
+                    <button class="btn btn-primary" id="enc-run">加密</button>
+                    <button class="btn btn-secondary" id="dec-run">解密</button>
+                </div>
+                <div class="result-box" id="enc-output">等待操作。</div>
+            `);
+            const out = el.querySelector('#enc-output');
+            el.querySelector('#enc-run').addEventListener('click', () => {
+                const v = el.querySelector('#enc-input').value;
+                out.textContent = btoa(unescape(encodeURIComponent(v)));
+            });
+            el.querySelector('#dec-run').addEventListener('click', () => {
+                try {
+                    const v = el.querySelector('#enc-input').value;
+                    out.textContent = decodeURIComponent(escape(atob(v)));
+                } catch (e) {
+                    out.textContent = '解密失敗：請輸入有效 Base64。';
+                }
+            });
+            return el;
+        }
+
+        function renderPacket() {
+            const el = createSection(`<p class="muted">封包流量分布圖：</p><div class="timeline" id="pkt"></div>`);
+            const box = el.querySelector('#pkt');
+            ['Auth', 'API', 'CDN', 'DB', 'WebSocket'].forEach(name => {
+                const v = Math.floor(Math.random() * 80) + 20;
+                const row = document.createElement('div');
+                row.className = 'event';
+                row.innerHTML = `${name}：${v}%<div style="height:8px;background:#334155;border-radius:999px;margin-top:6px;"><div style="width:${v}%;height:8px;background:#22d3ee;border-radius:999px"></div></div>`;
+                box.appendChild(row);
+            });
+            return el;
+        }
+
+        function renderBattle() {
+            const el = createSection(`
+                <div class="row">
+                    <select id="battle-a"><option>React</option><option>Vue</option><option>Node.js</option><option>Python</option></select>
+                    <select id="battle-b"><option>Go</option><option>Java</option><option>Rust</option><option>TypeScript</option></select>
+                </div>
+                <div class="controls" style="margin-top:10px;"><button class="btn btn-primary" id="battle-run">對戰</button></div>
+                <div class="result-box" id="battle-out">等待對戰。</div>
+            `);
+            el.querySelector('#battle-run').addEventListener('click', () => {
+                const a = el.querySelector('#battle-a').value;
+                const b = el.querySelector('#battle-b').value;
+                const scoreA = a.length * 7 + Math.floor(Math.random() * 20);
+                const scoreB = b.length * 7 + Math.floor(Math.random() * 20);
+                const win = scoreA >= scoreB ? a : b;
+                el.querySelector('#battle-out').textContent = `${a}: ${scoreA} 分\n${b}: ${scoreB} 分\n勝者：${win}`;
+            });
+            return el;
+        }
+
+        function renderCanvas() {
+            const el = createSection(`
+                <canvas id="coop-canvas" width="700" height="240" style="width:100%;background:#0f172a;border-radius:10px;border:1px solid #334155"></canvas>
+                <div class="controls" style="margin-top:10px;"><button class="btn btn-secondary" id="canvas-clear">清空畫布</button></div>
+            `);
+            const canvas = el.querySelector('#coop-canvas');
+            const ctx = canvas.getContext('2d');
+            let drawing = false;
+            canvas.addEventListener('pointerdown', () => drawing = true);
+            canvas.addEventListener('pointerup', () => drawing = false);
+            canvas.addEventListener('pointermove', (e) => {
+                if (!drawing) return;
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+                const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+                ctx.fillStyle = '#38bdf8';
+                ctx.beginPath();
+                ctx.arc(x, y, 4, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            el.querySelector('#canvas-clear').addEventListener('click', () => ctx.clearRect(0, 0, canvas.width, canvas.height));
+            return el;
+        }
+
+        function renderCapsule() {
+            const key = `capsule-events:${featureId}`;
+            const el = createSection(`
+                <div class="row">
+                    <input id="capsule-title" type="text" placeholder="里程碑標題">
+                    <input id="capsule-date" type="date">
+                </div>
+                <div class="controls" style="margin-top:10px;"><button class="btn btn-primary" id="capsule-add">新增事件</button></div>
+                <div class="timeline" id="capsule-list"></div>
+            `);
+            const list = el.querySelector('#capsule-list');
+            const load = () => {
+                const items = JSON.parse(localStorage.getItem(key) || '[]');
+                list.innerHTML = '';
+                items.forEach(item => {
+                    const row = document.createElement('div');
+                    row.className = 'event';
+                    row.textContent = `${item.date} - ${item.title}`;
+                    list.appendChild(row);
+                });
+            };
+            load();
+            el.querySelector('#capsule-add').addEventListener('click', () => {
+                const title = el.querySelector('#capsule-title').value.trim();
+                const date = el.querySelector('#capsule-date').value;
+                if (!title || !date) return;
+                const items = JSON.parse(localStorage.getItem(key) || '[]');
+                items.push({ title, date });
+                localStorage.setItem(key, JSON.stringify(items));
+                load();
+            });
+            return el;
+        }
+
+        function renderLearningHeatmap() {
+            const el = createSection(`
+                <p class="muted">調整學習投入比例，產生對應熱力分布。</p>
+                <div class="row" style="margin-top:8px;"><input id="lh-front" type="range" min="0" max="100" value="70"><span class="muted">前端</span></div>
+                <div class="row" style="margin-top:8px;"><input id="lh-back" type="range" min="0" max="100" value="55"><span class="muted">後端</span></div>
+                <div class="row" style="margin-top:8px;"><input id="lh-ai" type="range" min="0" max="100" value="45"><span class="muted">AI</span></div>
+                <div class="heatmap" id="lh-grid"></div>
+                <div class="result-box" id="lh-out"></div>
+            `);
+
+            const grid = el.querySelector('#lh-grid');
+            const out = el.querySelector('#lh-out');
+
+            const render = () => {
+                grid.innerHTML = '';
+                const front = Number(el.querySelector('#lh-front').value);
+                const back = Number(el.querySelector('#lh-back').value);
+                const ai = Number(el.querySelector('#lh-ai').value);
+                const avg = Math.round((front + back + ai) / 3);
+
+                for (let i = 0; i < 100; i++) {
+                    const lv = Math.floor((front * 0.4 + back * 0.35 + ai * 0.25) * (0.5 + Math.random() * 0.8));
+                    const cell = document.createElement('div');
+                    cell.className = 'heat';
+                    cell.style.background = `rgba(34, 211, 238, ${Math.max(0.12, lv / 140)})`;
+                    grid.appendChild(cell);
+                }
+
+                out.textContent = `學習投入指數：${avg}\n建議：${avg >= 65 ? '目前節奏良好，可維持週期複習。' : '建議提高每日固定學習時段。'}`;
+            };
+
+            el.querySelectorAll('input[type="range"]').forEach(input => input.addEventListener('input', render));
+            render();
+            return el;
+        }
+
+        function renderUsageHeatmap() {
+            const el = createSection(`
+                <p class="muted">點擊不同區塊，模擬網站使用熱區統計。</p>
+                <div class="controls" style="margin-top:8px;">
+                    <button class="btn btn-secondary" data-zone="首頁 Hero">首頁 Hero</button>
+                    <button class="btn btn-secondary" data-zone="作品集卡片">作品集卡片</button>
+                    <button class="btn btn-secondary" data-zone="聯絡表單">聯絡表單</button>
+                    <button class="btn btn-secondary" data-zone="功能實驗室">功能實驗室</button>
+                </div>
+                <div class="timeline" id="usage-log"></div>
+                <div class="result-box" id="usage-out">尚未累積點擊資料。</div>
+            `);
+
+            const counter = {
+                '首頁 Hero': 0,
+                '作品集卡片': 0,
+                '聯絡表單': 0,
+                '功能實驗室': 0
+            };
+
+            const out = el.querySelector('#usage-out');
+            const log = el.querySelector('#usage-log');
+
+            const render = () => {
+                const sorted = Object.entries(counter).sort((a, b) => b[1] - a[1]);
+                out.textContent = sorted.map(([zone, count]) => `${zone}: ${count} 次`).join('\n');
+                if (sorted[0][1] > 0) {
+                    const top = sorted[0][0];
+                    out.textContent += `\n\n最熱區域：${top}，可優先優化此區。`;
+                }
+            };
+
+            el.querySelectorAll('[data-zone]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const zone = btn.dataset.zone;
+                    counter[zone] += 1;
+                    const row = document.createElement('div');
+                    row.className = 'event';
+                    row.textContent = `${new Date().toLocaleTimeString()} - ${zone} 被點擊`;
+                    log.prepend(row);
+                    render();
+                });
+            });
+
+            render();
+            return el;
+        }
+
+        function renderGrowth() {
+            const el = createSection(`
+                <input id="growth-month" type="range" min="1" max="24" value="12">
+                <p class="muted">月份：<span id="growth-month-text">12</span></p>
+                <div class="result-box" id="growth-out"></div>
+            `);
+            const slider = el.querySelector('#growth-month');
+            const text = el.querySelector('#growth-month-text');
+            const out = el.querySelector('#growth-out');
+            const render = () => {
+                const m = Number(slider.value);
+                text.textContent = String(m);
+                const points = Array.from({ length: Math.min(m, 18) }, (_, i) => Math.min(100, 40 + i * 4 + Math.floor(Math.random() * 8)));
+                out.textContent = `成長點：${points.join(' → ')}`;
+            };
+            slider.addEventListener('input', render);
+            render();
+            return el;
+        }
+
+        function renderWaka() {
+            const el = createSection(`
+                <div class="row"><input id="waka-js" type="number" value="10" min="0"><input id="waka-py" type="number" value="6" min="0"></div>
+                <div class="row" style="margin-top:8px;"><input id="waka-vue" type="number" value="8" min="0"><input id="waka-node" type="number" value="7" min="0"></div>
+                <div class="controls" style="margin-top:10px;"><button class="btn btn-primary" id="waka-run">生成統計</button></div>
+                <div class="result-box" id="waka-out">等待統計。</div>
+            `);
+            el.querySelector('#waka-run').addEventListener('click', () => {
+                const vals = {
+                    JavaScript: Number(el.querySelector('#waka-js').value),
+                    Python: Number(el.querySelector('#waka-py').value),
+                    Vue: Number(el.querySelector('#waka-vue').value),
+                    Node: Number(el.querySelector('#waka-node').value)
+                };
+                const total = Object.values(vals).reduce((a, b) => a + b, 0) || 1;
+                const lines = Object.entries(vals).map(([k, v]) => `${k}: ${v}h (${Math.round(v / total * 100)}%)`);
+                el.querySelector('#waka-out').textContent = lines.join('\n');
+            });
+            return el;
+        }
+
+        function renderChat() {
+            const el = createSection(`
+                <div class="chat-box" id="chat-box"></div>
+                <div class="row"><input id="chat-input" type="text" placeholder="輸入訊息"><button class="btn btn-primary" id="chat-send">送出</button></div>
+            `);
+            const box = el.querySelector('#chat-box');
+            const append = (role, msg) => {
+                const row = document.createElement('div');
+                row.className = 'chat-item';
+                row.innerHTML = `<b>${role}：</b>${msg}`;
+                box.appendChild(row);
+                box.scrollTop = box.scrollHeight;
+            };
+            append('System', '頻道已連線。');
+            el.querySelector('#chat-send').addEventListener('click', () => {
+                const input = el.querySelector('#chat-input');
+                const text = input.value.trim();
+                if (!text) return;
+                append('你', text);
+                append('客服', `收到你的訊息：「${text}」`);
+                input.value = '';
+            });
+            return el;
+        }
+
+        function renderBizCard() {
+            const el = createSection(`
+                <div class="row"><select id="biz-plan"><option value="starter">Starter</option><option value="pro">Pro</option><option value="elite">Elite</option></select><button class="btn btn-primary" id="biz-run">更新名片</button></div>
+                <div class="result-box" id="biz-out">尚未選擇方案。</div>
+            `);
+            const map = {
+                starter: 'Starter：網站製作 + 基礎維運',
+                pro: 'Pro：全端開發 + SEO + 監控',
+                elite: 'Elite：客製平台 + 長期顧問 + SLA'
+            };
+            el.querySelector('#biz-run').addEventListener('click', () => {
+                const p = el.querySelector('#biz-plan').value;
+                el.querySelector('#biz-out').textContent = `方案內容：${map[p]}`;
+            });
+            return el;
+        }
+
+        function renderCollab() {
+            const el = createSection(`
+                <div class="row"><textarea id="collab-a">const a = 1;</textarea><textarea id="collab-b">const b = 2;</textarea></div>
+                <div class="controls" style="margin-top:10px;"><button class="btn btn-primary" id="merge-run">合併預覽</button></div>
+                <div class="result-box" id="merge-out">等待合併。</div>
+            `);
+            el.querySelector('#merge-run').addEventListener('click', () => {
+                const a = el.querySelector('#collab-a').value;
+                const b = el.querySelector('#collab-b').value;
+                el.querySelector('#merge-out').textContent = `// merge result\n${a}\n${b}`;
+            });
+            return el;
+        }
+
+        function renderMuseum() {
+            const el = createSection(`
+                <div class="controls"><button class="btn btn-secondary" data-v="v1">V1</button><button class="btn btn-secondary" data-v="v2">V2</button><button class="btn btn-secondary" data-v="v3">V3</button></div>
+                <div class="result-box" id="museum-out">選擇版本查看差異。</div>
+            `);
+            const map = {
+                v1: 'V1：單頁展示，重點在個人介紹。',
+                v2: 'V2：加入互動功能與多頁結構。',
+                v3: 'V3：Vue + 功能實驗室 + 後台整合。'
+            };
+            el.querySelectorAll('[data-v]').forEach(btn => btn.addEventListener('click', () => {
+                el.querySelector('#museum-out').textContent = map[btn.dataset.v];
+            }));
+            return el;
+        }
+
+        function renderArCard() {
+            return createSection(`
+                <p class="muted">AR 名片流程：掃碼 → 啟動相機 → 顯示 3D 名片。</p>
+                <div class="result-box">模擬狀態：相機權限待授權。\n你可以在手機端導入 WebXR 套件後直接接軌。</div>
+            `);
+        }
+
+        function renderEye() {
+            const el = createSection(`
+                <p class="muted">把滑鼠移到區塊上，模擬視線熱點。</p>
+                <div class="row" id="eye-zones">
+                    <div class="event">導覽區</div>
+                    <div class="event">作品區</div>
+                </div>
+                <div class="result-box" id="eye-out">尚未追蹤。</div>
+            `);
+            el.querySelectorAll('#eye-zones .event').forEach(node => {
+                node.addEventListener('mouseenter', () => {
+                    node.style.borderColor = '#22d3ee';
+                    el.querySelector('#eye-out').textContent = `焦點區域：${node.textContent}`;
+                });
+                node.addEventListener('mouseleave', () => {
+                    node.style.borderColor = '';
+                });
+            });
+            return el;
+        }
+
+        function renderQuantum() {
+            const el = createSection(`
+                <canvas id="q-canvas" width="700" height="240" style="width:100%;background:#0f172a;border-radius:10px;border:1px solid #334155"></canvas>
+                <div class="controls" style="margin-top:10px;"><button class="btn btn-primary" id="q-run">重新生成</button></div>
+            `);
+            const canvas = el.querySelector('#q-canvas');
+            const ctx = canvas.getContext('2d');
+            const paint = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (let i = 0; i < 220; i++) {
+                    const x = Math.random() * canvas.width;
+                    const y = Math.random() * canvas.height;
+                    const r = Math.random() * 4 + 1;
+                    ctx.fillStyle = `hsla(${Math.random() * 360}, 90%, 60%, 0.7)`;
+                    ctx.beginPath();
+                    ctx.arc(x, y, r, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            };
+            el.querySelector('#q-run').addEventListener('click', paint);
+            paint();
+            return el;
+        }
+
+        function renderTwin() {
+            const el = createSection(`
+                <div class="row"><input id="t-front" type="range" min="0" max="100" value="75"><input id="t-back" type="range" min="0" max="100" value="70"></div>
+                <div class="row" style="margin-top:8px;"><input id="t-ai" type="range" min="0" max="100" value="62"><input id="t-cloud" type="range" min="0" max="100" value="58"></div>
+                <div class="result-box" id="t-out"></div>
+            `);
+            const render = () => {
+                const vals = ['front', 'back', 'ai', 'cloud'].map(k => Number(el.querySelector(`#t-${k}`).value));
+                const avg = Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
+                el.querySelector('#t-out').textContent = `數位雙生成熟度：${avg}%\n建議：${avg >= 75 ? '可進入進階專案階段。' : '建議補強弱項後再擴張。'}`;
+            };
+            el.querySelectorAll('input[type="range"]').forEach(input => input.addEventListener('input', render));
+            render();
+            return el;
+        }
+
+        function renderPush() {
+            const el = createSection(`
+                <div class="row"><input id="push-title" type="text" value="作品更新通知"><button class="btn btn-primary" id="push-send">發送測試</button></div>
+                <div class="timeline" id="push-log"></div>
+            `);
+            const log = el.querySelector('#push-log');
+            el.querySelector('#push-send').addEventListener('click', () => {
+                const row = document.createElement('div');
+                row.className = 'event';
+                row.textContent = `${new Date().toLocaleTimeString()} 推播：${el.querySelector('#push-title').value}`;
+                log.prepend(row);
+            });
+            return el;
+        }
+
+        function renderPremium() {
+            const el = createSection(`
+                <div class="controls"><button class="btn btn-secondary" data-tier="free">Free</button><button class="btn btn-secondary" data-tier="pro">Pro</button><button class="btn btn-secondary" data-tier="vip">VIP</button></div>
+                <div class="result-box" id="premium-out">目前為 Free。</div>
+            `);
+            const rights = {
+                free: 'Free：公開內容',
+                pro: 'Pro：公開內容 + 進階教學',
+                vip: 'VIP：全部內容 + 一對一諮詢'
+            };
+            el.querySelectorAll('[data-tier]').forEach(btn => btn.addEventListener('click', () => {
+                el.querySelector('#premium-out').textContent = rights[btn.dataset.tier];
+            }));
+            return el;
+        }
+
+        function renderBooking() {
+            const key = `booking:${featureId}`;
+            const el = createSection(`
+                <div class="row"><input id="book-date" type="date"><select id="book-slot"><option>09:00</option><option>11:00</option><option>14:00</option><option>16:00</option></select></div>
+                <div class="controls" style="margin-top:10px;"><button class="btn btn-primary" id="book-run">預約</button><button class="btn btn-secondary" id="book-clear">清空</button></div>
+                <div class="timeline" id="book-list"></div>
+            `);
+            const list = el.querySelector('#book-list');
+            const render = () => {
+                const items = JSON.parse(localStorage.getItem(key) || '[]');
+                list.innerHTML = items.map(i => `<div class="event">${i.date} ${i.slot}</div>`).join('');
+            };
+            render();
+            el.querySelector('#book-run').addEventListener('click', () => {
+                const date = el.querySelector('#book-date').value;
+                const slot = el.querySelector('#book-slot').value;
+                if (!date) return;
+                const items = JSON.parse(localStorage.getItem(key) || '[]');
+                items.push({ date, slot });
+                localStorage.setItem(key, JSON.stringify(items));
+                render();
+            });
+            el.querySelector('#book-clear').addEventListener('click', () => {
+                localStorage.setItem(key, '[]');
+                render();
+            });
+            return el;
+        }
+
+        function renderPricing() {
+            const el = createSection(`
+                <div class="row"><input id="price-base" type="number" value="2000"><select id="price-level"><option value="1">標準</option><option value="1.25">加急</option><option value="1.5">特急</option></select></div>
+                <div class="controls" style="margin-top:10px;"><label class="muted"><input id="addon-seo" type="checkbox"> SEO</label><label class="muted"><input id="addon-api" type="checkbox"> API 串接</label><button class="btn btn-primary" id="price-run">計算</button></div>
+                <div class="result-box" id="price-out">等待計算。</div>
+            `);
+            el.querySelector('#price-run').addEventListener('click', () => {
+                let total = Number(el.querySelector('#price-base').value) || 0;
+                total *= Number(el.querySelector('#price-level').value);
+                if (el.querySelector('#addon-seo').checked) total += 800;
+                if (el.querySelector('#addon-api').checked) total += 1500;
+                el.querySelector('#price-out').textContent = `預估報價：NT$ ${Math.round(total).toLocaleString()}`;
+            });
+            return el;
+        }
+
+        const rendererByFeature = {
+            'ai-navigation': renderRoute,
+            'emotion-analysis': renderEmotion,
+            'auto-summary': renderSummary,
+            'face-interaction': renderFace,
+            'code-review': renderCodeReview,
+            'encrypted-message': renderEncrypt,
+            'packet-visualization': renderPacket,
+            'skill-battle': renderBattle,
+            'multiplayer-canvas': renderCanvas,
+            'time-capsule': renderCapsule,
+            'learning-heatmap': renderLearningHeatmap,
+            'skill-growth': renderGrowth,
+            'usage-heatmap': renderUsageHeatmap,
+            'wakatime-dashboard': renderWaka,
+            'live-chat': renderChat,
+            'business-card': renderBizCard,
+            'code-collab': renderCollab,
+            'version-museum': renderMuseum,
+            'ar-card': renderArCard,
+            'eye-tracking': renderEye,
+            'quantum-art': renderQuantum,
+            'digital-twin': renderTwin,
+            'push-notification': renderPush,
+            'premium-content': renderPremium,
+            'booking-system': renderBooking,
+            'dynamic-pricing': renderPricing
+        };
+
+        const renderer = rendererByFeature[featureId] || renderRoute;
+        dynamicContent.appendChild(renderer());
+
+        const checked = Array.from(taskList.querySelectorAll('input:checked')).length;
+        document.getElementById('kpi-completion').textContent = `${Math.round((checked / TASKS.length) * 100)}%`;
+    </script>
+</body>
+</html>

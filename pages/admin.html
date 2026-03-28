@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>後台管理系統 | Admin Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -13,8 +14,10 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0f172a;
+            font-family: 'Poppins', 'Noto Sans TC', sans-serif;
+            background: radial-gradient(circle at 10% -5%, #1d4ed8 0, transparent 35%),
+                        radial-gradient(circle at 90% 10%, #0ea5e9 0, transparent 30%),
+                        #0b1225;
             color: #e2e8f0;
         }
         
@@ -26,7 +29,7 @@
         
         /* 頂部導航 */
         .header {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #1d4ed8, #0ea5e9);
             padding: 1.5rem 2rem;
             border-radius: 15px;
             margin-bottom: 2rem;
@@ -64,6 +67,11 @@
             background: #10b981;
             color: white;
         }
+
+        .btn-neutral {
+            background: #334155;
+            color: white;
+        }
         
         .btn-danger {
             background: #ef4444;
@@ -81,6 +89,41 @@
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
+        }
+
+        .dashboard-tools {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            border: 1px solid #475569;
+            border-radius: 14px;
+            padding: 1rem;
+            margin-bottom: 1.4rem;
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 0.8rem;
+            align-items: center;
+        }
+
+        .search-input,
+        .filter-select {
+            width: 100%;
+            padding: 0.75rem 0.85rem;
+            border-radius: 10px;
+            border: 1px solid #64748b;
+            background: #0f172a;
+            color: #f8fafc;
+            font-size: 0.95rem;
+        }
+
+        .switch-wrap {
+            display: flex;
+            gap: 0.55rem;
+            align-items: center;
+            color: #cbd5e1;
+            font-size: 0.9rem;
+        }
+
+        .switch-wrap input {
+            accent-color: #0ea5e9;
         }
         
         .stat-card {
@@ -348,9 +391,34 @@
             margin-top: 0.5rem;
             display: none;
         }
+
+        .toast {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            padding: 0.8rem 1rem;
+            border-radius: 10px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: #f8fafc;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+            transform: translateY(120%);
+            transition: transform 0.25s ease;
+            z-index: 10001;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+        }
         
         .hidden {
             display: none !important;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard-tools {
+                grid-template-columns: 1fr;
+            }
         }
         
         /* 滾動條樣式 */
@@ -417,6 +485,20 @@
         </div>
 
         <!-- 統計卡片 -->
+        <div class="dashboard-tools">
+            <input type="text" id="global-search" class="search-input" placeholder="搜尋留言、聊天或終端機內容...">
+            <select id="panel-filter" class="filter-select">
+                <option value="all">顯示全部面板</option>
+                <option value="messages">僅留言面板</option>
+                <option value="chat">僅聊天記錄</option>
+                <option value="terminal">僅終端機記錄</option>
+            </select>
+            <label class="switch-wrap">
+                <input type="checkbox" id="auto-refresh-toggle">
+                每 20 秒自動刷新
+            </label>
+        </div>
+
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon">
@@ -449,7 +531,7 @@
         </div>
 
         <!-- 訪客留言板 -->
-        <div class="data-panel">
+        <div class="data-panel" id="messages-panel">
             <div class="panel-header">
                 <h2 class="panel-title">
                     <i class="fas fa-comments"></i>
@@ -465,7 +547,7 @@
         </div>
 
         <!-- AI 聊天記錄 -->
-        <div class="data-panel">
+        <div class="data-panel" id="chat-panel">
             <div class="panel-header">
                 <h2 class="panel-title">
                     <i class="fas fa-robot"></i>
@@ -481,7 +563,7 @@
         </div>
 
         <!-- 終端機指令記錄 -->
-        <div class="data-panel">
+        <div class="data-panel" id="terminal-panel-data">
             <div class="panel-header">
                 <h2 class="panel-title">
                     <i class="fas fa-terminal"></i>
@@ -507,7 +589,27 @@
         </div>
     </div>
 
+    <div id="toast" class="toast"></div>
+
     <script>
+        let autoRefreshTimer = null;
+
+        function escapeHtml(str) {
+            return String(str)
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#39;');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2200);
+        }
+
         // 登入驗證
         document.getElementById('login-form').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -518,10 +620,58 @@
                 document.getElementById('login-container').classList.add('hidden');
                 document.getElementById('main-content').classList.remove('hidden');
                 loadDashboardData();
+                bindDashboardTools();
             } else {
                 document.getElementById('login-error').style.display = 'block';
             }
         });
+
+        function bindDashboardTools() {
+            const search = document.getElementById('global-search');
+            const panelFilter = document.getElementById('panel-filter');
+            const autoRefresh = document.getElementById('auto-refresh-toggle');
+
+            if (search.dataset.bound === '1') return;
+            search.dataset.bound = '1';
+
+            search.addEventListener('input', applySearchFilter);
+            panelFilter.addEventListener('change', applyPanelVisibility);
+            autoRefresh.addEventListener('change', () => {
+                if (autoRefresh.checked) {
+                    autoRefreshTimer = setInterval(loadDashboardData, 20000);
+                    showToast('已啟用自動刷新');
+                } else {
+                    clearInterval(autoRefreshTimer);
+                    autoRefreshTimer = null;
+                    showToast('已停用自動刷新');
+                }
+            });
+        }
+
+        function applyPanelVisibility() {
+            const mode = document.getElementById('panel-filter').value;
+            const panels = {
+                messages: document.getElementById('messages-panel'),
+                chat: document.getElementById('chat-panel'),
+                terminal: document.getElementById('terminal-panel-data')
+            };
+
+            Object.keys(panels).forEach((key) => {
+                panels[key].style.display = (mode === 'all' || mode === key) ? '' : 'none';
+            });
+        }
+
+        function applySearchFilter() {
+            const keyword = document.getElementById('global-search').value.trim().toLowerCase();
+            const selectors = ['#messages-list .message-item', '#chat-log .chat-item', '#terminal-log tr'];
+
+            selectors.forEach((selector) => {
+                document.querySelectorAll(selector).forEach((el) => {
+                    const text = el.textContent.toLowerCase();
+                    el.style.display = !keyword || text.includes(keyword) ? '' : 'none';
+                });
+            });
+        }
 
         // 載入儀表板數據
         function loadDashboardData() {
@@ -542,7 +692,6 @@
         // 載入留言
         function loadMessages() {
             const messages = JSON.parse(localStorage.getItem('guestbook_messages') || '[]');
-            console.log('Admin: Loading messages', messages); // Debug log
             document.getElementById('total-messages').textContent = messages.length;
             
             const messagesList = document.getElementById('messages-list');
@@ -550,7 +699,6 @@
             
             if (messages.length === 0) {
                 messagesList.innerHTML = '<p style="text-align: center; color: #94a3b8;">目前沒有留言</p>';
-                console.log('Admin: No messages found'); // Debug log
                 return;
             }
             
@@ -560,10 +708,10 @@
                 messageCard.className = 'message-item';
                 messageCard.innerHTML = `
                     <div class="message-header">
-                        <span class="message-author">${msg.name}${msg.email ? ' (' + msg.email + ')' : ''}</span>
+                        <span class="message-author">${escapeHtml(msg.name)}${msg.email ? ' (' + escapeHtml(msg.email) + ')' : ''}</span>
                         <span class="message-date">${date.toLocaleString('zh-TW')}</span>
                     </div>
-                    <div class="message-content">${msg.message}</div>
+                    <div class="message-content">${escapeHtml(msg.message)}</div>
                     <div class="message-actions">
                         <button class="btn-icon" onclick="deleteMessage(${index})" title="刪除">
                             <i class="fas fa-trash"></i>
@@ -572,7 +720,7 @@
                 `;
                 messagesList.appendChild(messageCard);
             });
-            console.log('Admin: Messages displayed successfully'); // Debug log
+            applySearchFilter();
         }
 
         // 刪除留言
@@ -613,13 +761,14 @@
                     <div class="${chat.type === 'user' ? 'chat-user' : 'chat-bot'}">
                         ${chat.type === 'user' ? '<i class="fas fa-user"></i> 訪客' : '<i class="fas fa-robot"></i> AI 助手'}
                     </div>
-                    <div class="chat-message">${chat.message}</div>
+                    <div class="chat-message">${escapeHtml(chat.message)}</div>
                     <div style="color: #64748b; font-size: 0.85rem; margin-top: 0.3rem;">
                         ${new Date(chat.time).toLocaleString('zh-TW')}
                     </div>
                 `;
                 chatLogContainer.appendChild(chatItem);
             });
+            applySearchFilter();
         }
 
         // 清空聊天記錄
@@ -647,11 +796,12 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${new Date(log.time).toLocaleString('zh-TW')}</td>
-                    <td><code style="color: #10b981;">${log.command}</code></td>
-                    <td>${log.ip || '127.0.0.1'}</td>
+                    <td><code style="color: #10b981;">${escapeHtml(log.command)}</code></td>
+                    <td>${escapeHtml(log.ip || '127.0.0.1')}</td>
                 `;
                 terminalLogTable.appendChild(row);
             });
+            applySearchFilter();
         }
 
         // 清空終端機記錄
@@ -664,20 +814,20 @@
 
         // 刷新數據
         function refreshData() {
-            console.log('Refreshing dashboard data...'); // Debug log
             loadDashboardData();
-            
-            // 更好的提示訊息
+
             const messages = JSON.parse(localStorage.getItem('guestbook_messages') || '[]');
             const chatLog = JSON.parse(localStorage.getItem('chatbot_log') || '[]');
             const terminalLog = JSON.parse(localStorage.getItem('terminal_log') || '[]');
-            
-            alert(`數據已刷新！\n留言: ${messages.length} 則\n聊天記錄: ${chatLog.length} 則\n終端機記錄: ${terminalLog.length} 則`);
+
+            showToast(`刷新完成：留言 ${messages.length} / 聊天 ${chatLog.length} / 終端 ${terminalLog.length}`);
         }
 
         // 登出
         function logout() {
             if (confirm('確定要登出嗎？')) {
+                clearInterval(autoRefreshTimer);
+                autoRefreshTimer = null;
                 document.getElementById('main-content').classList.add('hidden');
                 document.getElementById('login-container').classList.remove('hidden');
                 document.getElementById('login-form').reset();

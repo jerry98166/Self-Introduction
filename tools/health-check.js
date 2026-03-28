@@ -76,6 +76,7 @@ function checkFeatureRegistry() {
     if (!fs.existsSync(labHtmlPath) || !fs.existsSync(labJsPath)) {
         return {
             unmatchedIds: [],
+            missingInLabIds: [],
             totalLabFeatureItems: 0,
             totalRegistryFeatures: 0
         };
@@ -100,17 +101,46 @@ function checkFeatureRegistry() {
     }
 
     const unmatchedIds = [...htmlIds].filter((id) => !jsIds.has(id));
+    const missingInLabIds = [...jsIds].filter((id) => !htmlIds.has(id));
 
     return {
         unmatchedIds,
+        missingInLabIds,
         totalLabFeatureItems: htmlIds.size,
         totalRegistryFeatures: jsIds.size
     };
 }
 
+function checkFeaturePageTargets() {
+    const labJsPath = path.join(root, 'assets', 'js', 'lab.js');
+    if (!fs.existsSync(labJsPath)) {
+        return { referenced: 0, missingPages: [] };
+    }
+
+    const labJs = read(labJsPath);
+    const regex = /openFeaturePage\('([^']+\.html)'\)/g;
+    const referenced = new Set();
+    const missingPages = [];
+    let m;
+
+    while ((m = regex.exec(labJs))) {
+        referenced.add(m[1]);
+    }
+
+    for (const page of referenced) {
+        const targetPath = path.join(root, 'features', page);
+        if (!fs.existsSync(targetPath)) {
+            missingPages.push(page);
+        }
+    }
+
+    return { referenced: referenced.size, missingPages };
+}
+
 function main() {
     const htmlResult = checkHtmlRefs();
     const featureResult = checkFeatureRegistry();
+    const featurePageResult = checkFeaturePageTargets();
 
     console.log('=== Project Health Check ===');
     console.log(`HTML files scanned: ${htmlResult.htmlFilesCount}`);
@@ -127,6 +157,9 @@ function main() {
     console.log(`- Feature items in pages/lab.html: ${featureResult.totalLabFeatureItems}`);
     console.log(`- Feature keys in assets/js/lab.js: ${featureResult.totalRegistryFeatures}`);
     console.log(`- Unmatched feature IDs: ${featureResult.unmatchedIds.length}`);
+    console.log(`- Registry IDs missing in lab page: ${featureResult.missingInLabIds.length}`);
+    console.log(`- Feature pages referenced in lab.js: ${featurePageResult.referenced}`);
+    console.log(`- Missing referenced feature pages: ${featurePageResult.missingPages.length}`);
 
     if (featureResult.unmatchedIds.length > 0) {
         for (const id of featureResult.unmatchedIds) {
@@ -134,7 +167,25 @@ function main() {
         }
     }
 
-    const hasError = htmlResult.missing.length > 0 || featureResult.unmatchedIds.length > 0;
+    if (featureResult.missingInLabIds.length > 0) {
+        console.log('  Missing in pages/lab.html:');
+        for (const id of featureResult.missingInLabIds) {
+            console.log(`  - ${id}`);
+        }
+    }
+
+    if (featurePageResult.missingPages.length > 0) {
+        console.log('  Missing feature page files:');
+        for (const page of featurePageResult.missingPages) {
+            console.log(`  - features/${page}`);
+        }
+    }
+
+    const hasError =
+        htmlResult.missing.length > 0 ||
+        featureResult.unmatchedIds.length > 0 ||
+        featureResult.missingInLabIds.length > 0 ||
+        featurePageResult.missingPages.length > 0;
     if (hasError) {
         process.exitCode = 1;
         console.log('\nResult: FAILED');

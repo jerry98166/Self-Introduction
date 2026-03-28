@@ -60,7 +60,6 @@ document.addEventListener('DOMContentLoaded', function() {
     safeInit(initCursorFollower);
     safeInit(initLanguageToggle);
     safeInit(initMusicPlayer);
-    safeInit(initPrintResume);
     safeInit(initVisitorCounter);
     safeInit(initLiveClock);
     safeInit(initSkillsRadarChart);
@@ -710,11 +709,7 @@ function debounce(func, delay) {
 // ========================================
 console.log('%c👋 歡迎來到我的網站！', 'font-size: 20px; font-weight: bold; color: #6366f1;');
 console.log('%c如果你對這個網站的程式碼感興趣，歡迎與我聯繫！', 'font-size: 14px; color: #6b7280;');
-<<<<<<< HEAD
 console.log('%c📧 11028201@cycu.org.tw', 'font-size: 14px; color: #6366f1;');
-=======
-console.log('%c📧 ycsimpson@gmail.com', 'font-size: 14px; color: #6366f1;');
->>>>>>> d60f12a13065b187ab168a3d9d65ae039f4176f6
 
 // ========================================
 // 追蹤使用者互動（Google Analytics 等）
@@ -1040,8 +1035,8 @@ async function updateLanguage() {
 // 音樂播放器
 let isPlaying = false;
 let audioContext;
-let oscillator;
 let melodyTimer;
+let activeVoices = [];
 
 function initMusicPlayer() {
     const musicToggle = document.getElementById('music-toggle');
@@ -1071,50 +1066,58 @@ function playMusic() {
         melodyTimer = null;
     }
 
-    oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-    
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    
-    oscillator.frequency.value = 440;
-    oscillator.type = 'sine';
-    gainNode.gain.value = 0.1;
-    
-    oscillator.start();
-    
-    // 播放簡單的旋律
-    const notes = [262, 294, 330, 349, 392, 440, 494, 523];
-    let noteIndex = 0;
-    
+    const melody = [523.25, 587.33, 659.25, 783.99, 659.25, 587.33, 523.25, 659.25];
+    const bass = [130.81, 146.83, 164.81, 196.0, 164.81, 146.83, 130.81, 164.81];
+    let step = 0;
+
+    const playVoice = (freq, type, gainValue, duration) => {
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+
+        osc.type = type;
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.0001, audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(gainValue, audioContext.currentTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + duration);
+
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        osc.start();
+        osc.stop(audioContext.currentTime + duration + 0.02);
+
+        activeVoices.push(osc);
+    };
+
     melodyTimer = setInterval(() => {
-        if (isPlaying && oscillator) {
-            oscillator.frequency.value = notes[noteIndex];
-            noteIndex = (noteIndex + 1) % notes.length;
+        if (!isPlaying) return;
+
+        const m = melody[step % melody.length];
+        const b = bass[step % bass.length];
+
+        playVoice(m, 'triangle', 0.08, 0.28);
+        playVoice(m * 1.5, 'sine', 0.03, 0.22);
+        if (step % 2 === 0) {
+            playVoice(b, 'sawtooth', 0.04, 0.38);
         }
-    }, 500);
+
+        step++;
+    }, 320);
 }
 
 function stopMusic() {
-    if (oscillator) {
-        oscillator.stop();
-        oscillator = null;
-    }
-
     if (melodyTimer) {
         clearInterval(melodyTimer);
         melodyTimer = null;
     }
-}
 
-// 列印履歷功能
-function initPrintResume() {
-    const printBtn = document.getElementById('print-resume');
-    if (!printBtn) return;
-    
-    printBtn.addEventListener('click', () => {
-        window.print();
+    activeVoices.forEach((voice) => {
+        try {
+            voice.stop();
+        } catch (e) {
+            // ignore already stopped voices
+        }
     });
+    activeVoices = [];
 }
 
 // 訪客計數器
