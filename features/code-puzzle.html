@@ -565,11 +565,20 @@ fetchData().then(data => {
             
             const hintBox = document.getElementById('hintBox');
             if (hintCount < currentChallenge.hints.length) {
-                hintBox.innerHTML = `<strong>提示 ${hintCount + 1}:</strong> ${currentChallenge.hints[hintCount]}`;
+                hintBox.innerHTML = '';
+                const strong = document.createElement('strong');
+                strong.textContent = `提示 ${hintCount + 1}:`;
+                hintBox.appendChild(strong);
+                hintBox.append(` ${currentChallenge.hints[hintCount]}`);
                 hintBox.classList.add('show');
                 hintCount++;
             } else {
-                hintBox.innerHTML = `<strong>所有提示已用完！</strong><br>Bug 在第 ${currentChallenge.bugs.join('、')} 行`;
+                hintBox.innerHTML = '';
+                const strong = document.createElement('strong');
+                strong.textContent = '所有提示已用完！';
+                hintBox.appendChild(strong);
+                hintBox.appendChild(document.createElement('br'));
+                hintBox.append(`Bug 在第 ${currentChallenge.bugs.join('、')} 行`);
                 hintBox.classList.add('show');
             }
         }

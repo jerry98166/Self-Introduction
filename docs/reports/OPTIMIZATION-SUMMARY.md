@@ -87,8 +87,8 @@
 
 ### 文檔文件
 ```
-✅ IMAGE-OPTIMIZATION.md (6.3KB)       - 圖片優化完整指南
-✅ DEPLOYMENT-GUIDE.md (12KB)          - 快速部署指南
+✅ docs/guides/IMAGE-OPTIMIZATION.md (6.3KB) - 圖片優化完整指南
+✅ docs/guides/DEPLOYMENT-GUIDE.md (12KB)    - 快速部署指南
 ✅ docs/網站全面優化報告.md (25KB)      - 詳細優化報告
 ```
 
@@ -240,16 +240,16 @@ Sitemap: 無 → 14+ 頁面
 1. **README.md** (8.1KB)  
    → 快速了解專案概況
 
-2. **DEPLOYMENT-GUIDE.md** (12KB) ⭐  
+2. **docs/guides/DEPLOYMENT-GUIDE.md** (12KB) ⭐  
    → **立即行動指南**（替換佔位符、部署步驟）
 
 3. **docs/網站全面優化報告.md** (25KB)  
    → 詳細的優化項目和技術細節
 
-4. **IMAGE-OPTIMIZATION.md** (6.3KB)  
+4. **docs/guides/IMAGE-OPTIMIZATION.md** (6.3KB)  
    → 圖片優化工具和方法
 
-5. **PROJECT_STRUCTURE.md** (12KB)  
+5. **docs/reports/PROJECT_STRUCTURE.md** (12KB)  
    → 完整的文件結構說明
 
 ---
@@ -257,7 +257,7 @@ Sitemap: 無 → 14+ 頁面
 ## 🎯 下一步行動計劃
 
 ### 今天立即完成（30分鐘）
-1. ✅ 閱讀 `DEPLOYMENT-GUIDE.md`
+1. ✅ 閱讀 `docs/guides/DEPLOYMENT-GUIDE.md`
 2. ✅ 替換所有佔位符（GA ID、網域、郵箱等）
 3. ✅ 使用 https://realfavicongenerator.net/ 生成圖示
 4. ✅ 在本地測試網站功能
@@ -346,7 +346,7 @@ Sitemap: 無 → 14+ 頁面
 ## 📞 技術支援
 
 ### 遇到問題？
-1. 查看 `DEPLOYMENT-GUIDE.md` 的「常見問題排除」章節
+1. 查看 `docs/guides/DEPLOYMENT-GUIDE.md` 的「常見問題排除」章節
 2. 檢查 `docs/網站全面優化報告.md` 的相關部分
 3. 使用瀏覽器開發者工具（F12）查看錯誤訊息
 
@@ -388,7 +388,7 @@ Sitemap: 無 → 14+ 頁面
 
 您的網站已經完全優化並準備好向世界展示了！
 
-**下一步：閱讀 `DEPLOYMENT-GUIDE.md` 並開始部署！**
+**下一步：閱讀 `docs/guides/DEPLOYMENT-GUIDE.md` 並開始部署！**
 
 ---
 

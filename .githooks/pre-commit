@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+
+set -eu
+
+echo "[pre-commit] Running project health check..."
+npm run health-check

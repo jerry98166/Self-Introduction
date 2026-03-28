@@ -60,14 +60,35 @@
 
 ```
 Self-Introduction/
-├── index.html              # 主頁面
-├── lab.html               # 功能實驗室
-├── admin.html             # 管理後台
-├── styles.css             # 主樣式表
-├── script.js              # 主 JavaScript
-├── lab.js                 # 功能實驗室控制器
+├── index.html              # 首頁
+├── 404.html                # 404 錯誤頁
+├── README.md               # 專案總說明
+├── package.json            # npm 腳本（health-check / setup-hooks）
+├── .githooks/              # Git hooks（pre-commit / pre-push）
 │
-├── features/              # 功能頁面目錄
+├── assets/                 # 共用資源
+│   ├── css/
+│   │   └── styles.css      # 全站樣式
+│   └── js/
+│       ├── script.js       # 主站互動邏輯
+│       ├── lab.js          # 功能實驗室註冊/路由
+│       ├── vue-app.js      # 首頁 Vue 增強
+│       ├── vue-subpages.js # 子頁 Vue 增強
+│       └── subpage-ux.js   # 子頁一致化 UX fallback
+│
+├── pages/                  # 主站子頁
+│   ├── about.html
+│   ├── skills.html
+│   ├── experience.html
+│   ├── projects.html
+│   ├── education.html
+│   ├── achievements.html
+│   ├── typing-game.html
+│   ├── lab.html
+│   ├── admin.html
+│   └── privacy.html
+│
+├── features/               # 功能頁面目錄
 │   ├── ai-interview.html         # AI 面試模擬器
 │   ├── voice-assistant.html      # 語音助理
 │   ├── gesture-control.html      # 手勢識別
@@ -83,21 +104,21 @@ Self-Introduction/
 │   ├── rpg-card.html            # RPG 角色卡
 │   └── treasure-hunt.html        # 尋寶遊戲
 │
-├── images/                # 圖片資源
+├── projects/               # 獨立專案頁
+│   └── cycu-guide.html
+│
+├── images/                 # 圖片資源
 │   └── README.md
 │
-├── docs/                  # 專案文件
-│   ├── README.md                 # 專案說明（舊版）
-│   ├── 開始使用.md               # 快速上手指南
-│   ├── 快速開始指南.md           # 詳細使用教學
-│   ├── 功能實驗室文檔.md         # 功能列表說明
-│   ├── 功能完成總結報告.md       # 完整技術報告
-│   ├── 新增功能報告.md           # 新功能說明
-│   └── ...
+├── docs/                   # 專案文件（已分層）
+│   ├── guides/             # 使用教學與部署指南
+│   ├── reports/            # 完成報告與優化報告
+│   ├── archive/legacy/     # 歷史舊文檔
+│   └── README.md           # 文件索引
 │
-├── css/                   # CSS 檔案（預留）
-├── js/                    # JS 檔案（預留）
-└── README.md              # 本檔案
+└── tools/
+    ├── health-check.js     # 健康檢查腳本
+    └── setup-hooks.js      # Git hooks 設定腳本
 
 ```
 
@@ -148,6 +169,7 @@ python -m SimpleHTTPServer 8000
 每次修改後，建議執行健康檢查腳本，自動驗證：
 - HTML 本地連結/資源是否存在
 - 功能實驗室條目是否與功能註冊表一致
+- 是否出現不安全的 HTML 插值寫法（`innerHTML/outerHTML/insertAdjacentHTML` + `${...}`）
 
 ```bash
 node tools/health-check.js
@@ -160,6 +182,15 @@ npm run health-check
 ```
 
 輸出 `Result: PASSED` 代表目前核心連結與功能映射正常。
+
+### 5. 啟用 Git 提交防呆（建議）
+執行一次以下指令，會把 Git hooks 路徑設定為專案內的 `.githooks/`：
+
+```bash
+npm run setup-hooks
+```
+
+啟用後在 `git commit` 與 `git push` 前會自動執行 `npm run health-check`，若檢查失敗會阻擋提交/推送。
 
 ## 🛠️ 技術棧
 
@@ -211,7 +242,10 @@ npm run health-check
 - **[開始使用.md](docs/guides/開始使用.md)** - 30秒快速上手
 - **[快速開始指南.md](docs/guides/快速開始指南.md)** - 詳細使用教學
 - **[功能實驗室文檔.md](docs/guides/功能實驗室文檔.md)** - 所有功能列表
+- **[DEPLOYMENT-GUIDE.md](docs/guides/DEPLOYMENT-GUIDE.md)** - 部署與上線指南
+- **[IMAGE-OPTIMIZATION.md](docs/guides/IMAGE-OPTIMIZATION.md)** - 圖片優化指南
 - **[功能完成總結報告.md](docs/reports/功能完成總結報告.md)** - 完整技術報告
+- **[PROJECT_STRUCTURE.md](docs/reports/PROJECT_STRUCTURE.md)** - 最新專案結構說明
 
 ## 🎯 效能指標
 

@@ -1,0 +1,375 @@
+(function () {
+    const STYLE_ID = 'global-subpage-ux-style';
+    const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let fallbackAudioContext = null;
+    let fallbackTimer = null;
+    let fallbackPlaying = false;
+    let fallbackStep = 0;
+
+    const fallbackPianoScore = [261.63, 293.66, 329.63, 392.0, 392.0, 329.63, 293.66, 261.63];
+
+    function injectStyles() {
+        if (document.getElementById(STYLE_ID)) return;
+
+        const style = document.createElement('style');
+        style.id = STYLE_ID;
+        style.textContent = [
+            '.skip-link{position:absolute;left:16px;top:-64px;z-index:4000;background:#0f172a;color:#fff;padding:10px 14px;border-radius:8px;text-decoration:none;box-shadow:0 8px 20px rgba(0,0,0,.25);transition:top .2s ease;}',
+            '.skip-link:focus{top:16px;}',
+            'a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #f59e0b;outline-offset:2px;}',
+            '.subpage-float-btn{position:fixed !important;right:24px !important;width:46px !important;height:46px !important;border:none !important;border-radius:999px !important;color:#fff !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;box-shadow:0 10px 24px rgba(15,23,42,.3) !important;z-index:2500 !important;}',
+            '#language-toggle.subpage-float-btn,.global-language-toggle.subpage-float-btn{bottom:186px !important;background:#334155 !important;}',
+            '#theme-toggle.subpage-float-btn,.global-theme-toggle.subpage-float-btn{bottom:132px !important;background:#475569 !important;}',
+            '#music-toggle.subpage-float-btn,.global-music-toggle.subpage-float-btn{bottom:78px !important;background:#0f172a !important;}',
+            '#back-to-top.subpage-float-btn,.global-back-to-top.subpage-float-btn{bottom:24px !important;background:#6366f1 !important;display:flex !important;}',
+            '#music-toggle.subpage-float-btn.playing,.global-music-toggle.subpage-float-btn.playing{background:#065f46 !important;}',
+            '.subpage-float-btn:hover{filter:brightness(1.08);}',
+            '.subpage-float-btn.subpage-hidden{display:none !important;}',
+            '@media (max-width:768px){.subpage-float-btn{right:16px !important;}#language-toggle.subpage-float-btn,.global-language-toggle.subpage-float-btn{bottom:178px !important;}#theme-toggle.subpage-float-btn,.global-theme-toggle.subpage-float-btn{bottom:124px !important;}#music-toggle.subpage-float-btn,.global-music-toggle.subpage-float-btn{bottom:70px !important;}#back-to-top.subpage-float-btn,.global-back-to-top.subpage-float-btn{bottom:16px !important;}}',
+            '@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto;}*,*::before,*::after{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important;}}'
+        ].join('');
+
+        document.head.appendChild(style);
+    }
+
+    function ensureSkipLink() {
+        if (document.querySelector('.skip-link')) return;
+
+        const target = document.getElementById('main-content') || ensureMainLandmark();
+        if (!target) return;
+
+        const skip = document.createElement('a');
+        skip.className = 'skip-link';
+        skip.href = '#main-content';
+        skip.textContent = '跳到主要內容';
+
+        document.body.insertBefore(skip, document.body.firstChild);
+    }
+
+    function ensureMainLandmark() {
+        let main = document.querySelector('main');
+
+        if (!main) {
+            main = document.querySelector('.container, .privacy-container, .app-container, .main-content, #app, #root');
+        }
+
+        if (!main) return null;
+        if (!main.id) main.id = 'main-content';
+        if (main.tagName.toLowerCase() !== 'main') {
+            main.setAttribute('role', 'main');
+        }
+        return main;
+    }
+
+    function ensureBackToTop() {
+        let btn = document.getElementById('back-to-top');
+        if (!btn) {
+            btn = document.createElement('button');
+            btn.type = 'button';
+            btn.id = 'back-to-top';
+            btn.className = 'global-back-to-top';
+            btn.setAttribute('aria-label', '回到頂部');
+            btn.innerHTML = '<i class="fas fa-arrow-up" aria-hidden="true"></i>';
+            document.body.appendChild(btn);
+        }
+
+        btn.classList.add('subpage-float-btn');
+
+        if (btn.dataset.backToTopBound !== 'true') {
+            btn.dataset.backToTopBound = 'true';
+            btn.addEventListener('click', function () {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            window.addEventListener('scroll', function () {
+                const shouldHide = window.scrollY <= 260;
+                btn.classList.toggle('subpage-hidden', shouldHide);
+            }, { passive: true });
+        }
+
+        btn.classList.toggle('subpage-hidden', window.scrollY <= 260);
+    }
+
+    function initMobileMenuAccessibility() {
+        const toggle = document.getElementById('mobile-menu-toggle');
+        const menu = document.getElementById('nav-menu');
+        if (!toggle || !menu) return;
+
+        toggle.setAttribute('aria-controls', 'nav-menu');
+        toggle.setAttribute('aria-expanded', menu.classList.contains('active') ? 'true' : 'false');
+
+        const syncExpanded = () => {
+            toggle.setAttribute('aria-expanded', menu.classList.contains('active') ? 'true' : 'false');
+        };
+
+        toggle.addEventListener('click', () => {
+            requestAnimationFrame(syncExpanded);
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && menu.classList.contains('active')) {
+                menu.classList.remove('active');
+                toggle.classList.remove('active');
+                syncExpanded();
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!menu.classList.contains('active')) return;
+            if (menu.contains(e.target) || toggle.contains(e.target)) return;
+            menu.classList.remove('active');
+            toggle.classList.remove('active');
+            syncExpanded();
+        });
+    }
+
+    function bindFallbackPiano(button) {
+        if (button.dataset.musicBound === 'true') return;
+
+        const playNote = (frequency) => {
+            const now = fallbackAudioContext.currentTime;
+            const osc = fallbackAudioContext.createOscillator();
+            const harmonic = fallbackAudioContext.createOscillator();
+            const gain = fallbackAudioContext.createGain();
+
+            osc.type = 'triangle';
+            harmonic.type = 'sine';
+            osc.frequency.setValueAtTime(frequency, now);
+            harmonic.frequency.setValueAtTime(frequency * 2, now);
+
+            gain.gain.setValueAtTime(0.0001, now);
+            gain.gain.exponentialRampToValueAtTime(0.16, now + 0.015);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
+
+            osc.connect(gain);
+            harmonic.connect(gain);
+            gain.connect(fallbackAudioContext.destination);
+
+            osc.start(now);
+            harmonic.start(now);
+            osc.stop(now + 0.38);
+            harmonic.stop(now + 0.38);
+        };
+
+        const stop = () => {
+            if (fallbackTimer) {
+                clearTimeout(fallbackTimer);
+                fallbackTimer = null;
+            }
+        };
+
+        const schedule = () => {
+            if (!fallbackPlaying) return;
+            playNote(fallbackPianoScore[fallbackStep % fallbackPianoScore.length]);
+            fallbackStep += 1;
+            fallbackTimer = setTimeout(schedule, 420);
+        };
+
+        const update = () => {
+            button.classList.toggle('playing', fallbackPlaying);
+            button.setAttribute('aria-pressed', fallbackPlaying ? 'true' : 'false');
+        };
+
+        const toggle = () => {
+            if (prefersReducedMotion) return;
+            if (!fallbackAudioContext) {
+                fallbackAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (fallbackAudioContext.state === 'suspended') {
+                fallbackAudioContext.resume();
+            }
+
+            fallbackPlaying = !fallbackPlaying;
+            if (fallbackPlaying) {
+                schedule();
+            } else {
+                stop();
+            }
+            update();
+        };
+
+        button.dataset.musicBound = 'true';
+        button.setAttribute('aria-pressed', 'false');
+        button.addEventListener('click', toggle);
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.key === 'm' || e.key === 'M') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                const targetTag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+                if (targetTag === 'input' || targetTag === 'textarea' || targetTag === 'select') return;
+                e.preventDefault();
+                toggle();
+            }
+        });
+    }
+
+    function ensureMusicToggle() {
+        let button = document.getElementById('music-toggle');
+
+        if (!button) {
+            button = document.createElement('button');
+            button.type = 'button';
+            button.id = 'music-toggle';
+            button.className = 'global-music-toggle';
+            button.setAttribute('aria-label', '鋼琴音樂');
+            button.title = '鋼琴音樂';
+            button.innerHTML = '<i class="fas fa-music" aria-hidden="true"></i>';
+            document.body.appendChild(button);
+        }
+
+        if (!button.querySelector('i')) {
+            button.innerHTML = '<i class="fas fa-music" aria-hidden="true"></i>';
+        }
+
+        button.classList.add('subpage-float-btn');
+        button.setAttribute('aria-label', '鋼琴音樂');
+        button.title = '鋼琴音樂';
+
+        bindFallbackPiano(button);
+    }
+
+    function ensureThemeToggle() {
+        let button = document.getElementById('theme-toggle');
+        if (!button) {
+            button = document.createElement('button');
+            button.type = 'button';
+            button.id = 'theme-toggle';
+            button.className = 'global-theme-toggle';
+            button.innerHTML = '<i class="fas fa-moon" aria-hidden="true"></i>';
+            document.body.appendChild(button);
+        }
+
+        if (!button.querySelector('i')) {
+            button.innerHTML = '<i class="fas fa-moon" aria-hidden="true"></i>';
+        }
+
+        button.classList.add('subpage-float-btn');
+        button.setAttribute('aria-label', '切換主題');
+        button.title = '切換主題';
+
+        const icon = button.querySelector('i');
+        const applyTheme = (theme) => {
+            document.body.setAttribute('data-theme', theme);
+            document.documentElement.setAttribute('data-theme', theme);
+            button.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+            if (icon) {
+                icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            }
+        };
+
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        applyTheme(savedTheme);
+
+        if (button.dataset.themeBound !== 'true') {
+            button.dataset.themeBound = 'true';
+            button.addEventListener('click', () => {
+                const current = document.body.getAttribute('data-theme') || 'light';
+                const next = current === 'light' ? 'dark' : 'light';
+                localStorage.setItem('theme', next);
+                applyTheme(next);
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if ((e.key === 't' || e.key === 'T') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                    const targetTag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+                    if (targetTag === 'input' || targetTag === 'textarea' || targetTag === 'select') return;
+                    e.preventDefault();
+                    button.click();
+                }
+            });
+        }
+    }
+
+    function ensureLanguageToggle() {
+        let button = document.getElementById('language-toggle');
+        if (!button) {
+            button = document.createElement('button');
+            button.type = 'button';
+            button.id = 'language-toggle';
+            button.className = 'global-language-toggle';
+            button.innerHTML = '<span class="lang-text">EN</span>';
+            document.body.appendChild(button);
+        }
+
+        if (!button.querySelector('.lang-text')) {
+            button.innerHTML = '<span class="lang-text">EN</span>';
+        }
+
+        button.classList.add('subpage-float-btn');
+        button.setAttribute('aria-label', '切換語言');
+        button.title = '切換語言';
+
+        if (button.dataset.languageBound === 'true') {
+            return;
+        }
+
+        const langText = button.querySelector('.lang-text');
+        let currentLanguage = localStorage.getItem('language') || 'zh';
+
+        const applyLanguage = (lang) => {
+            currentLanguage = lang;
+            localStorage.setItem('language', lang);
+            button.setAttribute('aria-pressed', lang === 'en' ? 'true' : 'false');
+            if (langText) {
+                langText.textContent = lang === 'zh' ? 'EN' : '中';
+            }
+
+            document.querySelectorAll('[data-zh][data-en]').forEach((el) => {
+                const text = lang === 'zh' ? el.getAttribute('data-zh') : el.getAttribute('data-en');
+                if (text !== null) {
+                    el.textContent = text;
+                }
+            });
+        };
+
+        button.dataset.languageBound = 'true';
+        applyLanguage(currentLanguage);
+
+        button.addEventListener('click', () => {
+            applyLanguage(currentLanguage === 'zh' ? 'en' : 'zh');
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.key === 'l' || e.key === 'L') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                const targetTag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+                if (targetTag === 'input' || targetTag === 'textarea' || targetTag === 'select') return;
+                e.preventDefault();
+                button.click();
+            }
+        });
+    }
+
+    function normalizeAriaLabels() {
+        const mapping = {
+            'theme-toggle': '切換主題',
+            'language-toggle': '切換語言',
+            'music-toggle': '鋼琴音樂',
+            'back-to-top': '回到頂部',
+            'mobile-menu-toggle': '切換選單'
+        };
+
+        Object.keys(mapping).forEach(function (id) {
+            const el = document.getElementById(id);
+            if (el && !el.getAttribute('aria-label')) {
+                el.setAttribute('aria-label', mapping[id]);
+            }
+        });
+    }
+
+    function init() {
+        injectStyles();
+        ensureMainLandmark();
+        ensureSkipLink();
+        ensureBackToTop();
+        normalizeAriaLabels();
+        initMobileMenuAccessibility();
+        ensureLanguageToggle();
+        ensureThemeToggle();
+        ensureMusicToggle();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();

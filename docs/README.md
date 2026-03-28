@@ -13,6 +13,8 @@
 - [快速開始指南.md](guides/快速開始指南.md)
 - [進階功能使用說明.md](guides/進階功能使用說明.md)
 - [功能實驗室文檔.md](guides/功能實驗室文檔.md)
+- [DEPLOYMENT-GUIDE.md](guides/DEPLOYMENT-GUIDE.md)
+- [IMAGE-OPTIMIZATION.md](guides/IMAGE-OPTIMIZATION.md)
 
 ## reports/
 
@@ -25,11 +27,14 @@
 - [新增功能報告.md](reports/新增功能報告.md)
 - [獨立作品集頁面建置報告.md](reports/獨立作品集頁面建置報告.md)
 - [網站全面優化報告.md](reports/網站全面優化報告.md)
+- [OPTIMIZATION-SUMMARY.md](reports/OPTIMIZATION-SUMMARY.md)
+- [PROJECT_STRUCTURE.md](reports/PROJECT_STRUCTURE.md)
+- [子頁一致化UX完成報告.md](reports/子頁一致化UX完成報告.md)
+- [深度整理優化報告.md](reports/深度整理優化報告.md)
 
 ## archive/legacy/
 
 - [README-OLD.md](archive/legacy/README-OLD.md)
-- [readme.txt](archive/legacy/readme.txt)
 
 ## 維護建議
 

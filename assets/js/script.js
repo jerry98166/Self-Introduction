@@ -3,6 +3,7 @@
 // ========================================
 let particles = [];
 const particleCount = 50;
+const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // ========================================
 // 立即移除 Preloader（避免卡住）
@@ -79,6 +80,10 @@ document.addEventListener('DOMContentLoaded', function() {
 // 粒子背景動畫
 // ========================================
 function initParticles() {
+    if (prefersReducedMotion) {
+        return;
+    }
+
     const canvas = document.getElementById('particles-canvas');
     
     // 如果 canvas 不存在，直接返回
@@ -165,7 +170,7 @@ function initParticles() {
     window.addEventListener('resize', () => {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-    });
+    }, { passive: true });
 }
 
 // ========================================
@@ -176,6 +181,26 @@ function initNavigation() {
     const navLinks = document.querySelectorAll('.nav-link');
     const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
     const navMenu = document.getElementById('nav-menu');
+
+    if (!navbar || !navMenu) return;
+
+    const closeMobileMenu = () => {
+        navMenu.classList.remove('active');
+        if (mobileMenuToggle) {
+            mobileMenuToggle.classList.remove('active');
+            mobileMenuToggle.setAttribute('aria-expanded', 'false');
+        }
+        document.body.classList.remove('menu-open');
+    };
+
+    const openMobileMenu = () => {
+        navMenu.classList.add('active');
+        if (mobileMenuToggle) {
+            mobileMenuToggle.classList.add('active');
+            mobileMenuToggle.setAttribute('aria-expanded', 'true');
+        }
+        document.body.classList.add('menu-open');
+    };
     
     // 滾動時改變導航欄樣式
     window.addEventListener('scroll', () => {
@@ -187,7 +212,7 @@ function initNavigation() {
         
         // 更新活動連結
         updateActiveLink();
-    });
+    }, { passive: true });
     
     // 平滑滾動
     navLinks.forEach(link => {
@@ -210,14 +235,33 @@ function initNavigation() {
             }
             
             // 關閉手機選單
-            navMenu.classList.remove('active');
+            closeMobileMenu();
         });
     });
     
     // 手機選單切換
-    mobileMenuToggle.addEventListener('click', () => {
-        navMenu.classList.toggle('active');
-        mobileMenuToggle.classList.toggle('active');
+    if (mobileMenuToggle) {
+        mobileMenuToggle.setAttribute('aria-expanded', 'false');
+        mobileMenuToggle.setAttribute('aria-controls', 'nav-menu');
+        mobileMenuToggle.addEventListener('click', () => {
+            if (navMenu.classList.contains('active')) {
+                closeMobileMenu();
+            } else {
+                openMobileMenu();
+            }
+        });
+    }
+
+    navMenu.addEventListener('click', (e) => {
+        if (e.target.classList.contains('nav-link')) {
+            closeMobileMenu();
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeMobileMenu();
+        }
     });
     
     // 更新活動連結
@@ -252,11 +296,15 @@ function initThemeToggle() {
     const body = document.body;
     const icon = themeToggle.querySelector('i');
     if (!icon) return;
+
+    themeToggle.dataset.themeBound = 'true';
+    themeToggle.setAttribute('aria-pressed', 'false');
     
     // 檢查本地儲存的主題設定
     const savedTheme = localStorage.getItem('theme') || 'light';
     body.setAttribute('data-theme', savedTheme);
     updateThemeIcon(savedTheme);
+    themeToggle.setAttribute('aria-pressed', savedTheme === 'dark' ? 'true' : 'false');
     
     themeToggle.addEventListener('click', () => {
         const currentTheme = body.getAttribute('data-theme');
@@ -265,6 +313,16 @@ function initThemeToggle() {
         body.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
         updateThemeIcon(newTheme);
+        themeToggle.setAttribute('aria-pressed', newTheme === 'dark' ? 'true' : 'false');
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if ((e.key === 't' || e.key === 'T') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+            const targetTag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+            if (targetTag === 'input' || targetTag === 'textarea' || targetTag === 'select') return;
+            e.preventDefault();
+            themeToggle.click();
+        }
     });
     
     function updateThemeIcon(theme) {
@@ -291,7 +349,7 @@ function initBackToTop() {
         } else {
             backToTopBtn.classList.remove('show');
         }
-    });
+    }, { passive: true });
     
     backToTopBtn.addEventListener('click', () => {
         window.scrollTo({
@@ -307,6 +365,11 @@ function initBackToTop() {
 function initTypingAnimation() {
     const typingText = document.querySelector('.typing-text');
     if (!typingText) return;
+
+    if (prefersReducedMotion) {
+        typingText.textContent = '全端工程師';
+        return;
+    }
 
     const textsByLanguage = {
         zh: ['全端工程師', '前端開發者', 'UI/UX 設計師', '問題解決者', '終身學習者'],
@@ -351,6 +414,10 @@ function initTypingAnimation() {
 // 滾動動畫
 // ========================================
 function initScrollAnimations() {
+    if (prefersReducedMotion) {
+        return;
+    }
+
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -100px 0px'
@@ -620,49 +687,6 @@ if (!('scrollBehavior' in document.documentElement.style)) {
 }
 
 // ========================================
-// 滑鼠游標特效（可選）
-// ========================================
-function initCursorEffect() {
-    const cursor = document.createElement('div');
-    cursor.className = 'custom-cursor';
-    document.body.appendChild(cursor);
-    
-    document.addEventListener('mousemove', (e) => {
-        cursor.style.left = e.clientX + 'px';
-        cursor.style.top = e.clientY + 'px';
-    });
-    
-    // 點擊可互動元素時的效果
-    const interactiveElements = document.querySelectorAll('a, button, .project-card, .social-link');
-    interactiveElements.forEach(el => {
-        el.addEventListener('mouseenter', () => {
-            cursor.classList.add('cursor-hover');
-        });
-        el.addEventListener('mouseleave', () => {
-            cursor.classList.remove('cursor-hover');
-        });
-    });
-}
-
-// ========================================
-// 視差滾動效果
-// ========================================
-function initParallaxEffect() {
-    window.addEventListener('scroll', () => {
-        const scrolled = window.pageYOffset;
-        const parallaxElements = document.querySelectorAll('.hero-image, .about-image');
-        
-        parallaxElements.forEach(el => {
-            const speed = 0.5;
-            el.style.transform = `translateY(${scrolled * speed}px)`;
-        });
-    });
-}
-
-// 初始化視差效果（可選）
-// initParallaxEffect();
-
-// ========================================
 // 載入動畫
 // ========================================
 window.addEventListener('load', () => {
@@ -677,39 +701,6 @@ window.addEventListener('load', () => {
         }, 300);
     }
 });
-
-// ========================================
-// 效能優化：節流函數
-// ========================================
-function throttle(func, delay) {
-    let lastCall = 0;
-    return function(...args) {
-        const now = new Date().getTime();
-        if (now - lastCall < delay) {
-            return;
-        }
-        lastCall = now;
-        return func(...args);
-    };
-}
-
-// ========================================
-// 效能優化：防抖函數
-// ========================================
-function debounce(func, delay) {
-    let timeoutId;
-    return function(...args) {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => func.apply(this, args), delay);
-    };
-}
-
-// ========================================
-// 列印友善提示
-// ========================================
-console.log('%c👋 歡迎來到我的網站！', 'font-size: 20px; font-weight: bold; color: #6366f1;');
-console.log('%c如果你對這個網站的程式碼感興趣，歡迎與我聯繫！', 'font-size: 14px; color: #6b7280;');
-console.log('%c📧 11028201@cycu.org.tw', 'font-size: 14px; color: #6366f1;');
 
 // ========================================
 // 追蹤使用者互動（Google Analytics 等）
@@ -740,52 +731,18 @@ document.querySelectorAll('.btn').forEach(btn => {
 // 鍵盤快捷鍵
 // ========================================
 document.addEventListener('keydown', (e) => {
-    // Ctrl/Cmd + K 開啟搜尋（如果有搜尋功能）
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        console.log('搜尋功能快捷鍵');
-    }
-    
     // ESC 關閉手機選單
     if (e.key === 'Escape') {
         const navMenu = document.getElementById('nav-menu');
-        if (navMenu.classList.contains('active')) {
+        if (navMenu && navMenu.classList.contains('active')) {
             navMenu.classList.remove('active');
         }
     }
 });
 
 // ========================================
-// 服務工作器註冊（PWA 支援）
-// ========================================
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        // 取消註解以啟用 PWA
-        // navigator.serviceWorker.register('/sw.js')
-        //     .then(registration => console.log('SW registered:', registration))
-        //     .catch(error => console.log('SW registration failed:', error));
-    });
-}
-
-// ========================================
-// 導出功能（如果需要在其他地方使用）
-// ========================================
-window.portfolioUtils = {
-    throttle,
-    debounce,
-    trackEvent
-};
-
-// ========================================
 // 新功能實現
 // ========================================
-
-// 加載畫面（已在文件開頭處理）
-function initPreloader() {
-    // Preloader 已在文件開頭的 IIFE 中處理
-    // 此函數保留為空以保持兼容性
-    return;
-}
 
 // 滾動進度條
 function initScrollProgress() {
@@ -800,11 +757,15 @@ function initScrollProgress() {
         const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
         const scrolled = (window.scrollY / windowHeight) * 100;
         progressBar.style.width = scrolled + '%';
-    });
+    }, { passive: true });
 }
 
 // 鼠標跟隨效果
 function initCursorFollower() {
+    if (prefersReducedMotion) {
+        return;
+    }
+
     const cursorFollower = document.getElementById('cursor-follower');
     
     // 如果 cursorFollower 不存在，直接返回
@@ -998,6 +959,10 @@ function initLanguageToggle() {
     const langText = langToggle.querySelector('.lang-text');
     if (!langText) return;
 
+    langToggle.dataset.languageBound = 'true';
+    langToggle.setAttribute('aria-pressed', currentLanguage === 'en' ? 'true' : 'false');
+    langToggle.title = '切換語言';
+
     langText.textContent = currentLanguage === 'zh' ? 'EN' : '中';
     updateLanguage();
     
@@ -1005,8 +970,18 @@ function initLanguageToggle() {
         currentLanguage = currentLanguage === 'zh' ? 'en' : 'zh';
         localStorage.setItem('language', currentLanguage);
         langText.textContent = currentLanguage === 'zh' ? 'EN' : '中';
+        langToggle.setAttribute('aria-pressed', currentLanguage === 'en' ? 'true' : 'false');
         await updateLanguage();
         unlockAchievement('explorer');
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if ((e.key === 'l' || e.key === 'L') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+            const targetTag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+            if (targetTag === 'input' || targetTag === 'textarea' || targetTag === 'select') return;
+            e.preventDefault();
+            langToggle.click();
+        }
     });
 }
 
@@ -1037,76 +1012,133 @@ let isPlaying = false;
 let audioContext;
 let melodyTimer;
 let activeVoices = [];
+let pianoStep = 0;
+
+const pianoScore = [
+    { notes: [261.63], beat: 1 },
+    { notes: [293.66], beat: 1 },
+    { notes: [329.63], beat: 1 },
+    { notes: [392.0], beat: 1 },
+    { notes: [392.0], beat: 1 },
+    { notes: [329.63], beat: 1 },
+    { notes: [293.66], beat: 1 },
+    { notes: [261.63], beat: 1 },
+    { notes: [220.0], beat: 1 },
+    { notes: [246.94], beat: 1 },
+    { notes: [261.63], beat: 1 },
+    { notes: [329.63], beat: 1 },
+    { notes: [329.63], beat: 1 },
+    { notes: [293.66], beat: 1 },
+    { notes: [293.66], beat: 2 }
+];
+const pianoBeatMs = 420;
 
 function initMusicPlayer() {
     const musicToggle = document.getElementById('music-toggle');
     if (!musicToggle) return;
-    
-    musicToggle.addEventListener('click', () => {
+
+    musicToggle.setAttribute('aria-label', '鋼琴音樂');
+    musicToggle.title = '鋼琴音樂';
+    musicToggle.setAttribute('aria-pressed', 'false');
+    musicToggle.dataset.musicBound = 'true';
+
+    const updateToggleState = () => {
+        musicToggle.setAttribute('aria-pressed', isPlaying ? 'true' : 'false');
+        musicToggle.classList.toggle('playing', isPlaying);
+    };
+
+    const toggleMusic = () => {
         if (!audioContext) {
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
         }
-        
+
+        if (audioContext.state === 'suspended') {
+            audioContext.resume();
+        }
+
         if (isPlaying) {
             stopMusic();
-            musicToggle.classList.remove('playing');
         } else {
             playMusic();
-            musicToggle.classList.add('playing');
             unlockAchievement('music');
         }
-        
+
         isPlaying = !isPlaying;
+        updateToggleState();
+    };
+    
+    musicToggle.addEventListener('click', toggleMusic);
+
+    document.addEventListener('keydown', (e) => {
+        if ((e.key === 'm' || e.key === 'M') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+            const targetTag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+            if (targetTag === 'input' || targetTag === 'textarea' || targetTag === 'select') return;
+            e.preventDefault();
+            toggleMusic();
+        }
     });
 }
 
 function playMusic() {
     if (melodyTimer) {
-        clearInterval(melodyTimer);
+        clearTimeout(melodyTimer);
         melodyTimer = null;
     }
 
-    const melody = [523.25, 587.33, 659.25, 783.99, 659.25, 587.33, 523.25, 659.25];
-    const bass = [130.81, 146.83, 164.81, 196.0, 164.81, 146.83, 130.81, 164.81];
-    let step = 0;
+    const playPianoNote = (frequency, durationSec, velocity = 0.18) => {
+        const now = audioContext.currentTime;
 
-    const playVoice = (freq, type, gainValue, duration) => {
         const osc = audioContext.createOscillator();
+        const harmonic = audioContext.createOscillator();
         const gain = audioContext.createGain();
+        const filter = audioContext.createBiquadFilter();
 
-        osc.type = type;
-        osc.frequency.value = freq;
-        gain.gain.setValueAtTime(0.0001, audioContext.currentTime);
-        gain.gain.exponentialRampToValueAtTime(gainValue, audioContext.currentTime + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + duration);
+        osc.type = 'triangle';
+        harmonic.type = 'sine';
+        osc.frequency.setValueAtTime(frequency, now);
+        harmonic.frequency.setValueAtTime(frequency * 2, now);
 
-        osc.connect(gain);
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(2500, now);
+        filter.Q.setValueAtTime(0.8, now);
+
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(velocity, now + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + durationSec);
+
+        osc.connect(filter);
+        harmonic.connect(filter);
+        filter.connect(gain);
         gain.connect(audioContext.destination);
-        osc.start();
-        osc.stop(audioContext.currentTime + duration + 0.02);
 
-        activeVoices.push(osc);
+        osc.start(now);
+        harmonic.start(now);
+        osc.stop(now + durationSec + 0.02);
+        harmonic.stop(now + durationSec + 0.02);
+
+        activeVoices.push(osc, harmonic);
     };
 
-    melodyTimer = setInterval(() => {
+    const scheduleNext = () => {
         if (!isPlaying) return;
 
-        const m = melody[step % melody.length];
-        const b = bass[step % bass.length];
+        const item = pianoScore[pianoStep % pianoScore.length];
+        const durationSec = Math.max(0.2, (item.beat * pianoBeatMs) / 1000 * 0.9);
 
-        playVoice(m, 'triangle', 0.08, 0.28);
-        playVoice(m * 1.5, 'sine', 0.03, 0.22);
-        if (step % 2 === 0) {
-            playVoice(b, 'sawtooth', 0.04, 0.38);
-        }
+        item.notes.forEach((freq, idx) => {
+            playPianoNote(freq, durationSec, idx === 0 ? 0.18 : 0.12);
+        });
 
-        step++;
-    }, 320);
+        pianoStep += 1;
+        melodyTimer = setTimeout(scheduleNext, item.beat * pianoBeatMs);
+    };
+
+    scheduleNext();
 }
 
 function stopMusic() {
     if (melodyTimer) {
-        clearInterval(melodyTimer);
+        clearTimeout(melodyTimer);
         melodyTimer = null;
     }
 
@@ -1677,13 +1709,14 @@ function initChatbot() {
         }, 800);
     }
     
-    function escapeHtml(value) {
-        return String(value)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#39;');
+    function appendTextWithBreaks(container, text) {
+        const parts = String(text).split(/<br\s*\/?>|\n/gi);
+        parts.forEach((part, index) => {
+            container.appendChild(document.createTextNode(part));
+            if (index < parts.length - 1) {
+                container.appendChild(document.createElement('br'));
+            }
+        });
     }
 
     function addMessage(text, type) {
@@ -1696,10 +1729,9 @@ function initChatbot() {
         
         const content = document.createElement('div');
         content.className = 'message-content';
-        const safeText = escapeHtml(text)
-            .replace(/&lt;br\s*\/??&gt;/gi, '<br>')
-            .replace(/\n/g, '<br>');
-        content.innerHTML = `<p>${safeText}</p>`;
+        const paragraph = document.createElement('p');
+        appendTextWithBreaks(paragraph, text);
+        content.appendChild(paragraph);
         
         messageDiv.appendChild(avatar);
         messageDiv.appendChild(content);
@@ -1924,10 +1956,6 @@ function initGuestbook() {
         
         // 顯示留言
         displayMessage(data);
-        
-        // 記錄到控制台用於調試
-        console.log('Message saved:', data);
-        console.log('Total messages:', messages.length);
     }
     
     function displayMessage(data) {
@@ -1956,7 +1984,6 @@ function initGuestbook() {
     
     function loadMessages() {
         const messages = getMessages();
-        console.log('Loading messages:', messages.length);
         messages.forEach(msg => displayMessage(msg));
     }
     

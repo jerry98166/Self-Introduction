@@ -108,6 +108,7 @@
     </script>
 </head>
 <body>
+    <a href="#main-content" class="skip-link">跳到主要內容</a>
     <div id="app">
     <!-- 加載畫面 -->
     <div id="preloader" class="preloader">
@@ -169,7 +170,7 @@
                 <a href="#home" class="logo">
                     <span class="logo-text">My Portfolio</span>
                 </a>
-                <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="選單">
+                <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="切換選單">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -188,6 +189,7 @@
         </div>
     </nav>
 
+    <main id="main-content">
     <!-- Hero 區域 -->
     <section id="home" class="hero">
         <div class="container">
@@ -455,6 +457,8 @@
         </div>
     </div>
 
+    </main>
+
     <!-- 頁尾 -->
     <footer class="footer">
         <div class="container">
@@ -520,6 +524,6 @@
     </div>
     <script defer src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
     <script defer src="assets/js/vue-app.js"></script>
-    <script src="assets/js/script.js"></script>
+    <script defer src="assets/js/script.js"></script>
 </body>
 </html>

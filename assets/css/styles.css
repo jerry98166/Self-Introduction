@@ -74,6 +74,36 @@ body {
     transition: background-color var(--transition-base), color var(--transition-base);
 }
 
+body.menu-open {
+    overflow: hidden;
+}
+
+.skip-link {
+    position: absolute;
+    left: 16px;
+    top: -64px;
+    z-index: 2000;
+    background: var(--bg-dark);
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-lg);
+    transition: top var(--transition-fast);
+}
+
+.skip-link:focus {
+    top: 16px;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline: 3px solid var(--secondary-color);
+    outline-offset: 2px;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -2562,6 +2592,27 @@ img {
     .section {
         page-break-inside: avoid;
         padding: 1rem 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    #particles-canvas,
+    .cursor-follower,
+    #three-container,
+    .scroll-indicator {
+        display: none !important;
     }
 }
 

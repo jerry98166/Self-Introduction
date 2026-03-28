@@ -560,7 +560,7 @@ gtag('event', 'test_event', {
 ---
 
 **需要幫助？**
-- 查看 [docs/網站全面優化報告.md](docs/網站全面優化報告.md)
+- 查看 [網站全面優化報告.md](../reports/網站全面優化報告.md)
 - 參考 [IMAGE-OPTIMIZATION.md](IMAGE-OPTIMIZATION.md)
 
 **祝您部署順利！** 🎊

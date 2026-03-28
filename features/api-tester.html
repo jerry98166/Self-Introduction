@@ -392,9 +392,9 @@
                 <div class="response-meta" id="responseMeta"></div>
 
                 <div class="response-tabs">
-                    <button class="tab-btn active" onclick="switchTab('body')">回應主體</button>
-                    <button class="tab-btn" onclick="switchTab('headers')">回應 Headers</button>
-                    <button class="tab-btn" onclick="switchTab('raw')">原始資料</button>
+                    <button class="tab-btn active" data-tab="body" onclick="switchTab('body')">回應主體</button>
+                    <button class="tab-btn" data-tab="headers" onclick="switchTab('headers')">回應 Headers</button>
+                    <button class="tab-btn" data-tab="raw" onclick="switchTab('raw')">原始資料</button>
                 </div>
 
                 <div class="response-content" id="responseContent"></div>
@@ -452,12 +452,27 @@
 
         function renderHeaders() {
             const headersList = document.getElementById('headersList');
-            headersList.innerHTML = Object.entries(headers).map(([key, value]) => `
-                <div class="header-item">
-                    <span><strong>${key}:</strong> ${value}</span>
-                    <button class="remove-btn" onclick="removeHeader('${key}')">✕</button>
-                </div>
-            `).join('');
+            headersList.innerHTML = '';
+
+            Object.entries(headers).forEach(([key, value]) => {
+                const item = document.createElement('div');
+                item.className = 'header-item';
+
+                const textSpan = document.createElement('span');
+                const strong = document.createElement('strong');
+                strong.textContent = `${key}:`;
+                textSpan.appendChild(strong);
+                textSpan.append(` ${value}`);
+
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-btn';
+                removeBtn.textContent = '✕';
+                removeBtn.addEventListener('click', () => removeHeader(key));
+
+                item.appendChild(textSpan);
+                item.appendChild(removeBtn);
+                headersList.appendChild(item);
+            });
         }
 
         async function sendRequest() {
@@ -516,12 +531,19 @@
                 displayResponse();
 
             } catch (error) {
-                responseContent.innerHTML = `
-                    <div style="color: #e74c3c;">
-                        <h3>❌ 錯誤</h3>
-                        <pre>${error.message}</pre>
-                    </div>
-                `;
+                responseContent.innerHTML = '';
+                const errorWrap = document.createElement('div');
+                errorWrap.style.color = '#e74c3c';
+
+                const title = document.createElement('h3');
+                title.textContent = '❌ 錯誤';
+
+                const pre = document.createElement('pre');
+                pre.textContent = error.message;
+
+                errorWrap.appendChild(title);
+                errorWrap.appendChild(pre);
+                responseContent.appendChild(errorWrap);
             } finally {
                 sendBtn.disabled = false;
                 sendBtn.textContent = '🚀 發送請求';
@@ -535,17 +557,33 @@
             const statusClass = currentResponse.status < 300 ? 'status-200' : 
                                currentResponse.status < 500 ? 'status-400' : 'status-500';
             
-            document.getElementById('responseMeta').innerHTML = `
-                <div class="meta-item">
-                    <span class="status-badge ${statusClass}">${currentResponse.status} ${currentResponse.statusText}</span>
-                </div>
-                <div class="meta-item">
-                    ⏱️ <strong>${currentResponse.duration}ms</strong>
-                </div>
-                <div class="meta-item">
-                    📏 <strong>${JSON.stringify(currentResponse.data).length} bytes</strong>
-                </div>
-            `;
+            const responseMeta = document.getElementById('responseMeta');
+            responseMeta.innerHTML = '';
+
+            const statusItem = document.createElement('div');
+            statusItem.className = 'meta-item';
+            const statusBadge = document.createElement('span');
+            statusBadge.className = `status-badge ${statusClass}`;
+            statusBadge.textContent = `${currentResponse.status} ${currentResponse.statusText}`;
+            statusItem.appendChild(statusBadge);
+
+            const timeItem = document.createElement('div');
+            timeItem.className = 'meta-item';
+            const timeStrong = document.createElement('strong');
+            timeStrong.textContent = `${currentResponse.duration}ms`;
+            timeItem.append('⏱️ ');
+            timeItem.appendChild(timeStrong);
+
+            const sizeItem = document.createElement('div');
+            sizeItem.className = 'meta-item';
+            const sizeStrong = document.createElement('strong');
+            sizeStrong.textContent = `${JSON.stringify(currentResponse.data).length} bytes`;
+            sizeItem.append('📏 ');
+            sizeItem.appendChild(sizeStrong);
+
+            responseMeta.appendChild(statusItem);
+            responseMeta.appendChild(timeItem);
+            responseMeta.appendChild(sizeItem);
 
             switchTab(currentTab);
         }
@@ -554,7 +592,7 @@
             currentTab = tab;
             
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            event?.target?.classList.add('active');
+            document.querySelector(`.tab-btn[data-tab="${tab}"]`)?.classList.add('active');
 
             const content = document.getElementById('responseContent');
             
@@ -562,10 +600,20 @@
 
             switch(tab) {
                 case 'body':
-                    content.innerHTML = `<pre>${JSON.stringify(currentResponse.data, null, 2)}</pre>`;
+                    {
+                        const pre = document.createElement('pre');
+                        pre.textContent = JSON.stringify(currentResponse.data, null, 2);
+                        content.innerHTML = '';
+                        content.appendChild(pre);
+                    }
                     break;
                 case 'headers':
-                    content.innerHTML = `<pre>${JSON.stringify(currentResponse.headers, null, 2)}</pre>`;
+                    {
+                        const pre = document.createElement('pre');
+                        pre.textContent = JSON.stringify(currentResponse.headers, null, 2);
+                        content.innerHTML = '';
+                        content.appendChild(pre);
+                    }
                     break;
                 case 'raw':
                     const raw = {
@@ -576,7 +624,12 @@
                         headers: currentResponse.headers,
                         body: currentResponse.data
                     };
-                    content.innerHTML = `<pre>${JSON.stringify(raw, null, 2)}</pre>`;
+                    {
+                        const pre = document.createElement('pre');
+                        pre.textContent = JSON.stringify(raw, null, 2);
+                        content.innerHTML = '';
+                        content.appendChild(pre);
+                    }
                     break;
             }
         }

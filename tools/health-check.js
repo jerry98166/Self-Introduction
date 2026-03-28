@@ -137,10 +137,39 @@ function checkFeaturePageTargets() {
     return { referenced: referenced.size, missingPages };
 }
 
+function checkUnsafeHtmlInterpolation() {
+    const codeFiles = walk(root, (p) => p.endsWith('.js') || p.endsWith('.html'));
+    const findings = [];
+
+    for (const filePath of codeFiles) {
+        const rel = path.relative(root, filePath);
+        if (rel.startsWith('tools/')) continue;
+
+        const content = read(filePath);
+        const lines = content.split(/\r?\n/);
+
+        lines.forEach((line, index) => {
+            const lineNum = index + 1;
+            if (/innerHTML\s*=\s*`[^`]*\$\{/.test(line)) {
+                findings.push({ file: rel, line: lineNum, type: 'innerHTML interpolation' });
+            }
+            if (/outerHTML\s*=\s*`[^`]*\$\{/.test(line)) {
+                findings.push({ file: rel, line: lineNum, type: 'outerHTML interpolation' });
+            }
+            if (/insertAdjacentHTML\s*\([^)]*`[^`]*\$\{/.test(line)) {
+                findings.push({ file: rel, line: lineNum, type: 'insertAdjacentHTML interpolation' });
+            }
+        });
+    }
+
+    return findings;
+}
+
 function main() {
     const htmlResult = checkHtmlRefs();
     const featureResult = checkFeatureRegistry();
     const featurePageResult = checkFeaturePageTargets();
+    const unsafeHtmlFindings = checkUnsafeHtmlInterpolation();
 
     console.log('=== Project Health Check ===');
     console.log(`HTML files scanned: ${htmlResult.htmlFilesCount}`);
@@ -160,6 +189,8 @@ function main() {
     console.log(`- Registry IDs missing in lab page: ${featureResult.missingInLabIds.length}`);
     console.log(`- Feature pages referenced in lab.js: ${featurePageResult.referenced}`);
     console.log(`- Missing referenced feature pages: ${featurePageResult.missingPages.length}`);
+    console.log(`\nSecurity checks:`);
+    console.log(`- Unsafe HTML interpolation findings: ${unsafeHtmlFindings.length}`);
 
     if (featureResult.unmatchedIds.length > 0) {
         for (const id of featureResult.unmatchedIds) {
@@ -181,11 +212,22 @@ function main() {
         }
     }
 
+    if (unsafeHtmlFindings.length > 0) {
+        console.log('  Unsafe interpolation detail (top 20):');
+        for (const item of unsafeHtmlFindings.slice(0, 20)) {
+            console.log(`  - ${item.file}:${item.line} (${item.type})`);
+        }
+        if (unsafeHtmlFindings.length > 20) {
+            console.log(`  ... and ${unsafeHtmlFindings.length - 20} more`);
+        }
+    }
+
     const hasError =
         htmlResult.missing.length > 0 ||
         featureResult.unmatchedIds.length > 0 ||
         featureResult.missingInLabIds.length > 0 ||
-        featurePageResult.missingPages.length > 0;
+        featurePageResult.missingPages.length > 0 ||
+        unsafeHtmlFindings.length > 0;
     if (hasError) {
         process.exitCode = 1;
         console.log('\nResult: FAILED');

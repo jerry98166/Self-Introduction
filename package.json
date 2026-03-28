@@ -4,6 +4,7 @@
   "private": true,
   "description": "Personal portfolio website with feature lab and Vue-enhanced navigation",
   "scripts": {
+    "setup-hooks": "node tools/setup-hooks.js",
     "health-check": "node tools/health-check.js"
   }
 }
