@@ -182,39 +182,75 @@ const FeatureLab = {
                 name: 'Base64 編碼解碼器',
                 description: '快速進行 Base64 編碼和解碼轉換',
                 status: 'ready',
-                launch: () => window.open('features/base64-converter.html', '_blank')
+                launch: () => openFeaturePage('base64-converter.html')
             },
             'markdown-preview': {
                 name: 'Markdown 編輯器',
                 description: '即時預覽的 Markdown 編輯器',
                 status: 'ready',
-                launch: () => window.open('features/markdown-preview.html', '_blank')
+                launch: () => openFeaturePage('markdown-preview.html')
             },
             'color-picker': {
                 name: '調色盤工具',
                 description: 'HEX/RGB 顏色轉換和調色盤',
                 status: 'ready',
-                launch: () => window.open('features/color-picker.html', '_blank')
+                launch: () => openFeaturePage('color-picker.html')
             },
             'qrcode-generator': {
                 name: 'QR Code 生成器',
                 description: '生成任何文字或網址的 QR Code',
                 status: 'ready',
-                launch: () => window.open('features/qrcode-generator.html', '_blank')
+                launch: () => openFeaturePage('qrcode-generator.html')
             },
             'unit-converter': {
                 name: '單位轉換器',
                 description: '長度、重量、溫度、資料大小轉換',
                 status: 'ready',
-                launch: () => window.open('features/unit-converter.html', '_blank')
+                launch: () => openFeaturePage('unit-converter.html')
             },
             'hash-calculator': {
                 name: '雜湊值計算器',
                 description: '計算 MD5、SHA-1、SHA-256 雜湊值',
                 status: 'ready',
-                launch: () => window.open('features/hash-calculator.html', '_blank')
+                launch: () => openFeaturePage('hash-calculator.html')
             }
         };
+
+        const plannedFeatures = {
+            'ai-navigation': { name: 'AI 智能導覽', description: 'AI 根據訪客行為推薦最適合的內容路徑', status: 'beta' },
+            'emotion-analysis': { name: '情緒分析儀表板', description: '分析互動訊息中的情緒趨勢並視覺化', status: 'beta' },
+            'auto-summary': { name: 'AI 自動摘要', description: '將頁面內容轉換為快速摘要與重點清單', status: 'beta' },
+            'face-interaction': { name: '人臉互動系統', description: '透過鏡頭偵測訪客表情並給予互動回饋', status: 'beta' },
+            'code-review': { name: '程式碼智能審查', description: '自動檢查程式碼品質並提供改善建議', status: 'beta' },
+            'encrypted-message': { name: '加密留言板', description: '提供端對端加密留言與安全分享機制', status: 'beta' },
+            'packet-visualization': { name: '封包視覺化', description: '將請求流量與資料交換轉為互動圖表', status: 'beta' },
+            'skill-battle': { name: '技能對戰模擬', description: '用互動對戰方式呈現技能樹與等級成長', status: 'beta' },
+            'multiplayer-canvas': { name: '多人協作畫布', description: '多人即時繪圖與訊息同步互動', status: 'beta' },
+            'time-capsule': { name: '時間膠囊', description: '記錄里程碑並在指定時間解鎖回顧內容', status: 'beta' },
+            'learning-heatmap': { name: '學習熱力圖', description: '追蹤學習主題投入時間與進度熱點', status: 'beta' },
+            'skill-growth': { name: '技能成長曲線', description: '以圖表呈現技能成熟度與成長速度', status: 'beta' },
+            'usage-heatmap': { name: '網站使用熱力圖', description: '可視化訪客互動區域與點擊分布', status: 'beta' },
+            'wakatime-dashboard': { name: 'WakaTime 儀表板', description: '整合開發時間分布與語言統計', status: 'beta' },
+            'live-chat': { name: '即時聊天室', description: '訪客與管理者的即時訊息互動模組', status: 'beta' },
+            'business-card': { name: '電子商務名片', description: '可互動的商品化名片與服務入口', status: 'beta' },
+            'code-collab': { name: '程式碼共編', description: '線上多人共同編輯與即時預覽環境', status: 'beta' },
+            'version-museum': { name: '網站版本博物館', description: '展示不同版本的演進與設計差異', status: 'beta' },
+            'ar-card': { name: 'AR 名片', description: '結合擴增實境的互動式個人名片', status: 'beta' },
+            'eye-tracking': { name: '眼動追蹤', description: '偵測視線焦點並優化使用者體驗', status: 'beta' },
+            'quantum-art': { name: '量子亂數藝術', description: '利用亂數種子產生生成式視覺作品', status: 'beta' },
+            'digital-twin': { name: '數位雙生', description: '建立個人技術能力與職涯的動態映射', status: 'coming' },
+            'push-notification': { name: '推播通知', description: '訂閱站內通知並即時接收更新', status: 'beta' },
+            'premium-content': { name: '付費內容解鎖', description: '分級內容權限與訂閱解鎖流程', status: 'beta' },
+            'booking-system': { name: '預約系統', description: '提供會議或諮詢時段預約流程', status: 'beta' },
+            'dynamic-pricing': { name: '動態定價名片', description: '依服務組合動態計算估價與方案', status: 'beta' }
+        };
+
+        Object.entries(plannedFeatures).forEach(([id, feature]) => {
+            this.features[id] = {
+                ...feature,
+                launch: () => this.launchPlannedFeature(id)
+            };
+        });
     },
     
     updateStats() {
@@ -228,6 +264,14 @@ const FeatureLab = {
     }
 };
 
+function getFeaturesBasePath() {
+    return window.location.pathname.includes('/pages/') ? '../features/' : 'features/';
+}
+
+function openFeaturePage(fileName) {
+    window.open(getFeaturesBasePath() + fileName, '_blank');
+}
+
 // 開啟功能模態框
 function openFeature(featureId) {
     const feature = FeatureLab.features[featureId];
@@ -235,6 +279,10 @@ function openFeature(featureId) {
         alert('此功能正在開發中...');
         return;
     }
+
+    const statusLabel = feature.status === 'ready' ? '✓ 已就緒' : (feature.status === 'beta' ? '⚠ 測試中' : '🚧 開發中');
+    const statusColor = feature.status === 'ready' ? '#10b981' : (feature.status === 'beta' ? '#f59e0b' : '#6b7280');
+    const actionLabel = feature.status === 'ready' ? '啟動功能' : '查看規劃';
     
     const modal = document.getElementById('feature-modal');
     const modalBody = document.getElementById('modal-body');
@@ -244,12 +292,12 @@ function openFeature(featureId) {
         <p style="color: #6b7280; margin: 1rem 0; line-height: 1.8;">${feature.description}</p>
         <div style="background: #f3f4f6; padding: 1rem; border-radius: 10px; margin: 1rem 0;">
             <strong>狀態：</strong> 
-            <span style="color: ${feature.status === 'ready' ? '#10b981' : '#f59e0b'};">
-                ${feature.status === 'ready' ? '✓ 已就緒' : '⚠ 測試中'}
+            <span style="color: ${statusColor};">
+                ${statusLabel}
             </span>
         </div>
         <button class="launch-btn" onclick="FeatureLab.features['${featureId}'].launch()">
-            🚀 啟動功能
+            🚀 ${actionLabel}
         </button>
     `;
     
@@ -275,143 +323,151 @@ document.addEventListener('click', (e) => {
 
 // AI 面試模擬器
 FeatureLab.launchAIInterview = function() {
-    window.open('features/ai-interview.html', '_blank');
+    openFeaturePage('ai-interview.html');
 };
 
 // 語音對話助理
 FeatureLab.launchVoiceAssistant = function() {
-    window.open('features/voice-assistant.html', '_blank');
+    openFeaturePage('voice-assistant.html');
 };
 
 // 手勢辨識控制
 FeatureLab.launchGestureControl = function() {
-    window.open('features/gesture-control.html', '_blank');
+    openFeaturePage('gesture-control.html');
 };
 
 // CTF 關卡系統
 FeatureLab.launchCTF = function() {
-    window.open('features/ctf-challenges.html', '_blank');
+    openFeaturePage('ctf-challenges.html');
 };
 
 // 數位足跡展示
 FeatureLab.launchDigitalFootprint = function() {
-    window.open('features/digital-footprint.html', '_blank');
+    openFeaturePage('digital-footprint.html');
 };
 
 // RPG 角色卡
 FeatureLab.launchRPGCard = function() {
-    window.open('features/rpg-card.html', '_blank');
+    openFeaturePage('rpg-card.html');
 };
 
 // 網站尋寶遊戲
 FeatureLab.launchTreasureHunt = function() {
-    window.open('features/treasure-hunt.html', '_blank');
+    openFeaturePage('treasure-hunt.html');
 };
 
 // GitHub 3D 貢獻圖
 FeatureLab.launchGitHub3D = function() {
-    window.open('features/contribution-3d.html', '_blank');
+    openFeaturePage('contribution-3d.html');
 };
 
 // 全球訪客地圖
 FeatureLab.launchVisitorGlobe = function() {
-    window.open('features/visitor-map.html', '_blank');
+    openFeaturePage('visitor-map.html');
 };
 
 
 // WebGL 著色器
 FeatureLab.launchWebGLShader = function() {
-    window.open('features/shader-art.html', '_blank');
+    openFeaturePage('shader-art.html');
 };
 
 // 動態天氣主題
 FeatureLab.launchWeatherTheme = function() {
-    window.open('features/weather-theme.html', '_blank');
+    openFeaturePage('weather-theme.html');
 };
 
 // 音樂視覺化
 FeatureLab.launchMusicVisualizer = function() {
-    window.open('features/music-visualizer.html', '_blank');
+    openFeaturePage('music-visualizer.html');
 };
 
 // 程式碼編輯器
 FeatureLab.launchCodeEditor = function() {
-    window.open('features/code-editor.html', '_blank');
+    openFeaturePage('code-editor.html');
 };
 
 // 密碼強度測試
 FeatureLab.launchPasswordStrength = function() {
-    window.open('features/password-strength.html', '_blank');
+    openFeaturePage('password-strength.html');
 };
 
 // 程式碼解謎
 FeatureLab.launchCodePuzzle = function() {
-    window.open('features/code-puzzle.html', '_blank');
+    openFeaturePage('code-puzzle.html');
 };
 
 // API 測試工具
 FeatureLab.launchAPITester = function() {
-    window.open('features/api-tester.html', '_blank');
+    openFeaturePage('api-tester.html');
 };
 
 // 正則測試器
 FeatureLab.launchRegexTester = function() {
-    window.open('features/regex-tester.html', '_blank');
+    openFeaturePage('regex-tester.html');
 };
 
 // JSON 格式化
 FeatureLab.launchJSONFormatter = function() {
-    window.open('features/json-formatter.html', '_blank');
+    openFeaturePage('json-formatter.html');
 };
 
 // 時區轉換
 FeatureLab.launchTimezoneConverter = function() {
-    window.open('features/timezone-converter.html', '_blank');
+    openFeaturePage('timezone-converter.html');
 };
 
 // 打磚塊遊戲
 FeatureLab.launchBreakoutGame = function() {
-    window.open('features/breakout-game.html', '_blank');
+    openFeaturePage('breakout-game.html');
 };
 
 // 蜜罐系統
 FeatureLab.launchHoneypot = function() {
-    window.open('features/honeypot.html', '_blank');
+    openFeaturePage('honeypot.html');
 };
 
 // 假藍屏
 FeatureLab.launchFakeBSOD = function() {
-    window.open('features/fake-bsod.html', '_blank');
+    openFeaturePage('fake-bsod.html');
 };
 
 // 滑鼠軌跡藝術
 FeatureLab.launchMouseArt = function() {
-    window.open('features/mouse-art.html', '_blank');
+    openFeaturePage('mouse-art.html');
 };
 
 // X光模式
 FeatureLab.launchXRayMode = function() {
-    window.open('features/xray-mode.html', '_blank');
+    openFeaturePage('xray-mode.html');
 };
 
 // 語音合成
 FeatureLab.launchVoiceSynthesis = function() {
-    window.open('features/voice-synthesis.html', '_blank');
+    openFeaturePage('voice-synthesis.html');
 };
 
 // PWA
 FeatureLab.launchPWA = function() {
-    window.open('features/pwa-info.html', '_blank');
+    openFeaturePage('pwa-info.html');
 };
 
 // 震動反饋
 FeatureLab.launchHapticFeedback = function() {
-    window.open('features/haptic-feedback.html', '_blank');
+    openFeaturePage('haptic-feedback.html');
 };
 
 // 推薦信牆
 FeatureLab.launchRecommendationWall = function() {
-    window.open('features/recommendation-wall.html', '_blank');
+    openFeaturePage('recommendation-wall.html');
+};
+
+FeatureLab.launchPlannedFeature = function(featureId) {
+    const feature = this.features[featureId];
+    if (!feature) return;
+
+    const statusText = feature.status === 'coming' ? '開發中' : '測試中';
+    alert(`${feature.name} 目前為${statusText}階段，已納入後續開發排程。`);
 };
 
 // 初始化

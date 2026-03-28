@@ -142,6 +142,23 @@ python -m SimpleHTTPServer 8000
 2. 功能实验室：点击导航栏的 "🧪 功能实验室" 或直接访问 `lab.html`
 3. 管理后台：点击导航栏的 "⚙️ 管理后台" 或直接访问 `admin.html`
 
+### 4. 功能健康检查（推荐）
+每次修改后，建议运行一次健康检查脚本，自动验证：
+- HTML 本地链接/资源是否存在
+- 功能实验室条目是否与功能注册表一致
+
+```bash
+node tools/health-check.js
+```
+
+或使用 npm script：
+
+```bash
+npm run health-check
+```
+
+输出 `Result: PASSED` 代表目前核心链接与功能映射正常。
+
 ## 🛠️ 技术栈
 
 ### 前端框架
@@ -262,7 +279,7 @@ MIT License - 自由使用和修改
 
 **高孟麟**
 - 网站: [Portfolio](https://your-website.com)
-- Email: your-email@example.com
+- Email: 11028201@cycu.org.tw
 - GitHub: [@yourusername](https://github.com/yourusername)
 
 ---

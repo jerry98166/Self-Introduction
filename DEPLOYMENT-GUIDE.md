@@ -32,10 +32,10 @@ find . -type f \( -name "*.html" -o -name "*.xml" -o -name "*.txt" \) -exec sed 
 
 ### 3. 電子郵件
 **位置**: `index.html`、`privacy.html`  
-**替換**: `your-email@example.com` → 您的電子郵件
+**替換**: `11028201@cycu.org.tw` → 您的電子郵件
 
 ```bash
-sed -i '' 's/your-email@example.com/您的真實郵箱@gmail.com/g' index.html privacy.html
+sed -i '' 's/11028201@cycu.org.tw/11028201@cycu.org.tw/g' index.html privacy.html
 ```
 
 ---
@@ -48,7 +48,7 @@ sed -i '' 's/your-email@example.com/您的真實郵箱@gmail.com/g' index.html p
 <a href="https://github.com/您的用戶名" class="social-link" aria-label="GitHub">
 <a href="https://linkedin.com/in/您的用戶名" class="social-link" aria-label="LinkedIn">
 <a href="https://twitter.com/您的用戶名" class="social-link" aria-label="Twitter">
-<a href="mailto:您的郵箱@example.com" class="social-link" aria-label="Email">
+<a href="mailto:11028201@cycu.org.tw" class="social-link" aria-label="Email">
 ```
 
 ---

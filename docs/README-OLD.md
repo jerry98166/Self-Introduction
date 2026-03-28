@@ -498,7 +498,7 @@ A: 先在前台使用各項功能產生資料，再到後台查看
 ## 📧 聯絡
 
 如有問題，請透過以下方式聯繫：
-- Email: example@email.com
+- Email: 11028201@cycu.org.tw
 - GitHub: [您的 GitHub]
 
 ---

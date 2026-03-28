@@ -3,12 +3,220 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>打字速度測試 - 高孟麟 | 全端工程師</title>
-    <meta name="description" content="測試您的打字速度和準確度！">
+    <title>2048 與數獨遊戲 - 高孟麟 | 全端工程師</title>
+    <meta name="description" content="遊玩 2048 與數獨，並可自由切換簡單、中等、困難難度。">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
     <link rel="icon" type="image/png" href="../favicon-32x32.png">
     <link rel="stylesheet" href="../assets/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        .games-shell {
+            background: rgba(255, 255, 255, 0.82);
+            border: 1px solid rgba(99, 102, 241, 0.18);
+            border-radius: 24px;
+            padding: 1.25rem;
+            backdrop-filter: blur(14px);
+        }
+
+        .game-tabs {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(120px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .game-tab {
+            border: 0;
+            border-radius: 12px;
+            padding: 0.85rem 1rem;
+            font-weight: 700;
+            color: #334155;
+            background: #e2e8f0;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        .game-tab.active {
+            color: #fff;
+            background: linear-gradient(135deg, #2563eb, #0ea5e9);
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.25);
+        }
+
+        .game-tab:hover {
+            transform: translateY(-2px);
+        }
+
+        .game-panel {
+            display: none;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(148, 163, 184, 0.24);
+            border-radius: 18px;
+            padding: 1rem;
+        }
+
+        .game-panel.active {
+            display: block;
+        }
+
+        .panel-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .difficulty-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .difficulty-btn {
+            border: 1px solid rgba(148, 163, 184, 0.45);
+            border-radius: 999px;
+            padding: 0.4rem 0.8rem;
+            background: #f8fafc;
+            color: #334155;
+            font-size: 0.86rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .difficulty-btn.active {
+            border-color: #2563eb;
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .mini-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .mini-stat {
+            background: #eff6ff;
+            color: #1e3a8a;
+            border-radius: 10px;
+            padding: 0.45rem 0.65rem;
+            font-size: 0.86rem;
+            font-weight: 600;
+        }
+
+        .board-2048 {
+            --cell-size: min(78px, 20vw);
+            display: grid;
+            grid-template-columns: repeat(4, var(--cell-size));
+            gap: 8px;
+            background: #94a3b8;
+            padding: 8px;
+            border-radius: 14px;
+            width: fit-content;
+            margin: 0 auto;
+        }
+
+        .tile {
+            width: var(--cell-size);
+            height: var(--cell-size);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: clamp(1rem, 2.5vw, 1.6rem);
+            color: #334155;
+            background: rgba(255, 255, 255, 0.45);
+            user-select: none;
+        }
+
+        .tile.v2 { background: #fef3c7; }
+        .tile.v4 { background: #fde68a; }
+        .tile.v8 { background: #fdba74; color: #111827; }
+        .tile.v16 { background: #fb923c; color: #fff; }
+        .tile.v32 { background: #f97316; color: #fff; }
+        .tile.v64 { background: #ea580c; color: #fff; }
+        .tile.v128 { background: #38bdf8; color: #fff; }
+        .tile.v256 { background: #0ea5e9; color: #fff; }
+        .tile.v512 { background: #0284c7; color: #fff; }
+        .tile.v1024 { background: #0369a1; color: #fff; }
+        .tile.v2048 { background: #1d4ed8; color: #fff; }
+
+        .helper-text {
+            color: #475569;
+            margin-top: 0.85rem;
+            font-size: 0.92rem;
+        }
+
+        .sudoku-board {
+            display: grid;
+            grid-template-columns: repeat(9, minmax(0, 1fr));
+            border: 2px solid #0f172a;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .sudoku-cell {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border: 1px solid #cbd5e1;
+            text-align: center;
+            font-size: clamp(0.9rem, 2.4vw, 1.15rem);
+            font-weight: 700;
+            color: #1f2937;
+            background: #fff;
+            outline: none;
+        }
+
+        .sudoku-cell.fixed {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        .sudoku-cell.error {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .sudoku-cell:nth-child(3n) {
+            border-right: 2px solid #0f172a;
+        }
+
+        .sudoku-cell:nth-child(9n) {
+            border-right: 1px solid #cbd5e1;
+        }
+
+        .sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+        .sudoku-cell:nth-child(n + 46):nth-child(-n + 54) {
+            border-bottom: 2px solid #0f172a;
+        }
+
+        .sudoku-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-top: 1rem;
+        }
+
+        .status-line {
+            margin-top: 0.7rem;
+            color: #334155;
+            font-weight: 600;
+        }
+
+        @media (max-width: 680px) {
+            .games-shell {
+                padding: 0.95rem;
+            }
+
+            .panel-toolbar {
+                align-items: flex-start;
+            }
+        }
+    </style>
 </head>
 <body>
     <div id="preloader" class="preloader">
@@ -83,87 +291,61 @@
         </div>
     </nav>
 
-    <!-- 打字速度測試遊戲 -->
+    <!-- 遊戲中心 -->
     <section id="typing-game" class="typing-game section">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title" data-zh="打字速度測試" data-en="Typing Speed Test">打字速度測試</h2>
+                <h2 class="section-title" data-zh="益智小遊戲" data-en="Mini Games Hub">益智小遊戲</h2>
                 <div class="section-divider"></div>
-                <p class="section-description" data-zh="測試您的打字速度和準確度！" data-en="Test your typing speed and accuracy!">測試您的打字速度和準確度！</p>
+                <p class="section-description" data-zh="挑戰 2048 與數獨，兩款遊戲都可自由切換難度。" data-en="Play 2048 and Sudoku with selectable difficulty.">挑戰 2048 與數獨，兩款遊戲都可自由切換難度。</p>
             </div>
-            <div class="typing-game-content glass-card hover-glow">
-                <!-- 難度選擇器 -->
-                <div class="difficulty-selector">
-                    <button class="diff-btn active" data-time="60" data-mode="easy">🟢 簡單 (60秒)</button>
-                    <button class="diff-btn" data-time="30" data-mode="medium">🟡 中等 (30秒)</button>
-                    <button class="diff-btn" data-time="15" data-mode="hard">🔴 困難 (15秒)</button>
+            <div class="games-shell hover-glow">
+                <div class="game-tabs" id="game-tabs">
+                    <button class="game-tab active" data-target="game-2048">2048</button>
+                    <button class="game-tab" data-target="game-sudoku">數獨 Sudoku</button>
                 </div>
 
-                <!-- 個人最佳紀錄 -->
-                <div class="best-score-display">
-                    <div class="best-score-item">
-                        <div class="label">最佳 WPM</div>
-                        <div class="value" id="best-wpm-display">—</div>
+                <div id="game-2048" class="game-panel active">
+                    <div class="panel-toolbar">
+                        <div class="difficulty-group" id="d2048-group">
+                            <button class="difficulty-btn active" data-level="easy">簡單</button>
+                            <button class="difficulty-btn" data-level="medium">中等</button>
+                            <button class="difficulty-btn" data-level="hard">困難</button>
+                        </div>
+                        <div class="mini-stats">
+                            <div class="mini-stat">分數: <span id="score-2048">0</span></div>
+                            <div class="mini-stat">最高: <span id="best-2048">0</span></div>
+                        </div>
                     </div>
-                    <div class="best-score-item">
-                        <div class="label">最高準確度</div>
-                        <div class="value" id="best-accuracy-display">—</div>
+
+                    <div class="board-2048" id="board-2048"></div>
+
+                    <div class="sudoku-actions">
+                        <button class="btn btn-primary" id="restart-2048-btn"><i class="fas fa-redo"></i> 重新開始</button>
                     </div>
-                    <div class="best-score-item">
-                        <div class="label">挑戰次數</div>
-                        <div class="value" id="play-count-display">0</div>
-                    </div>
-                </div>
-                <div class="game-stats">
-                    <div class="stat-box">
-                        <div class="stat-label" data-zh="時間" data-en="Time">時間</div>
-                        <div class="stat-value" id="game-time">60</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-label" data-zh="WPM" data-en="WPM">WPM</div>
-                        <div class="stat-value" id="game-wpm">0</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-label" data-zh="準確度" data-en="Accuracy">準確度</div>
-                        <div class="stat-value" id="game-accuracy">100%</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-label" data-zh="錯誤" data-en="Errors">錯誤</div>
-                        <div class="stat-value" id="game-errors">0</div>
-                    </div>
-                </div>
-                <div class="game-area">
-                    <div class="text-display" id="text-display"></div>
-                    <textarea class="text-input" id="text-input" placeholder="點擊這裡開始打字..." disabled></textarea>
-                </div>
-                <div class="game-controls">
-                    <button class="btn btn-primary" id="start-game-btn" data-zh="開始遊戲" data-en="Start Game">
-                        <i class="fas fa-play"></i> 開始遊戲
-                    </button>
-                    <button class="btn btn-secondary" id="reset-game-btn" data-zh="重新開始" data-en="Reset">
-                        <i class="fas fa-redo"></i> 重新開始
-                    </button>
-                </div>
-                <div class="game-results" id="game-results" style="display: none;">
-                    <h3 data-zh="遊戲結束！" data-en="Game Over!">遊戲結束！</h3>
-                    <div class="results-content">
-                        <p><span data-zh="您的打字速度：" data-en="Your WPM: ">您的打字速度：</span><strong id="final-wpm">0</strong> WPM</p>
-                        <p><span data-zh="準確度：" data-en="Accuracy: ">準確度：</span><strong id="final-accuracy">0</strong>%</p>
-                        <p><span data-zh="總錯誤數：" data-en="Total Errors: ">總錯誤數：</span><strong id="final-errors">0</strong></p>
-                    </div>
+                    <p class="helper-text">操作方式：鍵盤方向鍵或 WASD。</p>
+                    <p class="status-line" id="status-2048">挑戰開始！合併方塊直到 2048。</p>
                 </div>
 
-                <!-- 打字小技巧 -->
-                <div class="tips-card">
-                    <h4><i class="fas fa-lightbulb"></i> 提升打字速度的技巧</h4>
-                    <ul class="tips-list">
-                        <li>保持正確的手部姿勢，雙手放在 Home Row（ASDF / JKL;）</li>
-                        <li>不要低頭看鍵盤，練習盲打是提速的關鍵</li>
-                        <li>放鬆肩膀和手腕，避免長時間緊繃造成疲勞</li>
-                        <li>專注於準確度，速度會隨練習自然提升</li>
-                        <li>每天練習 10-15 分鐘比一次練習 2 小時更有效</li>
-                        <li>使用所有手指，均衡分配每個按鍵的責任</li>
-                    </ul>
+                <div id="game-sudoku" class="game-panel">
+                    <div class="panel-toolbar">
+                        <div class="difficulty-group" id="sudoku-level-group">
+                            <button class="difficulty-btn active" data-level="easy">簡單</button>
+                            <button class="difficulty-btn" data-level="medium">中等</button>
+                            <button class="difficulty-btn" data-level="hard">困難</button>
+                        </div>
+                        <div class="mini-stats">
+                            <div class="mini-stat">已填入: <span id="sudoku-progress">0</span>/81</div>
+                        </div>
+                    </div>
+
+                    <div class="sudoku-board" id="sudoku-board"></div>
+                    <div class="sudoku-actions">
+                        <button class="btn btn-primary" id="new-sudoku-btn"><i class="fas fa-plus"></i> 新局</button>
+                        <button class="btn btn-secondary" id="check-sudoku-btn"><i class="fas fa-check"></i> 檢查</button>
+                        <button class="btn btn-secondary" id="solve-sudoku-btn"><i class="fas fa-wand-magic-sparkles"></i> 顯示答案</button>
+                    </div>
+                    <p class="status-line" id="status-sudoku">選擇難度並開始解題。</p>
                 </div>
             </div>
         </div>
@@ -228,49 +410,343 @@
         </div>
     </footer>
 
+    <script defer src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+    <script defer src="../assets/js/vue-subpages.js"></script>
     <script src="../assets/js/script.js"></script>
     <script>
-        // ── Difficulty selector ──────────────────────────────────────────────
-        const diffBtns = document.querySelectorAll('.diff-btn');
-        diffBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                diffBtns.forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                const newTime = parseInt(this.dataset.time);
-                // Update the visible timer if game not started
-                const gameTimeEl = document.getElementById('game-time');
-                if (gameTimeEl) gameTimeEl.textContent = newTime;
-                // Store for game to pick up
-                window.selectedGameTime = newTime;
+        (function () {
+            const tabs = document.querySelectorAll('.game-tab');
+            const panels = document.querySelectorAll('.game-panel');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    panels.forEach(p => p.classList.remove('active'));
+                    tab.classList.add('active');
+                    const target = document.getElementById(tab.dataset.target);
+                    if (target) target.classList.add('active');
+                });
             });
-        });
-        window.selectedGameTime = 60; // default
 
-        // ── Best score tracker ───────────────────────────────────────────────
-        function updateBestScoreDisplay() {
-            const best = JSON.parse(localStorage.getItem('typingBest') || '{}');
-            const count = parseInt(localStorage.getItem('typingPlayCount') || '0');
-            document.getElementById('best-wpm-display').textContent = best.wpm || '—';
-            document.getElementById('best-accuracy-display').textContent = best.acc ? best.acc + '%' : '—';
-            document.getElementById('play-count-display').textContent = count;
-        }
-        updateBestScoreDisplay();
+            // 2048
+            const boardEl = document.getElementById('board-2048');
+            const scoreEl = document.getElementById('score-2048');
+            const bestEl = document.getElementById('best-2048');
+            const status2048 = document.getElementById('status-2048');
+            const restart2048Btn = document.getElementById('restart-2048-btn');
+            const d2048Btns = document.querySelectorAll('#d2048-group .difficulty-btn');
 
-        // Hook into results to save best score
-        const orig = window.showResults;
-        document.addEventListener('gameOver', function(e) {
-            const wpm = parseInt(document.getElementById('final-wpm').textContent);
-            const acc = parseInt(document.getElementById('final-accuracy').textContent);
-            const best = JSON.parse(localStorage.getItem('typingBest') || '{}');
-            if (!best.wpm || wpm > best.wpm) {
-                best.wpm = wpm;
-                best.acc = acc;
-                localStorage.setItem('typingBest', JSON.stringify(best));
+            const settings2048 = {
+                easy: { spawn4Chance: 0.05, startTiles: 2 },
+                medium: { spawn4Chance: 0.1, startTiles: 2 },
+                hard: { spawn4Chance: 0.2, startTiles: 3 }
+            };
+
+            let level2048 = 'easy';
+            let grid = [];
+            let score = 0;
+            let hasWon = false;
+
+            function getBest2048() {
+                return parseInt(localStorage.getItem('best2048') || '0', 10);
             }
-            const count = parseInt(localStorage.getItem('typingPlayCount') || '0');
-            localStorage.setItem('typingPlayCount', count + 1);
-            updateBestScoreDisplay();
-        });
+
+            function setBest2048(val) {
+                localStorage.setItem('best2048', String(val));
+            }
+
+            function init2048() {
+                grid = Array.from({ length: 4 }, () => Array(4).fill(0));
+                score = 0;
+                hasWon = false;
+                for (let i = 0; i < settings2048[level2048].startTiles; i++) addRandomTile();
+                render2048();
+                status2048.textContent = '挑戰開始！合併方塊直到 2048。';
+            }
+
+            function addRandomTile() {
+                const empty = [];
+                for (let r = 0; r < 4; r++) {
+                    for (let c = 0; c < 4; c++) {
+                        if (grid[r][c] === 0) empty.push([r, c]);
+                    }
+                }
+                if (!empty.length) return;
+                const [r, c] = empty[Math.floor(Math.random() * empty.length)];
+                grid[r][c] = Math.random() < settings2048[level2048].spawn4Chance ? 4 : 2;
+            }
+
+            function slideAndMerge(line) {
+                const arr = line.filter(v => v !== 0);
+                for (let i = 0; i < arr.length - 1; i++) {
+                    if (arr[i] === arr[i + 1]) {
+                        arr[i] *= 2;
+                        score += arr[i];
+                        arr[i + 1] = 0;
+                    }
+                }
+                const merged = arr.filter(v => v !== 0);
+                while (merged.length < 4) merged.push(0);
+                return merged;
+            }
+
+            function move(direction) {
+                let moved = false;
+                const snapshot = JSON.stringify(grid);
+
+                if (direction === 'left' || direction === 'right') {
+                    for (let r = 0; r < 4; r++) {
+                        const original = [...grid[r]];
+                        const line = direction === 'left' ? original : [...original].reverse();
+                        const next = slideAndMerge(line);
+                        grid[r] = direction === 'left' ? next : next.reverse();
+                    }
+                } else {
+                    for (let c = 0; c < 4; c++) {
+                        const col = [];
+                        for (let r = 0; r < 4; r++) col.push(grid[r][c]);
+                        const line = direction === 'up' ? col : [...col].reverse();
+                        const next = slideAndMerge(line);
+                        const finalCol = direction === 'up' ? next : next.reverse();
+                        for (let r = 0; r < 4; r++) grid[r][c] = finalCol[r];
+                    }
+                }
+
+                moved = snapshot !== JSON.stringify(grid);
+                if (!moved) return;
+
+                addRandomTile();
+                render2048();
+                evaluate2048();
+            }
+
+            function hasMoves() {
+                for (let r = 0; r < 4; r++) {
+                    for (let c = 0; c < 4; c++) {
+                        if (grid[r][c] === 0) return true;
+                        if (c < 3 && grid[r][c] === grid[r][c + 1]) return true;
+                        if (r < 3 && grid[r][c] === grid[r + 1][c]) return true;
+                    }
+                }
+                return false;
+            }
+
+            function evaluate2048() {
+                const max = Math.max(...grid.flat());
+                if (max >= 2048 && !hasWon) {
+                    hasWon = true;
+                    status2048.textContent = '恭喜！你已達成 2048！';
+                }
+                if (!hasMoves()) {
+                    status2048.textContent = '遊戲結束，沒有可移動的方塊了。';
+                }
+            }
+
+            function render2048() {
+                boardEl.innerHTML = '';
+                grid.flat().forEach(val => {
+                    const tile = document.createElement('div');
+                    tile.className = `tile ${val ? `v${val}` : ''}`;
+                    tile.textContent = val || '';
+                    boardEl.appendChild(tile);
+                });
+
+                scoreEl.textContent = String(score);
+                const best = Math.max(getBest2048(), score);
+                setBest2048(best);
+                bestEl.textContent = String(best);
+            }
+
+            d2048Btns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    d2048Btns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    level2048 = btn.dataset.level;
+                    init2048();
+                });
+            });
+
+            restart2048Btn.addEventListener('click', init2048);
+
+            document.addEventListener('keydown', (e) => {
+                if (!document.getElementById('game-2048').classList.contains('active')) return;
+                const map = {
+                    ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right',
+                    w: 'up', s: 'down', a: 'left', d: 'right',
+                    W: 'up', S: 'down', A: 'left', D: 'right'
+                };
+                const dir = map[e.key];
+                if (!dir) return;
+                e.preventDefault();
+                move(dir);
+            });
+
+            // Sudoku
+            const boardSudoku = document.getElementById('sudoku-board');
+            const sudokuLevelBtns = document.querySelectorAll('#sudoku-level-group .difficulty-btn');
+            const sudokuProgress = document.getElementById('sudoku-progress');
+            const sudokuStatus = document.getElementById('status-sudoku');
+            const newSudokuBtn = document.getElementById('new-sudoku-btn');
+            const checkSudokuBtn = document.getElementById('check-sudoku-btn');
+            const solveSudokuBtn = document.getElementById('solve-sudoku-btn');
+
+            const removeCounts = { easy: 36, medium: 46, hard: 54 };
+            let sudokuLevel = 'easy';
+            let sudokuPuzzle = [];
+            let sudokuSolution = [];
+
+            function shuffle(arr) {
+                const a = [...arr];
+                for (let i = a.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [a[i], a[j]] = [a[j], a[i]];
+                }
+                return a;
+            }
+
+            function makeSolvedGrid() {
+                const base = [1,2,3,4,5,6,7,8,9];
+                const pattern = (r, c) => (r * 3 + Math.floor(r / 3) + c) % 9;
+                const rows = shuffle([0,1,2]).flatMap(g => shuffle([0,1,2]).map(r => g * 3 + r));
+                const cols = shuffle([0,1,2]).flatMap(g => shuffle([0,1,2]).map(c => g * 3 + c));
+                const nums = shuffle(base);
+                return rows.map(r => cols.map(c => nums[pattern(r, c)]));
+            }
+
+            function cloneGrid(src) {
+                return src.map(row => [...row]);
+            }
+
+            function makePuzzle(level) {
+                const solved = makeSolvedGrid();
+                const puzzle = cloneGrid(solved);
+                let remove = removeCounts[level];
+                while (remove > 0) {
+                    const r = Math.floor(Math.random() * 9);
+                    const c = Math.floor(Math.random() * 9);
+                    if (puzzle[r][c] !== 0) {
+                        puzzle[r][c] = 0;
+                        remove--;
+                    }
+                }
+                return { puzzle, solved };
+            }
+
+            function renderSudoku() {
+                boardSudoku.innerHTML = '';
+                for (let r = 0; r < 9; r++) {
+                    for (let c = 0; c < 9; c++) {
+                        const input = document.createElement('input');
+                        input.className = 'sudoku-cell';
+                        input.type = 'text';
+                        input.maxLength = 1;
+                        input.dataset.row = String(r);
+                        input.dataset.col = String(c);
+
+                        const val = sudokuPuzzle[r][c];
+                        if (val !== 0) {
+                            input.value = String(val);
+                            input.readOnly = true;
+                            input.classList.add('fixed');
+                        } else {
+                            input.addEventListener('input', (e) => {
+                                const clean = e.target.value.replace(/[^1-9]/g, '').slice(0, 1);
+                                e.target.value = clean;
+                                updateSudokuProgress();
+                            });
+                        }
+
+                        boardSudoku.appendChild(input);
+                    }
+                }
+                updateSudokuProgress();
+            }
+
+            function updateSudokuProgress() {
+                const cells = boardSudoku.querySelectorAll('.sudoku-cell');
+                let filled = 0;
+                cells.forEach(cell => {
+                    if (cell.value) filled++;
+                });
+                sudokuProgress.textContent = String(filled);
+            }
+
+            function readUserGrid() {
+                const result = Array.from({ length: 9 }, () => Array(9).fill(0));
+                const cells = boardSudoku.querySelectorAll('.sudoku-cell');
+                cells.forEach(cell => {
+                    const r = Number(cell.dataset.row);
+                    const c = Number(cell.dataset.col);
+                    result[r][c] = Number(cell.value) || 0;
+                    cell.classList.remove('error');
+                });
+                return result;
+            }
+
+            function checkSudoku() {
+                const current = readUserGrid();
+                let isComplete = true;
+                let hasError = false;
+
+                const cells = boardSudoku.querySelectorAll('.sudoku-cell');
+                cells.forEach(cell => {
+                    const r = Number(cell.dataset.row);
+                    const c = Number(cell.dataset.col);
+                    const v = Number(cell.value) || 0;
+                    if (v === 0) isComplete = false;
+                    if (v !== 0 && v !== sudokuSolution[r][c]) {
+                        hasError = true;
+                        cell.classList.add('error');
+                    }
+                });
+
+                if (hasError) {
+                    sudokuStatus.textContent = '目前有錯誤數字，紅色格請再檢查。';
+                } else if (isComplete) {
+                    sudokuStatus.textContent = '恭喜！你完成數獨了！';
+                } else {
+                    sudokuStatus.textContent = '目前沒有錯誤，繼續加油！';
+                }
+
+                return current;
+            }
+
+            function solveSudoku() {
+                const cells = boardSudoku.querySelectorAll('.sudoku-cell');
+                cells.forEach(cell => {
+                    const r = Number(cell.dataset.row);
+                    const c = Number(cell.dataset.col);
+                    cell.value = String(sudokuSolution[r][c]);
+                    cell.classList.remove('error');
+                });
+                updateSudokuProgress();
+                sudokuStatus.textContent = '已顯示答案。可按新局再挑戰一次。';
+            }
+
+            function newSudoku() {
+                const { puzzle, solved } = makePuzzle(sudokuLevel);
+                sudokuPuzzle = puzzle;
+                sudokuSolution = solved;
+                renderSudoku();
+                sudokuStatus.textContent = '新題目已產生，開始挑戰吧！';
+            }
+
+            sudokuLevelBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    sudokuLevelBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    sudokuLevel = btn.dataset.level;
+                    newSudoku();
+                });
+            });
+
+            newSudokuBtn.addEventListener('click', newSudoku);
+            checkSudokuBtn.addEventListener('click', checkSudoku);
+            solveSudokuBtn.addEventListener('click', solveSudoku);
+
+            init2048();
+            newSudoku();
+        })();
     </script>
 </body>
 </html>

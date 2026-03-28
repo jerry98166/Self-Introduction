@@ -1,0 +1,9 @@
+{
+  "name": "self-introduction",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Personal portfolio website with feature lab and Vue-enhanced navigation",
+  "scripts": {
+    "health-check": "node tools/health-check.js"
+  }
+}

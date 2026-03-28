@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Gao logo">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="56" height="56" rx="14" fill="url(#g)"/>
+  <path d="M16 46V18h6.8l9.2 13.2L41.2 18H48v28h-7.2V31.3L33 42.1h-2L23.2 31.3V46z" fill="#fff"/>
+  <circle cx="48.5" cy="15.5" r="4.5" fill="#fff"/>
+</svg>

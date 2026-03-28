@@ -215,7 +215,7 @@ Sitemap: 無 → 14+ 頁面
 ```
 □ Google Analytics ID (G-XXXXXXXXXX)
 □ 網域名稱 (https://yourwebsite.com)
-□ 電子郵件 (your-email@example.com)
+□ 電子郵件 (11028201@cycu.org.tw)
 □ Twitter 用戶名 (@yourusername)
 □ GitHub/LinkedIn/Twitter 連結
 □ 大學名稱（結構化資料中）

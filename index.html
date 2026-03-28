@@ -35,17 +35,18 @@
     <meta name="twitter:creator" content="@Jerry59877">
     
     <!-- ========== 安全性標頭 ========== -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://www.google-analytics.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://www.google-analytics.com https://translate.googleapis.com;">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <meta name="format-detection" content="telephone=no">
     
     <!-- ========== Favicon ========== -->
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="manifest" href="/site.webmanifest">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="manifest" href="site.webmanifest">
     <meta name="theme-color" content="#6366f1">
     <meta name="msapplication-TileColor" content="#6366f1">
     
@@ -107,6 +108,7 @@
     </script>
 </head>
 <body>
+    <div id="app">
     <!-- 加載畫面 -->
     <div id="preloader" class="preloader">
         <div class="preloader-content">
@@ -179,17 +181,14 @@
                     <span></span>
                 </button>
                 <ul class="nav-menu" id="nav-menu">
-                    <li><a href="#home" class="nav-link active" data-zh="首頁" data-en="Home">首頁</a></li>
-                    <li><a href="pages/about.html" class="nav-link" data-zh="關於我" data-en="About">關於我</a></li>
-                    <li><a href="pages/skills.html" class="nav-link" data-zh="技能" data-en="Skills">技能</a></li>
-                    <li><a href="pages/experience.html" class="nav-link" data-zh="經歷" data-en="Experience">經歷</a></li>
-                    <li><a href="pages/projects.html" class="nav-link" data-zh="作品集" data-en="Projects">作品集</a></li>
-                    <li><a href="pages/education.html" class="nav-link" data-zh="學歷" data-en="Education">學歷</a></li>
-                    <li><a href="pages/typing-game.html" class="nav-link" data-zh="打字遊戲" data-en="Typing Game">打字遊戲</a></li>
-                    <li><a href="pages/achievements.html" class="nav-link" data-zh="成就徽章" data-en="Achievements">成就徽章</a></li>
-                    <li><a href="pages/lab.html" class="nav-link nav-lab" data-zh="🧪 功能實驗室" data-en="🧪 Feature Lab">🧪 功能實驗室</a></li>
-                    <li><a href="pages/admin.html" class="nav-link nav-admin" data-zh="⚙️ 管理後台" data-en="⚙️ Admin Panel">⚙️ 管理後台</a></li>
-                    <li><a href="#contact" class="nav-link" data-zh="聯絡我" data-en="Contact">聯絡我</a></li>
+                    <li v-for="item in navLinks" :key="item.href">
+                        <a
+                            :href="item.href"
+                            :class="['nav-link', item.extraClass || '', item.active ? 'active' : '']"
+                            :data-zh="item.zh"
+                            :data-en="item.en"
+                        >{{ item.zh }}</a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -221,26 +220,16 @@
                         </a>
                     </div>
                     <div class="social-links">
-                        <a href="https://github.com/jerry98166" target="_blank" class="social-link" aria-label="GitHub">
-                            <i class="fab fa-github"></i>
-                        </a>
-                        <a href="https://www.linkedin.com/in/%E5%AD%9F%E9%BA%9F-%E9%AB%98-b88773191/" target="_blank" class="social-link" aria-label="LinkedIn">
-                            <i class="fab fa-linkedin"></i>
-                        </a>
-                        <a href="https://x.com/Jerry59877" target="_blank" class="social-link" aria-label="Twitter/X">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="https://www.youtube.com/@%E9%AB%98%E5%AD%9F%E9%BA%9F-u1b" target="_blank" class="social-link" aria-label="YouTube">
-                            <i class="fab fa-youtube"></i>
-                        </a>
-                        <a href="https://www.instagram.com/jerry98166/" target="_blank" class="social-link" aria-label="Instagram">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="https://www.facebook.com/allen.jerry.357827" target="_blank" class="social-link" aria-label="Facebook">
-                            <i class="fab fa-facebook"></i>
-                        </a>
-                        <a href="mailto:ycsimpson@gmail.com" class="social-link" aria-label="Email">
-                            <i class="fas fa-envelope"></i>
+                        <a
+                            v-for="link in heroSocialLinks"
+                            :key="link.href"
+                            :href="link.href"
+                            :target="link.external ? '_blank' : null"
+                            :rel="link.external ? 'noopener noreferrer' : null"
+                            class="social-link"
+                            :aria-label="link.label"
+                        >
+                            <i :class="link.icon"></i>
                         </a>
                     </div>
                     <!-- 訪客計數器和實時時鐘 -->
@@ -294,16 +283,7 @@
                             </div>
                             <div class="contact-text-info">
                                 <h4>Email</h4>
-                                <a href="mailto:ycsimpson@gmail.com">ycsimpson@gmail.com</a>
-                            </div>
-                        </div>
-                        <div class="contact-item">
-                            <div class="contact-icon">
-                                <i class="fas fa-phone"></i>
-                            </div>
-                            <div class="contact-text-info">
-                                <h4>電話</h4>
-                                <a href="tel:+886911588916">+886 911-588-916</a>
+                                <a href="mailto:11028201@cycu.org.tw">11028201@cycu.org.tw</a>
                             </div>
                         </div>
                         <div class="contact-item">
@@ -509,10 +489,9 @@
                 <div class="footer-section">
                     <h3 class="footer-title">快速連結</h3>
                     <ul class="footer-links">
-                        <li><a href="#home">首頁</a></li>
-                        <li><a href="#about">關於我</a></li>
-                        <li><a href="#skills">技能</a></li>
-                        <li><a href="#projects">作品集</a></li>
+                        <li v-for="link in footerQuickLinks" :key="link.href">
+                            <a :href="link.href">{{ link.text }}</a>
+                        </li>
                     </ul>
                 </div>
                 <div class="footer-section">
@@ -538,12 +517,15 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2026 高孟麟. All rights reserved.</p>
+                <p>&copy; {{ currentYear }} 高孟麟. All rights reserved.</p>
                 <p>Made with <i class="fas fa-heart"></i> and <i class="fas fa-coffee"></i></p>
             </div>
         </div>
     </footer>
 
+    </div>
+    <script defer src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+    <script defer src="assets/js/vue-app.js"></script>
     <script src="assets/js/script.js"></script>
 </body>
 </html>

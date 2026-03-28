@@ -248,8 +248,11 @@ function initNavigation() {
 // ========================================
 function initThemeToggle() {
     const themeToggle = document.getElementById('theme-toggle');
+    if (!themeToggle) return;
+
     const body = document.body;
     const icon = themeToggle.querySelector('i');
+    if (!icon) return;
     
     // 檢查本地儲存的主題設定
     const savedTheme = localStorage.getItem('theme') || 'light';
@@ -281,6 +284,7 @@ function initThemeToggle() {
 // ========================================
 function initBackToTop() {
     const backToTopBtn = document.getElementById('back-to-top');
+    if (!backToTopBtn) return;
     
     window.addEventListener('scroll', () => {
         if (window.scrollY > 300) {
@@ -303,13 +307,12 @@ function initBackToTop() {
 // ========================================
 function initTypingAnimation() {
     const typingText = document.querySelector('.typing-text');
-    const texts = [
-        '全端工程師',
-        '前端開發者',
-        'UI/UX 設計師',
-        '問題解決者',
-        '終身學習者'
-    ];
+    if (!typingText) return;
+
+    const textsByLanguage = {
+        zh: ['全端工程師', '前端開發者', 'UI/UX 設計師', '問題解決者', '終身學習者'],
+        en: ['Full-Stack Engineer', 'Frontend Developer', 'UI/UX Designer', 'Problem Solver', 'Lifelong Learner']
+    };
     
     let textIndex = 0;
     let charIndex = 0;
@@ -317,6 +320,7 @@ function initTypingAnimation() {
     let typingSpeed = 150;
     
     function type() {
+        const texts = textsByLanguage[currentLanguage] || textsByLanguage.zh;
         const currentText = texts[textIndex];
         
         if (isDeleting) {
@@ -417,7 +421,10 @@ function initProjectFilters() {
 // ========================================
 function initContactForm() {
     const form = document.getElementById('contact-form');
+    if (!form) return;
+
     const formMessage = document.querySelector('.form-message');
+    if (!formMessage) return;
     
     form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -703,7 +710,7 @@ function debounce(func, delay) {
 // ========================================
 console.log('%c👋 歡迎來到我的網站！', 'font-size: 20px; font-weight: bold; color: #6366f1;');
 console.log('%c如果你對這個網站的程式碼感興趣，歡迎與我聯繫！', 'font-size: 14px; color: #6b7280;');
-console.log('%c📧 example@email.com', 'font-size: 14px; color: #6366f1;');
+console.log('%c📧 11028201@cycu.org.tw', 'font-size: 14px; color: #6366f1;');
 
 // ========================================
 // 追蹤使用者互動（Google Analytics 等）
@@ -836,21 +843,175 @@ function initCursorFollower() {
 }
 
 // 語言切換功能
-let currentLanguage = 'zh';
+let currentLanguage = localStorage.getItem('language') || 'zh';
+const translationCache = JSON.parse(localStorage.getItem('translation-cache-v1') || '{}');
+const textNodeOriginalMap = new Map();
+const attrOriginalMap = new Map();
+
+function saveTranslationCache() {
+    localStorage.setItem('translation-cache-v1', JSON.stringify(translationCache));
+}
+
+function isTranslatableText(text) {
+    if (!text) return false;
+    const trimmed = text.trim();
+    if (!trimmed) return false;
+    // 只翻譯含中文的內容，避免覆蓋既有英文與數字內容
+    return /[\u3400-\u9FFF]/.test(trimmed);
+}
+
+function parseTranslateResponse(data) {
+    if (!Array.isArray(data) || !Array.isArray(data[0])) return null;
+    return data[0]
+        .map(item => (Array.isArray(item) ? item[0] : ''))
+        .join('')
+        .trim();
+}
+
+async function translateToEnglish(text) {
+    const key = `zh-en:${text}`;
+    if (translationCache[key]) return translationCache[key];
+
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=zh-TW&tl=en&dt=t&q=${encodeURIComponent(text)}`;
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Translate API failed: ${response.status}`);
+
+    const data = await response.json();
+    const translated = parseTranslateResponse(data) || text;
+    translationCache[key] = translated;
+    saveTranslationCache();
+    return translated;
+}
+
+function collectTextNodesForTranslation() {
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    const targets = [];
+
+    while (walker.nextNode()) {
+        const node = walker.currentNode;
+        const parent = node.parentElement;
+        if (!parent) continue;
+        if (parent.closest('script, style, noscript')) continue;
+        if (parent.closest('[data-zh][data-en]')) continue;
+
+        const original = textNodeOriginalMap.get(node) ?? node.textContent;
+        if (!textNodeOriginalMap.has(node)) {
+            textNodeOriginalMap.set(node, original);
+        }
+
+        if (!isTranslatableText(original)) continue;
+
+        const match = original.match(/^(\s*)([\s\S]*?)(\s*)$/);
+        if (!match) continue;
+
+        const [, prefix, core, suffix] = match;
+        if (!isTranslatableText(core)) continue;
+
+        targets.push({ node, prefix, core, suffix });
+    }
+
+    return targets;
+}
+
+function collectAttrTargetsForTranslation() {
+    const attrs = ['placeholder', 'title', 'aria-label', 'alt'];
+    const elements = document.querySelectorAll('*');
+    const targets = [];
+
+    elements.forEach(el => {
+        if (el.matches('script, style, noscript')) return;
+        if (el.closest('[data-zh][data-en]')) return;
+
+        attrs.forEach(attr => {
+            const value = el.getAttribute(attr);
+            if (!isTranslatableText(value)) return;
+
+            let attrMap = attrOriginalMap.get(el);
+            if (!attrMap) {
+                attrMap = new Map();
+                attrOriginalMap.set(el, attrMap);
+            }
+
+            if (!attrMap.has(attr)) {
+                attrMap.set(attr, value);
+            }
+
+            targets.push({ el, attr, value: attrMap.get(attr) });
+        });
+    });
+
+    return targets;
+}
+
+async function translatePageToEnglish() {
+    const textTargets = collectTextNodesForTranslation();
+    const attrTargets = collectAttrTargetsForTranslation();
+    const unique = new Set();
+
+    textTargets.forEach(({ core }) => unique.add(core));
+    attrTargets.forEach(({ value }) => unique.add(value));
+    if (isTranslatableText(document.title)) unique.add(document.title);
+
+    const mapping = {};
+    const tasks = Array.from(unique).map(async (source) => {
+        try {
+            mapping[source] = await translateToEnglish(source);
+        } catch (error) {
+            console.warn('Translation failed:', source, error);
+            mapping[source] = source;
+        }
+    });
+
+    await Promise.all(tasks);
+
+    textTargets.forEach(({ node, prefix, core, suffix }) => {
+        node.textContent = `${prefix}${mapping[core] || core}${suffix}`;
+    });
+
+    attrTargets.forEach(({ el, attr, value }) => {
+        el.setAttribute(attr, mapping[value] || value);
+    });
+
+    if (isTranslatableText(document.title)) {
+        document.title = mapping[document.title] || document.title;
+    }
+}
+
+function restoreOriginalLanguageContent() {
+    textNodeOriginalMap.forEach((original, node) => {
+        if (node && node.parentNode) {
+            node.textContent = original;
+        }
+    });
+
+    attrOriginalMap.forEach((attrMap, el) => {
+        if (!el || !el.isConnected) return;
+        attrMap.forEach((value, attr) => {
+            el.setAttribute(attr, value);
+        });
+    });
+}
 
 function initLanguageToggle() {
     const langToggle = document.getElementById('language-toggle');
+    if (!langToggle) return;
+
     const langText = langToggle.querySelector('.lang-text');
+    if (!langText) return;
+
+    langText.textContent = currentLanguage === 'zh' ? 'EN' : '中';
+    updateLanguage();
     
-    langToggle.addEventListener('click', () => {
+    langToggle.addEventListener('click', async () => {
         currentLanguage = currentLanguage === 'zh' ? 'en' : 'zh';
+        localStorage.setItem('language', currentLanguage);
         langText.textContent = currentLanguage === 'zh' ? 'EN' : '中';
-        updateLanguage();
+        await updateLanguage();
         unlockAchievement('explorer');
     });
 }
 
-function updateLanguage() {
+async function updateLanguage() {
     const elements = document.querySelectorAll('[data-zh][data-en]');
     
     elements.forEach(el => {
@@ -863,15 +1024,24 @@ function updateLanguage() {
             el.textContent = enText;
         }
     });
+
+    if (currentLanguage === 'zh') {
+        restoreOriginalLanguageContent();
+        return;
+    }
+
+    await translatePageToEnglish();
 }
 
 // 音樂播放器
 let isPlaying = false;
 let audioContext;
 let oscillator;
+let melodyTimer;
 
 function initMusicPlayer() {
     const musicToggle = document.getElementById('music-toggle');
+    if (!musicToggle) return;
     
     musicToggle.addEventListener('click', () => {
         if (!audioContext) {
@@ -892,6 +1062,11 @@ function initMusicPlayer() {
 }
 
 function playMusic() {
+    if (melodyTimer) {
+        clearInterval(melodyTimer);
+        melodyTimer = null;
+    }
+
     oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
     
@@ -908,7 +1083,7 @@ function playMusic() {
     const notes = [262, 294, 330, 349, 392, 440, 494, 523];
     let noteIndex = 0;
     
-    setInterval(() => {
+    melodyTimer = setInterval(() => {
         if (isPlaying && oscillator) {
             oscillator.frequency.value = notes[noteIndex];
             noteIndex = (noteIndex + 1) % notes.length;
@@ -921,11 +1096,17 @@ function stopMusic() {
         oscillator.stop();
         oscillator = null;
     }
+
+    if (melodyTimer) {
+        clearInterval(melodyTimer);
+        melodyTimer = null;
+    }
 }
 
 // 列印履歷功能
 function initPrintResume() {
     const printBtn = document.getElementById('print-resume');
+    if (!printBtn) return;
     
     printBtn.addEventListener('click', () => {
         window.print();
@@ -935,6 +1116,8 @@ function initPrintResume() {
 // 訪客計數器
 function initVisitorCounter() {
     const counterEl = document.getElementById('visitor-count');
+    if (!counterEl) return;
+
     let count = localStorage.getItem('visitorCount') || 0;
     count = parseInt(count) + 1;
     localStorage.setItem('visitorCount', count);
@@ -943,6 +1126,8 @@ function initVisitorCounter() {
 }
 
 function animateCounter(element, start, end, duration) {
+    if (!element) return;
+
     const range = end - start;
     const increment = range / (duration / 16);
     let current = start;
@@ -960,6 +1145,7 @@ function animateCounter(element, start, end, duration) {
 // 實時時鐘
 function initLiveClock() {
     const clockEl = document.getElementById('clock-time');
+    if (!clockEl) return;
     
     function updateClock() {
         const now = new Date();
@@ -1027,6 +1213,10 @@ function initTypingGame() {
     const accuracyEl = document.getElementById('game-accuracy');
     const errorsEl = document.getElementById('game-errors');
     const resultsDiv = document.getElementById('game-results');
+
+    if (!textDisplay || !textInput || !startBtn || !resetBtn || !timeEl || !wpmEl || !accuracyEl || !errorsEl || !resultsDiv) {
+        return;
+    }
     
     const texts = [
         'The quick brown fox jumps over the lazy dog.',
@@ -1237,9 +1427,11 @@ function initAchievements() {
     
     // 追蹤主題切換
     const themeToggle = document.getElementById('theme-toggle');
-    themeToggle.addEventListener('click', () => {
-        unlockAchievement('theme');
-    });
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            unlockAchievement('theme');
+        });
+    }
     
     // 追蹤聯絡表單
     const contactForm = document.getElementById('contact-form');
@@ -1506,7 +1698,9 @@ function initChatbot() {
         } else if (msg.includes('專案') || msg.includes('project')) {
             return '我完成了超過50個專案，包括電商平台、社交媒體應用、數據分析平台等。您可以查看我的作品集區塊了解更多細節！';
         } else if (msg.includes('聯絡') || msg.includes('contact')) {
-            return '您可以通過以下方式聯絡我：<br>📧 Email: ycsimpson@gmail.com<br>📞 電話: 0911-588-916<br>💼 LinkedIn: linkedin.com/in/孟麟-高-b88773191<br>🐙 GitHub: github.com/jerry98166<br>也歡迎使用頁面下方的聯絡表單！';
+            return currentLanguage === 'zh'
+                ? '您可以通過以下方式聯絡我：<br>📧 Email: 11028201@cycu.org.tw<br>💼 LinkedIn: linkedin.com/in/孟麟-高-b88773191<br>🐙 GitHub: github.com/jerry98166<br>也歡迎使用頁面下方的聯絡表單！'
+                : 'You can contact me via:<br>📧 Email: 11028201@cycu.org.tw<br>💼 LinkedIn: linkedin.com/in/孟麟-高-b88773191<br>🐙 GitHub: github.com/jerry98166<br>You can also use the contact form below.';
         } else if (msg.includes('學歷') || msg.includes('education')) {
             return '我畢業於知名大學計算機科學系，擁有學士學位，並持續學習最新的技術和框架。';
         } else {
@@ -1578,9 +1772,8 @@ Interests: Web Development, AI, Open Source`,
 4. Portfolio Website - You're looking at it!`,
         
         contact: () => `Contact Information:
-Email: ycsimpson@gmail.com
-Phone: 0911-588-916
-GitHub: github.com/jerry98166
+    Email: 11028201@cycu.org.tw
+    GitHub: github.com/jerry98166
 LinkedIn: linkedin.com/in/孟麟-高-b88773191
 X (Twitter): x.com/Jerry59877
 Instagram: instagram.com/jerry98166
