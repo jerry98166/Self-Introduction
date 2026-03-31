@@ -1,6 +1,6 @@
 # SCALE READINESS REPORT
 
-Generated: 2026-03-31T15:28:22.112Z
+Generated: 2026-03-31T15:36:10.218Z
 
 ## Summary
 
@@ -13,8 +13,8 @@ Generated: 2026-03-31T15:28:22.112Z
 - HTML files: 78
 - CSS files: 2
 - JS files: 15
-- Image files: 9
-- docs files: 28
+- Image files: 8
+- docs files: 10
 - Feature pages: 64
 - Inline onclick handlers: 257
 - CSS !important count: 186
