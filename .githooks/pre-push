@@ -2,5 +2,5 @@
 
 set -eu
 
-echo "[pre-push] Running project health check..."
-npm run health-check
+echo "[pre-push] Running full project verification..."
+npm run verify-all

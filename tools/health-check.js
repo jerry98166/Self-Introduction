@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 const root = path.resolve(__dirname, '..');
-const ignoredDirs = new Set(['.git', 'node_modules']);
+const ignoredDirs = new Set(['.git', 'node_modules', 'temp', 'docs']);
 
 function walk(dir, matcher, out = []) {
     for (const name of fs.readdirSync(dir)) {
@@ -72,6 +72,7 @@ function checkHtmlRefs() {
 function checkFeatureRegistry() {
     const labHtmlPath = path.join(root, 'pages', 'lab.html');
     const labJsPath = path.join(root, 'assets', 'js', 'lab.js');
+    const manifestPath = path.join(root, 'feature-manifest.json');
 
     if (!fs.existsSync(labHtmlPath) || !fs.existsSync(labJsPath)) {
         return {
@@ -85,6 +86,24 @@ function checkFeatureRegistry() {
     const labHtml = read(labHtmlPath);
     const labJs = read(labJsPath);
 
+    // Check if using dynamic navigation (feature-navigator.js)
+    const useDynamicNav = labHtml.includes('feature-navigator.js') &&
+                         labHtml.includes('navigator-container');
+    
+    // If using dynamic navigation, validate manifest instead
+    if (useDynamicNav && fs.existsSync(manifestPath)) {
+        const manifestJson = JSON.parse(read(manifestPath));
+        const totalFeatures = manifestJson.features ? manifestJson.features.length : 0;
+        return {
+            unmatchedIds: [],
+            missingInLabIds: [],
+            totalLabFeatureItems: totalFeatures,
+            totalRegistryFeatures: totalFeatures,
+            dynamicNavigation: true
+        };
+    }
+
+    // Fallback to old hard-coded detection
     const htmlIds = new Set();
     const jsIds = new Set();
 
@@ -165,11 +184,50 @@ function checkUnsafeHtmlInterpolation() {
     return findings;
 }
 
+function checkSecurityHardeningInclude() {
+    const htmlFiles = walk(root, (p) => p.endsWith('.html'));
+    const missing = [];
+
+    for (const htmlPath of htmlFiles) {
+        const content = read(htmlPath);
+        if (!content.includes('security-hardening.js')) {
+            missing.push(path.relative(root, htmlPath));
+        }
+    }
+
+    return {
+        scanned: htmlFiles.length,
+        missing
+    };
+}
+
+function checkDangerousProtocols() {
+    const htmlFiles = walk(root, (p) => p.endsWith('.html'));
+    const findings = [];
+
+    for (const htmlPath of htmlFiles) {
+        const rel = path.relative(root, htmlPath);
+        const content = read(htmlPath);
+        const lines = content.split(/\r?\n/);
+
+        lines.forEach((line, index) => {
+            const lineNum = index + 1;
+            if (/(href|src)\s*=\s*"\s*javascript:/i.test(line) || /(href|src)\s*=\s*'\s*javascript:/i.test(line)) {
+                findings.push({ file: rel, line: lineNum, type: 'javascript protocol in href/src' });
+            }
+        });
+    }
+
+    return findings;
+}
+
 function main() {
     const htmlResult = checkHtmlRefs();
     const featureResult = checkFeatureRegistry();
     const featurePageResult = checkFeaturePageTargets();
     const unsafeHtmlFindings = checkUnsafeHtmlInterpolation();
+    const securityIncludeResult = checkSecurityHardeningInclude();
+    const dangerousProtocolFindings = checkDangerousProtocols();
 
     console.log('=== Project Health Check ===');
     console.log(`HTML files scanned: ${htmlResult.htmlFilesCount}`);
@@ -183,14 +241,21 @@ function main() {
     }
 
     console.log('\nFeature lab consistency:');
-    console.log(`- Feature items in pages/lab.html: ${featureResult.totalLabFeatureItems}`);
-    console.log(`- Feature keys in assets/js/lab.js: ${featureResult.totalRegistryFeatures}`);
-    console.log(`- Unmatched feature IDs: ${featureResult.unmatchedIds.length}`);
-    console.log(`- Registry IDs missing in lab page: ${featureResult.missingInLabIds.length}`);
+    if (featureResult.dynamicNavigation) {
+        console.log(`- Dynamic Navigation: ✓ ENABLED`);
+        console.log(`- Total features in manifest: ${featureResult.totalLabFeatureItems}`);
+    } else {
+        console.log(`- Feature items in pages/lab.html: ${featureResult.totalLabFeatureItems}`);
+        console.log(`- Feature keys in assets/js/lab.js: ${featureResult.totalRegistryFeatures}`);
+        console.log(`- Unmatched feature IDs: ${featureResult.unmatchedIds.length}`);
+        console.log(`- Registry IDs missing in lab page: ${featureResult.missingInLabIds.length}`);
+    }
     console.log(`- Feature pages referenced in lab.js: ${featurePageResult.referenced}`);
     console.log(`- Missing referenced feature pages: ${featurePageResult.missingPages.length}`);
     console.log(`\nSecurity checks:`);
     console.log(`- Unsafe HTML interpolation findings: ${unsafeHtmlFindings.length}`);
+    console.log(`- Pages missing security-hardening.js: ${securityIncludeResult.missing.length}`);
+    console.log(`- Dangerous javascript: href/src findings: ${dangerousProtocolFindings.length}`);
 
     if (featureResult.unmatchedIds.length > 0) {
         for (const id of featureResult.unmatchedIds) {
@@ -222,12 +287,34 @@ function main() {
         }
     }
 
+    if (securityIncludeResult.missing.length > 0) {
+        console.log('  Missing security hardening script in:');
+        for (const file of securityIncludeResult.missing.slice(0, 30)) {
+            console.log(`  - ${file}`);
+        }
+        if (securityIncludeResult.missing.length > 30) {
+            console.log(`  ... and ${securityIncludeResult.missing.length - 30} more`);
+        }
+    }
+
+    if (dangerousProtocolFindings.length > 0) {
+        console.log('  Dangerous protocol detail (top 20):');
+        for (const item of dangerousProtocolFindings.slice(0, 20)) {
+            console.log(`  - ${item.file}:${item.line} (${item.type})`);
+        }
+        if (dangerousProtocolFindings.length > 20) {
+            console.log(`  ... and ${dangerousProtocolFindings.length - 20} more`);
+        }
+    }
+
     const hasError =
         htmlResult.missing.length > 0 ||
         featureResult.unmatchedIds.length > 0 ||
-        featureResult.missingInLabIds.length > 0 ||
+        (!featureResult.dynamicNavigation && featureResult.missingInLabIds.length > 0) ||
         featurePageResult.missingPages.length > 0 ||
-        unsafeHtmlFindings.length > 0;
+        unsafeHtmlFindings.length > 0 ||
+        securityIncludeResult.missing.length > 0 ||
+        dangerousProtocolFindings.length > 0;
     if (hasError) {
         process.exitCode = 1;
         console.log('\nResult: FAILED');

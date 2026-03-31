@@ -12,7 +12,7 @@ Disallow: /*.json$
 Disallow: /*.txt$
 
 # Sitemap 位置
-Sitemap: /sitemap.xml
+Sitemap: https://jerry98166.github.io/Self-Introduction/sitemap.xml
 
 # 特定爬蟲規則
 User-agent: Googlebot

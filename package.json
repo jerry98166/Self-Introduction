@@ -5,6 +5,10 @@
   "description": "Personal portfolio website with feature lab and Vue-enhanced navigation",
   "scripts": {
     "setup-hooks": "node tools/setup-hooks.js",
-    "health-check": "node tools/health-check.js"
+    "health-check": "node tools/health-check.js",
+    "security-check": "node tools/security-smoke-test.js",
+    "scale-check": "node tools/scale-readiness-check.js",
+    "nav-generate": "node tools/nav-generator.js",
+    "verify-all": "npm run nav-generate && npm run health-check && npm run security-check && npm run scale-check"
   }
 }

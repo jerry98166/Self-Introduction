@@ -171,29 +171,32 @@
             </div>
         </section>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
     <script>
-        const input = document.getElementById('mdInput');
-        const preview = document.getElementById('preview');
-        const initialText = `# Markdown 編輯器\n\n歡迎使用安全預覽模式。\n\n- 支援標準 Markdown\n- 已過濾潛在惡意腳本\n\n\`console.log("Hello")\``;
+        document.addEventListener('DOMContentLoaded', () => {
+            const input = document.getElementById('mdInput');
+            const preview = document.getElementById('preview');
+            const initialText = `# Markdown 編輯器\n\n歡迎使用安全預覽模式。\n\n- 支援標準 Markdown\n- 已過濾潛在惡意腳本\n\n\`console.log("Hello")\``;
 
-        input.value = initialText;
-        
-        function renderPreview() {
-            const rawHtml = marked.parse(input.value, {
-                breaks: true,
-                gfm: true,
-                headerIds: false,
-                mangle: false
-            });
-            preview.innerHTML = DOMPurify.sanitize(rawHtml, {
-                USE_PROFILES: { html: true }
-            });
-        }
+            input.value = initialText;
 
-        input.addEventListener('input', renderPreview);
-        renderPreview();
+            function renderPreview() {
+                const rawHtml = marked.parse(input.value, {
+                    breaks: true,
+                    gfm: true,
+                    headerIds: false,
+                    mangle: false
+                });
+                preview.innerHTML = DOMPurify.sanitize(rawHtml, {
+                    USE_PROFILES: { html: true }
+                });
+            }
+
+            input.addEventListener('input', renderPreview);
+            renderPreview();
+        });
     </script>
+    <script defer src="../assets/js/security-hardening.js"></script>
 </body>
 </html>

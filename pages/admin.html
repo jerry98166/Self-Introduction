@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>後台管理系統 | Admin Dashboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet"></noscript>
     <style>
         * {
             margin: 0;
@@ -419,6 +420,59 @@
             .dashboard-tools {
                 grid-template-columns: 1fr;
             }
+            
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-actions {
+                width: 100%;
+            }
+            
+            .btn {
+                flex: 1;
+                justify-content: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .login-box {
+                width: calc(100% - 2rem);
+                padding: 2rem 1rem;
+            }
+            
+            .header h1 {
+                font-size: 1.3rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .filter-select {
+                font-size: 0.85rem;
+            }
+            
+            .panel-title {
+                font-size: 1.2rem;
+            }
+            
+            .data-table th,
+            .data-table td {
+                padding: 0.7rem 0.5rem;
+                font-size: 0.85rem;
+            }
         }
         
         /* 滾動條樣式 */
@@ -477,6 +531,12 @@
             <div class="header-actions">
                 <button class="btn btn-primary" onclick="refreshData()">
                     <i class="fas fa-sync-alt"></i> 刷新數據
+                </button>
+                <button class="btn btn-primary" onclick="exportData()">
+                    <i class="fas fa-download"></i> 導出數據
+                </button>
+                <button class="btn btn-primary" onclick="showStatistics()">
+                    <i class="fas fa-chart-bar"></i> 統計分析
                 </button>
                 <button class="btn btn-danger" onclick="logout()">
                     <i class="fas fa-sign-out-alt"></i> 登出
@@ -834,7 +894,56 @@
                 document.getElementById('login-error').style.display = 'none';
             }
         }
+        
+        // 數據導出功能
+        function exportData() {
+            const data = {
+                messages: JSON.parse(localStorage.getItem('guestbook_messages') || '[]'),
+                chatLog: JSON.parse(localStorage.getItem('chatbot_log') || '[]'),
+                terminalLog: JSON.parse(localStorage.getItem('terminal_log') || '[]'),
+                exportTime: new Date().toLocaleString('zh-TW')
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `admin-data-${Date.now()}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+            showToast('數據已導出為 JSON 文件');
+        }
+        
+        // 批量操作
+        function selectAllMessages() {
+            document.querySelectorAll('#messages-list .message-item').forEach(el => {
+                el.classList.add('selected');
+            });
+            showToast('已選擇全部留言');
+        }
+        
+        // 統計分析
+        function showStatistics() {
+            const messages = JSON.parse(localStorage.getItem('guestbook_messages') || '[]');
+            const chatLog = JSON.parse(localStorage.getItem('chatbot_log') || '[]');
+            
+            let stats = `
+            📊 數據統計分析
+            ═════════════════
+            訪客留言：${messages.length} 條
+            AI 對話：${chatLog.length} 條
+            `;
+            
+            if (messages.length > 0) {
+                stats += `最新留言：${messages[messages.length - 1].name}`;
+            }
+            
+            alert(stats);
+            showToast('統計分析已顯示');
+        }
     </script>
     <script defer src="../assets/js/subpage-ux.js"></script>
+    <script defer src="../assets/js/security-hardening.js"></script>
 </body>
 </html>

@@ -279,10 +279,10 @@
                 <span>🏠</span>
                 <span>返回首頁</span>
             </a>
-            <a href="javascript:history.back()" class="btn btn-secondary">
+            <button type="button" id="back-button" class="btn btn-secondary">
                 <span>←</span>
                 <span>返回上一頁</span>
-            </a>
+            </button>
         </div>
         
         <div class="suggestions">
@@ -309,6 +309,14 @@
         // setTimeout(() => {
         //     window.location.href = '/';
         // }, 3000);
+
+        const backButton = document.getElementById('back-button');
+        if (backButton) {
+            backButton.addEventListener('click', () => {
+                window.history.back();
+            });
+        }
     </script>
+    <script defer src="assets/js/security-hardening.js"></script>
 </body>
 </html>

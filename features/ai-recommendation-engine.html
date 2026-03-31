@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI 智能推薦引擎 - 根據您的興趣和技能推薦功能">
+    <title>🤖 AI 智能推薦引擎</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50px;
+            transition: all 0.3s;
+        }
+        
+        .back-link:hover { background: rgba(255,255,255,0.3); }
+        
+        .profile-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .profile-section h2 {
+            margin-bottom: 1.5rem;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .skill-input-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .skill-input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        .skill-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .skill-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .tag {
+            padding: 0.5rem 1rem;
+            background: #f3f4f6;
+            border: 2px solid #d1d5db;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            user-select: none;
+        }
+        
+        .tag:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        
+        .tag.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .interest-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .category-checkbox {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .category-checkbox:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        
+        .category-checkbox input {
+            margin-right: 0.75rem;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .btn-primary {
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .recommendations-section {
+            margin-top: 3rem;
+        }
+        
+        .recommendations-section h2 {
+            color: white;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-size: 2rem;
+        }
+        
+        .recommendation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+        
+        .recommendation-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .recommendation-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        
+        .recommendation-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .match-score {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: #d1fae5;
+            color: #065f46;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .recommendation-card h3 {
+            margin: 1rem 0 0.5rem;
+            color: #333;
+        }
+        
+        .recommendation-card p {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        
+        .recommendation-reasons {
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .recommendation-reasons h5 {
+            color: #667eea;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+        
+        .reason {
+            font-size: 0.85rem;
+            color: #666;
+            padding: 0.25rem 0;
+        }
+        
+        .reason:before {
+            content: '✓ ';
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+        
+        .btn-explore {
+            width: 100%;
+            padding: 0.75rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-explore:hover {
+            background: #764ba2;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: white;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8rem; }
+            .interest-categories { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../pages/lab.html" class="back-link">← 返回功能實驗室</a>
+        
+        <div class="header">
+            <h1>🤖 AI 智能推薦引擎</h1>
+            <p>根據您的技能和興趣，發現最適合的功能</p>
+        </div>
+        
+        <div class="profile-section" id="profileSection">
+            <h2>⚙️ 設定您的興趣和技能</h2>
+            
+            <div class="skill-input-group">
+                <label for="skillsInput">🎯 您的專業技能</label>
+                <input 
+                    type="text" 
+                    id="skillsInput" 
+                    class="skill-input" 
+                    placeholder="例如: Python, React, 數據分析, UI設計..."
+                    onkeypress="handleSkillInput(event)"
+                >
+                <div class="tag-container" id="skillTags"></div>
+            </div>
+            
+            <div class="skill-input-group">
+                <label>📚 感興趣的領域</label>
+                <div class="interest-categories">
+                    <label class="category-checkbox">
+                        <input type="checkbox" value="AI" onchange="updateInterests()"> 🤖 人工智智能
+                    </label>
+                    <label class="category-checkbox">
+                        <input type="checkbox" value="遊戲" onchange="updateInterests()"> 🎮 遊戲開發
+                    </label>
+                    <label class="category-checkbox">
+                        <input type="checkbox" value="數據可視化" onchange="updateInterests()"> 📊 數據可視化
+                    </label>
+                    <label class="category-checkbox">
+                        <input type="checkbox" value="安全" onchange="updateInterests()"> 🔐 資訊安全
+                    </label>
+                    <label class="category-checkbox">
+                        <input type="checkbox" value="開發工具" onchange="updateInterests()"> ⚙️ 開發工具
+                    </label>
+                    <label class="category-checkbox">
+                        <input type="checkbox" value="創意" onchange="updateInterests()"> ✨ 創意設計
+                    </label>
+                </div>
+            </div>
+            
+            <button class="btn-primary" onclick="generateRecommendations()">
+                🔮 生成個性化推薦
+            </button>
+        </div>
+        
+        <div class="recommendations-section" id="recommendationsSection" style="display:none;">
+            <h2>你為你精選的功能推薦</h2>
+            <div class="recommendation-grid" id="recommendationGrid"></div>
+        </div>
+        
+        <div class="loading" id="loadingSection" style="display:none;">
+            <div class="loading-spinner"></div>
+            <p>分析中...</p>
+        </div>
+    </div>
+    
+    <script src="../assets/js/security-hardening.js"></script>
+    <script src="../assets/js/feature-navigator.js"></script>
+    <script>
+        // 模擬推薦引擎
+        const FEATURE_REGISTRY = {
+            'AI 面試模擬器': {
+                category: 'AI 工具',
+                skills: ['AI', 'NLP', '面試'],
+                interests: ['AI'],
+                description: '利用 AI 進行真實面試練習'
+            },
+            '調色盤工具': {
+                category: '設計工具',
+                skills: ['UI設計', '創意'],
+                interests: ['創意'],
+                description: '專業的色彩選擇和搭配工具'
+            },
+            'WebGL 著色器藝術': {
+                category: '藝術',
+                skills: ['JavaScript', 'WebGL', '創意'],
+                interests: ['創意'],
+                description: '實時 WebGL 著色器視覺化'
+            },
+            '程式碼謎題': {
+                category: '學習',
+                skills: ['JavaScript', 'Python', '邏輯'],
+                interests: ['遊戲', '開發工具'],
+                description: '編程解謎遊戲，提高邏輯思維'
+            },
+            'CTF 挑戰賽': {
+                category: '安全',
+                skills: ['資訊安全', '黑客', 'Web安全'],
+                interests: ['安全'],
+                description: 'Capture The Flag 資訊安全挑戰'
+            },
+            '密碼強度檢查': {
+                category: '安全',
+                skills: ['資訊安全', 'Web安全'],
+                interests: ['安全'],
+                description: '密碼安全強度即時評估'
+            },
+            'JSON 格式化': {
+                category: '開發工具',
+                skills: ['JavaScript', '開發工具', '調試'],
+                interests: ['開發工具'],
+                description: 'JSON 驗證、格式化和視覺化工具'
+            },
+            '正規表達式測試器': {
+                category: '開發工具',
+                skills: ['JavaScript', 'Regex', '文字處理'],
+                interests: ['開發工具'],
+                description: '互動式正規表達式測試工具'
+            },
+            '音樂視覺化器': {
+                category: '多媒體',
+                skills: ['JavaScript', 'Web Audio API', '創意'],
+                interests: ['創意', '藝術'],
+                description: '音樂驅動的實時視覺化效果'
+            },
+            '網路封包視覺化': {
+                category: '網路',
+                skills: ['網路', '資訊安全', '數據分析'],
+                interests: ['安全'],
+                description: '網路流量和封包分析可視化'
+            },
+            '數位雙生': {
+                category: 'IoT',
+                skills: ['3D', 'JavaScript', 'IoT'],
+                interests: ['AI'],
+                description: '虛實映射的互動體驗'
+            },
+            '功能分析儀表板': {
+                category: '分析',
+                skills: ['數據分析', 'JavaScript', 'Chart.js'],
+                interests: ['數據可視化'],
+                description: '功能使用統計和分析'
+            }
+        };
+        
+        let userSkills = [];
+        let userInterests = [];
+        
+        function handleSkillInput(event) {
+            if (event.key === 'Enter') {
+                const input = event.target;
+                const skill = input.value.trim();
+                if (skill && !userSkills.includes(skill)) {
+                    userSkills.push(skill);
+                    input.value = '';
+                    renderSkillTags();
+                }
+            }
+        }
+        
+        function renderSkillTags() {
+            const container = document.getElementById('skillTags');
+            container.innerHTML = userSkills.map(skill =>
+                '<span class="tag selected">' + skill + ' <strong style="margin-left:0.5rem;cursor:pointer;" onclick="removeSkill(\'' + skill + '\')">×</strong></span>'
+            ).join('');
+        }
+        
+        function removeSkill(skill) {
+            userSkills = userSkills.filter(s => s !== skill);
+            renderSkillTags();
+        }
+        
+        function updateInterests() {
+            const checkboxes = document.querySelectorAll('.category-checkbox input:checked');
+            userInterests = Array.from(checkboxes).map(cb => cb.value);
+        }
+        
+        function generateRecommendations() {
+            updateInterests();
+            
+            if (userSkills.length === 0 && userInterests.length === 0) {
+                alert('請至少選擇一個技能或興趣領域');
+                return;
+            }
+            
+            // 顯示加載狀態
+            document.getElementById('profileSection').style.display = 'none';
+            document.getElementById('loadingSection').style.display = 'block';
+            document.getElementById('recommendationsSection').style.display = 'none';
+            
+            // 模擬 AI 分析
+            setTimeout(() => {
+                document.getElementById('loadingSection').style.display = 'none';
+                
+                // 計算推薦分數
+                const scored = Object.entries(FEATURE_REGISTRY).map(([name, data]) => {
+                    let score = 0;
+                    
+                    // 技能匹配分數
+                    data.skills.forEach(skill => {
+                        if (userSkills.some(us => us.toLowerCase().includes(skill.toLowerCase()))) {
+                            score += 30;
+                        }
+                    });
+                    
+                    // 興趣匹配分數
+                    data.interests.forEach(interest => {
+                        if (userInterests.includes(interest)) {
+                            score += 40;
+                        }
+                    });
+                    
+                    // 基礎分數
+                    score += 10;
+                    
+                    return { name, ...data, score };
+                })
+                .filter(item => item.score > 0)
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 6);
+                
+                // 渲染推薦
+                const grid = document.getElementById('recommendationGrid');
+                grid.innerHTML = scored.map(item => `
+                    <div class="recommendation-card">
+                        <div class="match-score">匹配度: ${item.score}%</div>
+                        <h3>${item.name}</h3>
+                        <p>${item.description}</p>
+                        <div class="recommendation-reasons">
+                            <h5>推薦原因</h5>
+                            ${item.skills.slice(0, 3).map(skill => '<div class="reason">' + skill + '</div>').join('')}
+                        </div>
+                        <button class="btn-explore" onclick="navigateTo('${item.name.toLowerCase().replace(/\\s+/g, '-')}')">
+                            探索功能 →
+                        </button>
+                    </div>
+                `).join('');
+                
+                document.getElementById('recommendationsSection').style.display = 'block';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

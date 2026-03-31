@@ -15,6 +15,8 @@
 - [功能實驗室文檔.md](guides/功能實驗室文檔.md)
 - [DEPLOYMENT-GUIDE.md](guides/DEPLOYMENT-GUIDE.md)
 - [IMAGE-OPTIMIZATION.md](guides/IMAGE-OPTIMIZATION.md)
+- [SECURITY-HARDENING.md](guides/SECURITY-HARDENING.md)
+- [SCALE-UPGRADE-ROADMAP.md](guides/SCALE-UPGRADE-ROADMAP.md)
 
 ## reports/
 
@@ -31,6 +33,7 @@
 - [PROJECT_STRUCTURE.md](reports/PROJECT_STRUCTURE.md)
 - [子頁一致化UX完成報告.md](reports/子頁一致化UX完成報告.md)
 - [深度整理優化報告.md](reports/深度整理優化報告.md)
+- [SCALE-READINESS-REPORT.md](reports/SCALE-READINESS-REPORT.md)
 
 ## archive/legacy/
 

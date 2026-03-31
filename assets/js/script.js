@@ -1,9 +1,134 @@
 // ========================================
+// 性能優化工具函數
+// ========================================
+
+// 防抖函數 - 延遲執行
+const debounce = (fn, delay = 300) => {
+    let timeoutId;
+    return function(...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => fn.apply(this, args), delay);
+    };
+};
+
+// 節流函數 - 限制執行頻率
+const throttle = (fn, delay = 300) => {
+    let lastCall = 0;
+    return function(...args) {
+        const now = Date.now();
+        if (now - lastCall >= delay) {
+            lastCall = now;
+            fn.apply(this, args);
+        }
+    };
+};
+
+const externalScriptCache = new Map();
+
+function loadExternalScript(src, globalName) {
+    if (globalName && typeof window[globalName] !== 'undefined') {
+        return Promise.resolve(window[globalName]);
+    }
+
+    if (externalScriptCache.has(src)) {
+        return externalScriptCache.get(src);
+    }
+
+    const loader = new Promise((resolve, reject) => {
+        const existing = document.querySelector(`script[src="${src}"]`);
+
+        if (existing) {
+            if (globalName && typeof window[globalName] !== 'undefined') {
+                resolve(window[globalName]);
+                return;
+            }
+
+            existing.addEventListener('load', () => resolve(window[globalName]), { once: true });
+            existing.addEventListener('error', () => reject(new Error(`Failed to load script: ${src}`)), { once: true });
+            return;
+        }
+
+        const script = document.createElement('script');
+        script.src = src;
+        script.async = true;
+        script.onload = () => resolve(window[globalName]);
+        script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+        document.head.appendChild(script);
+    });
+
+    externalScriptCache.set(src, loader);
+    return loader;
+}
+
+// 延遲加載圖片
+const lazyLoadImages = () => {
+    if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                        imageObserver.unobserve(img);
+                    }
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '50px'
+        });
+        
+        document.querySelectorAll('img[data-src]').forEach(img => {
+            imageObserver.observe(img);
+        });
+    }
+};
+
+// 性能監測
+const performanceMonitor = {
+    mark: (name) => {
+        if ('performance' in window) {
+            performance.mark(name);
+        }
+    },
+    measure: (name, startMark, endMark) => {
+        if ('performance' in window && 'measure' in performance) {
+            try {
+                performance.measure(name, startMark, endMark);
+            } catch(e) {}
+        }
+    }
+};
+
+function runWhenIdle(task, timeout = 1200) {
+    if ('requestIdleCallback' in window) {
+        requestIdleCallback(task, { timeout });
+        return;
+    }
+    setTimeout(task, Math.min(timeout, 600));
+}
+
+// ========================================
 // 全域變數與初始化
 // ========================================
 let particles = [];
-const particleCount = 50;
+const particleCount = window.innerWidth < 768 ? 24 : 50;
 const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isSaveDataMode = !!(navigator.connection && navigator.connection.saveData);
+
+// 優化滾動事件 - 使用節流
+const onScroll = throttle(() => {
+    const navbar = document.getElementById('navbar');
+    if (navbar) {
+        if (window.scrollY > 100) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    }
+    updateActiveLink();
+}, 100);
 
 // ========================================
 // 立即移除 Preloader（避免卡住）
@@ -44,43 +169,45 @@ setTimeout(() => {
 document.addEventListener('DOMContentLoaded', function() {
     const safeInit = (fn) => { try { fn(); } catch(e) { console.warn(fn.name + ' failed:', e); } };
 
-    // 初始化所有功能
-    safeInit(initParticles);
+    // 首屏必要功能
     safeInit(initNavigation);
     safeInit(initThemeToggle);
     safeInit(initBackToTop);
-    safeInit(initTypingAnimation);
-    safeInit(initScrollAnimations);
-    safeInit(initProjectFilters);
     safeInit(initContactForm);
-    safeInit(initStatCounters);
-    safeInit(initSkillBars);
-    
-    // 新功能初始化
-    safeInit(initScrollProgress);
-    safeInit(initCursorFollower);
     safeInit(initLanguageToggle);
-    safeInit(initMusicPlayer);
     safeInit(initVisitorCounter);
     safeInit(initLiveClock);
-    safeInit(initSkillsRadarChart);
-    safeInit(initTypingGame);
-    safeInit(initSocialShare);
-    safeInit(initAchievements);
-    safeInit(init3DCardEffect);
-    
-    // 初始化右側功能
-    safeInit(initThreeJS);
-    safeInit(initChatbot);
-    safeInit(initTerminal);
-    safeInit(initOnlineStatus);
+
+    // 次要互動放到下一個 frame，縮短首屏主執行緒占用
+    requestAnimationFrame(() => {
+        safeInit(initTypingAnimation);
+        safeInit(initScrollAnimations);
+        safeInit(initProjectFilters);
+        safeInit(initStatCounters);
+        safeInit(initSkillBars);
+        safeInit(initScrollProgress);
+        safeInit(initCursorFollower);
+        safeInit(initSkillsRadarChart);
+        safeInit(initTypingGame);
+        safeInit(initSocialShare);
+        safeInit(initAchievements);
+        safeInit(initOnlineStatus);
+    });
+
+    // 高成本功能使用 idle 啟動
+    runWhenIdle(() => safeInit(initParticles), 900);
+    runWhenIdle(() => safeInit(init3DCardEffect), 1200);
+    runWhenIdle(() => safeInit(initThreeJS), 1500);
+    runWhenIdle(() => safeInit(initChatbot), 1500);
+    runWhenIdle(() => safeInit(initTerminal), 1500);
+    runWhenIdle(() => safeInit(initMusicPlayer), 1000);
 });
 
 // ========================================
 // 粒子背景動畫
 // ========================================
 function initParticles() {
-    if (prefersReducedMotion) {
+    if (prefersReducedMotion || isSaveDataMode) {
         return;
     }
 
@@ -97,6 +224,10 @@ function initParticles() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     
+    let isPageVisible = !document.hidden;
+    const maxDistance = 150;
+    const maxDistanceSq = maxDistance * maxDistance;
+
     // 創建粒子
     class Particle {
         constructor() {
@@ -132,6 +263,11 @@ function initParticles() {
     
     // 動畫循環
     function animate() {
+        if (!isPageVisible) {
+            requestAnimationFrame(animate);
+            return;
+        }
+
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
         particles.forEach(particle => {
@@ -150,10 +286,11 @@ function initParticles() {
             for (let j = i + 1; j < particles.length; j++) {
                 const dx = particles[i].x - particles[j].x;
                 const dy = particles[i].y - particles[j].y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                
-                if (distance < 150) {
-                    ctx.strokeStyle = `rgba(99, 102, 241, ${1 - distance / 150})`;
+                const distanceSq = dx * dx + dy * dy;
+
+                if (distanceSq < maxDistanceSq) {
+                    const distance = Math.sqrt(distanceSq);
+                    ctx.strokeStyle = `rgba(99, 102, 241, ${1 - distance / maxDistance})`;
                     ctx.lineWidth = 1;
                     ctx.beginPath();
                     ctx.moveTo(particles[i].x, particles[i].y);
@@ -171,6 +308,10 @@ function initParticles() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
     }, { passive: true });
+
+    document.addEventListener('visibilitychange', () => {
+        isPageVisible = !document.hidden;
+    });
 }
 
 // ========================================
@@ -203,16 +344,7 @@ function initNavigation() {
     };
     
     // 滾動時改變導航欄樣式
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 100) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
-        
-        // 更新活動連結
-        updateActiveLink();
-    }, { passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true });
     
     // 平滑滾動
     navLinks.forEach(link => {
@@ -528,6 +660,11 @@ function initContactForm() {
         const email = document.getElementById('email');
         const subject = document.getElementById('subject');
         const message = document.getElementById('message');
+
+        const hasSuspiciousContent = (value) => {
+            const text = String(value || '').toLowerCase();
+            return /<\s*script|javascript:|data:text\/html|on\w+\s*=/.test(text);
+        };
         
         // 清除之前的錯誤訊息
         document.querySelectorAll('.error-message').forEach(msg => {
@@ -537,6 +674,9 @@ function initContactForm() {
         // 驗證姓名
         if (name.value.trim() === '') {
             showError(name, '請輸入您的姓名');
+            isValid = false;
+        } else if (hasSuspiciousContent(name.value)) {
+            showError(name, '姓名格式不正確');
             isValid = false;
         }
         
@@ -553,6 +693,9 @@ function initContactForm() {
         if (subject.value.trim() === '') {
             showError(subject, '請輸入主題');
             isValid = false;
+        } else if (hasSuspiciousContent(subject.value)) {
+            showError(subject, '主題包含不允許字元');
+            isValid = false;
         }
         
         // 驗證訊息
@@ -561,6 +704,9 @@ function initContactForm() {
             isValid = false;
         } else if (message.value.trim().length < 10) {
             showError(message, '訊息內容至少需要 10 個字元');
+            isValid = false;
+        } else if (hasSuspiciousContent(message.value)) {
+            showError(message, '訊息內容包含不允許字元');
             isValid = false;
         }
         
@@ -1014,27 +1160,79 @@ let melodyTimer;
 let activeVoices = [];
 let pianoStep = 0;
 
+// ========== 鋼琴樂譜 ==========
+// 樂譜1: 經典旋律（歡迎樂）
 const pianoScore = [
-    { notes: [261.63], beat: 1 },
-    { notes: [293.66], beat: 1 },
-    { notes: [329.63], beat: 1 },
-    { notes: [392.0], beat: 1 },
-    { notes: [392.0], beat: 1 },
-    { notes: [329.63], beat: 1 },
-    { notes: [293.66], beat: 1 },
-    { notes: [261.63], beat: 1 },
-    { notes: [220.0], beat: 1 },
-    { notes: [246.94], beat: 1 },
-    { notes: [261.63], beat: 1 },
-    { notes: [329.63], beat: 1 },
-    { notes: [329.63], beat: 1 },
-    { notes: [293.66], beat: 1 },
-    { notes: [293.66], beat: 2 }
+    // 第一段
+    { notes: [261.63], beat: 0.5 },  // C4
+    { notes: [293.66], beat: 0.5 },  // D4
+    { notes: [329.63], beat: 1 },    // E4
+    { notes: [392.0], beat: 1 },     // G4
+    { notes: [392.0], beat: 0.5 },   // G4
+    { notes: [329.63], beat: 0.5 },  // E4
+    { notes: [293.66], beat: 1 },    // D4
+    { notes: [261.63], beat: 1 },    // C4
+    // 第二段
+    { notes: [220.0], beat: 0.5 },   // A3
+    { notes: [246.94], beat: 0.5 },  // B3
+    { notes: [261.63], beat: 1 },    // C4
+    { notes: [329.63], beat: 1 },    // E4
+    { notes: [329.63], beat: 0.5 },  // E4
+    { notes: [293.66], beat: 0.5 },  // D4
+    { notes: [293.66], beat: 1 },    // D4
+    { notes: [261.63], beat: 1 }     // C4
 ];
-const pianoBeatMs = 420;
+
+// 樂譜2: 寧靜夜晚（Peaceful Night）
+const pianoScorePeaceful = [
+    { notes: [261.63], beat: 1 },    // C4
+    { notes: [196.0], beat: 1 },     // G3
+    { notes: [196.0], beat: 0.5 },   // G3
+    { notes: [220.0], beat: 0.5 },   // A3
+    { notes: [246.94], beat: 1 },    // B3
+    { notes: [261.63], beat: 1 },    // C4
+    { notes: [329.63], beat: 1 },    // E4
+    { notes: [392.0], beat: 1 },     // G4
+    { notes: [349.23], beat: 0.5 },  // F4
+    { notes: [329.63], beat: 0.5 },  // E4
+    { notes: [293.66], beat: 1 },    // D4
+    { notes: [261.63], beat: 1 },    // C4
+];
+
+// 樂譜3: 歡樂節慶（Festive Joy）
+const pianoScoreFestive = [
+    // 第一段
+    { notes: [392.0, 261.63], beat: 0.5 }, // G4 + C4（和弦）
+    { notes: [440.0], beat: 0.5 },          // A4
+    { notes: [493.88], beat: 0.5 },         // B4
+    { notes: [523.25], beat: 0.5 },         // C5
+    { notes: [523.25], beat: 1 },           // C5
+    { notes: [493.88], beat: 0.5 },         // B4
+    { notes: [440.0], beat: 0.5 },          // A4
+    { notes: [392.0], beat: 1 },            // G4
+    // 第二段
+    { notes: [349.23], beat: 1 },           // F4
+    { notes: [329.63], beat: 1 },           // E4
+    { notes: [349.23], beat: 0.5 },         // F4
+    { notes: [392.0], beat: 0.5 },          // G4
+    { notes: [440.0], beat: 1 },            // A4
+    { notes: [523.25], beat: 1 }            // C5
+];
+
+let currentScoreName = 'welcome';
+let pianoScores = {
+    welcome: pianoScore,
+    peaceful: pianoScorePeaceful,
+    festive: pianoScoreFestive
+};
+
+const pianoBeatMs = 400;
 
 function initMusicPlayer() {
     const musicToggle = document.getElementById('music-toggle');
+    const musicPanel = document.getElementById('music-panel');
+    const scoreBtns = document.querySelectorAll('.score-btn');
+    
     if (!musicToggle) return;
 
     musicToggle.setAttribute('aria-label', '鋼琴音樂');
@@ -1067,8 +1265,54 @@ function initMusicPlayer() {
         updateToggleState();
     };
     
-    musicToggle.addEventListener('click', toggleMusic);
+    // 音樂播放按鈕點擊
+    musicToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleMusic();
+    });
 
+    // 樂譜選擇面板
+    if (musicPanel && scoreBtns.length > 0) {
+        musicToggle.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            musicPanel.style.display = musicPanel.style.display === 'none' ? 'block' : 'none';
+        });
+
+        // 樂譜按鈕選擇
+        scoreBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // 更新活動按鈕
+                scoreBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // 更換樂譜
+                currentScoreName = btn.getAttribute('data-score');
+                pianoStep = 0;
+                
+                // 如果正在播放，重新開始
+                if (isPlaying) {
+                    stopMusic();
+                    setTimeout(() => {
+                        playMusic();
+                    }, 200);
+                }
+                
+                // 自動隱藏面板
+                setTimeout(() => {
+                    musicPanel.style.display = 'none';
+                }, 300);
+            });
+        });
+
+        // 點擊外部隱藏面板
+        document.addEventListener('click', () => {
+            if (musicPanel && musicPanel.style.display === 'block') {
+                musicPanel.style.display = 'none';
+            }
+        });
+    }
+
+    // 鍵盤快捷鍵
     document.addEventListener('keydown', (e) => {
         if ((e.key === 'm' || e.key === 'M') && !e.ctrlKey && !e.metaKey && !e.altKey) {
             const targetTag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
@@ -1085,48 +1329,89 @@ function playMusic() {
         melodyTimer = null;
     }
 
-    const playPianoNote = (frequency, durationSec, velocity = 0.18) => {
+    // 改進的鋼琴音色 - 使用多振盪器和過濾器
+    const playPianoNote = (frequency, durationSec, velocity = 0.18, timbre = 'standard') => {
         const now = audioContext.currentTime;
 
         const osc = audioContext.createOscillator();
         const harmonic = audioContext.createOscillator();
+        const subOsc = audioContext.createOscillator();  // 低頻增強
         const gain = audioContext.createGain();
+        const harmonicGain = audioContext.createGain();
+        const subGain = audioContext.createGain();
         const filter = audioContext.createBiquadFilter();
+        const dryGain = audioContext.createGain();
 
-        osc.type = 'triangle';
-        harmonic.type = 'sine';
+        // 音色選擇
+        const timbres = {
+            'standard': { type: 'triangle', harmonic: 2, harmFreq: frequency * 2 },
+            'warm': { type: 'sine', harmonic: 1.5, harmFreq: frequency * 1.5 },
+            'bright': { type: 'triangle', harmonic: 3, harmFreq: frequency * 3 }
+        };
+        
+        const timbreConfig = timbres[timbre] || timbres['standard'];
+
+        // 主振盪器
+        osc.type = timbreConfig.type;
         osc.frequency.setValueAtTime(frequency, now);
-        harmonic.frequency.setValueAtTime(frequency * 2, now);
+        
+        // 諧波振盪器
+        harmonic.type = 'sine';
+        harmonic.frequency.setValueAtTime(timbreConfig.harmFreq, now);
+        harmonicGain.gain.setValueAtTime(0.08, now);
+        
+        // 低頻增強
+        subOsc.type = 'sine';
+        subOsc.frequency.setValueAtTime(frequency * 0.5, now);
+        subGain.gain.setValueAtTime(0.04, now);
 
+        // 過濾器 - 溫暖的低通
         filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(2500, now);
-        filter.Q.setValueAtTime(0.8, now);
+        filter.frequency.setValueAtTime(3000, now);
+        filter.frequency.exponentialRampToValueAtTime(2000, now + durationSec);
+        filter.Q.setValueAtTime(1.5, now);
 
+        // 包絡 - 更自然的鋼琴衰減
         gain.gain.setValueAtTime(0.0001, now);
-        gain.gain.exponentialRampToValueAtTime(velocity, now + 0.015);
+        gain.gain.exponentialRampToValueAtTime(velocity, now + 0.08);
+        gain.gain.exponentialRampToValueAtTime(velocity * 0.6, now + durationSec * 0.7);
         gain.gain.exponentialRampToValueAtTime(0.0001, now + durationSec);
 
+        // 連接圖
         osc.connect(filter);
-        harmonic.connect(filter);
+        harmonic.connect(harmonicGain);
+        harmonicGain.connect(filter);
+        subOsc.connect(subGain);
+        subGain.connect(filter);
         filter.connect(gain);
         gain.connect(audioContext.destination);
 
+        // 啟動振盪器
         osc.start(now);
         harmonic.start(now);
-        osc.stop(now + durationSec + 0.02);
-        harmonic.stop(now + durationSec + 0.02);
+        subOsc.start(now);
+        
+        osc.stop(now + durationSec + 0.1);
+        harmonic.stop(now + durationSec + 0.1);
+        subOsc.stop(now + durationSec + 0.1);
 
-        activeVoices.push(osc, harmonic);
+        activeVoices.push(osc, harmonic, subOsc);
     };
 
     const scheduleNext = () => {
         if (!isPlaying) return;
 
-        const item = pianoScore[pianoStep % pianoScore.length];
-        const durationSec = Math.max(0.2, (item.beat * pianoBeatMs) / 1000 * 0.9);
+        const currentScore = pianoScores[currentScoreName] || pianoScores.welcome;
+        const item = currentScore[pianoStep % currentScore.length];
+        const durationSec = Math.max(0.2, (item.beat * pianoBeatMs) / 1000 * 0.85);
+
+        // 根據位置選擇音色
+        let timbre = 'standard';
+        if (pianoStep < 8) timbre = 'warm';
+        else if (pianoStep < 16) timbre = 'bright';
 
         item.notes.forEach((freq, idx) => {
-            playPianoNote(freq, durationSec, idx === 0 ? 0.18 : 0.12);
+            playPianoNote(freq, durationSec, idx === 0 ? 0.18 : 0.12, timbre);
         });
 
         pianoStep += 1;
@@ -1203,8 +1488,16 @@ function initLiveClock() {
 function initSkillsRadarChart() {
     const ctx = document.getElementById('skillsRadarChart');
     if (!ctx) return;
-    
-    new Chart(ctx, {
+
+    if (ctx.dataset.chartInitialized === 'true') return;
+
+    const renderChart = () => {
+        if (typeof Chart === 'undefined') {
+            console.warn('Chart.js not loaded');
+            return;
+        }
+
+        new Chart(ctx, {
         type: 'radar',
         data: {
             labels: ['前端開發', '後端開發', 'UI/UX設計', '資料庫', '雲端服務', '專案管理'],
@@ -1239,6 +1532,20 @@ function initSkillsRadarChart() {
             }
         }
     });
+
+        ctx.dataset.chartInitialized = 'true';
+    };
+
+    if (typeof Chart === 'undefined') {
+        loadExternalScript('https://cdn.jsdelivr.net/npm/chart.js', 'Chart')
+            .then(renderChart)
+            .catch((error) => {
+                console.warn('Failed to lazy-load Chart.js:', error);
+            });
+        return;
+    }
+
+    renderChart();
 }
 
 // 打字速度測試遊戲
@@ -1565,6 +1872,11 @@ document.head.appendChild(style);
 
 // 3D卡片傾斜效果
 function init3DCardEffect() {
+    const supportsHover = window.matchMedia && window.matchMedia('(hover: hover)').matches;
+    if (!supportsHover || prefersReducedMotion) {
+        return;
+    }
+
     const cards = document.querySelectorAll('.project-card, .education-card, .achievement-badge');
     
     cards.forEach(card => {
@@ -1592,51 +1904,81 @@ function init3DCardEffect() {
 // Three.js 3D 背景動畫
 // ========================================
 function initThreeJS() {
-    if (typeof THREE === 'undefined') {
-        console.warn('Three.js not loaded');
+    if (prefersReducedMotion || isSaveDataMode) {
         return;
     }
-    
+
     const container = document.getElementById('three-container');
-    
+
     if (!container) {
-        console.warn('Three.js container not found');
         return;
     }
-    
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    container.appendChild(renderer.domElement);
-    
-    // 創建幾何體
-    const geometry = new THREE.TorusKnotGeometry(10, 3, 100, 16);
-    const material = new THREE.MeshBasicMaterial({ 
-        color: 0x6366f1, 
-        wireframe: true 
-    });
-    const torusKnot = new THREE.Mesh(geometry, material);
-    scene.add(torusKnot);
-    
-    camera.position.z = 30;
-    
-    // 動畫循環
-    function animate() {
-        requestAnimationFrame(animate);
-        torusKnot.rotation.x += 0.01;
-        torusKnot.rotation.y += 0.01;
-        renderer.render(scene, camera);
+
+    if (container.dataset.threeInitialized === 'true') {
+        return;
     }
-    animate();
-    
-    // 窗口大小調整
-    window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
+
+    const mountThree = () => {
+        if (typeof THREE === 'undefined') {
+            console.warn('Three.js not loaded');
+            return;
+        }
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+
         renderer.setSize(window.innerWidth, window.innerHeight);
-    });
+        container.appendChild(renderer.domElement);
+
+        // 創建幾何體
+        const geometry = new THREE.TorusKnotGeometry(10, 3, 100, 16);
+        const material = new THREE.MeshBasicMaterial({
+            color: 0x6366f1,
+            wireframe: true
+        });
+        const torusKnot = new THREE.Mesh(geometry, material);
+        scene.add(torusKnot);
+
+        camera.position.z = 30;
+
+        // 動畫循環
+        function animate() {
+            requestAnimationFrame(animate);
+            torusKnot.rotation.x += 0.01;
+            torusKnot.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // 窗口大小調整
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }, { passive: true });
+
+        container.dataset.threeInitialized = 'true';
+    };
+
+    const loadAndMount = () => {
+        if (typeof THREE !== 'undefined') {
+            mountThree();
+            return;
+        }
+
+        loadExternalScript('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js', 'THREE')
+            .then(mountThree)
+            .catch((error) => {
+                console.warn('Failed to lazy-load Three.js:', error);
+            });
+    };
+
+    if ('requestIdleCallback' in window) {
+        requestIdleCallback(loadAndMount, { timeout: 2000 });
+    } else {
+        setTimeout(loadAndMount, 300);
+    }
 }
 
 // ========================================

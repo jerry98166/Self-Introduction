@@ -12,7 +12,7 @@
     <meta name="keywords" content="關於,背景,全端工程師,高孟麟,個人簡介">
     <meta name="author" content="高孟麟">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://yourwebsite.com/pages/about.html">
+    <link rel="canonical" href="https://jerry98166.github.io/Self-Introduction/pages/about.html">
     
     <!-- ========== Favicon ========== -->
     <link rel="icon" type="image/svg+xml" href="../favicon.svg">
@@ -24,8 +24,9 @@
     
     <!-- ========== CSS 樣式表 ========== -->
     <link rel="stylesheet" href="../assets/css/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet"></noscript>
 </head>
 <body>
     <!-- 加載畫面 -->
@@ -117,7 +118,7 @@
                     <div class="about-image-wrapper">
                         <picture>
                             <source srcset="../images/profile.webp" type="image/webp">
-                            <img src="../images/profile.jpg" alt="高孟麟的工作照片" class="about-profile-image" width="600" height="800" loading="lazy">
+                            <img src="../images/profile.jpg" alt="高孟麟的工作照片" class="about-profile-image" width="600" height="800" loading="lazy" decoding="async">
                         </picture>
                     </div>
                 </div>
@@ -361,7 +362,8 @@
 
     <script defer src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
     <script defer src="../assets/js/vue-subpages.js"></script>
-    <script src="../assets/js/script.js"></script>
+    <script defer src="../assets/js/script.js"></script>
     <script defer src="../assets/js/subpage-ux.js"></script>
+    <script defer src="../assets/js/security-hardening.js"></script>
 </body>
 </html>

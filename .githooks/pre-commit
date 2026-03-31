@@ -2,5 +2,5 @@
 
 set -eu
 
-echo "[pre-commit] Running project health check..."
-npm run health-check
+echo "[pre-commit] Running full project verification..."
+npm run verify-all

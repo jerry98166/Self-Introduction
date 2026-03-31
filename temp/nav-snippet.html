@@ -1,0 +1,854 @@
+
+<!-- ========== 智能導航面板 ========== -->
+<div id="feature-navigator" class="feature-navigator-panel">
+  <!-- 搜索欄 -->
+  <div class="nav-search-bar">
+    <input type="text" id="feature-search" class="search-input" 
+           placeholder="🔍 搜尋功能名稱、標籤或說明..." 
+           onkeyup="searchFeatures(this.value)">
+    <button class="clear-search-btn" id="clear-search-btn" onclick="clearSearch()" style="display:none;">✕</button>
+  </div>
+
+  <!-- 篩選選項 -->
+  <div class="nav-filters">
+    <div class="filter-section">
+      <h5>📂 依分類篩選</h5>
+      <div class="filter-buttons">
+        <button class="filter-btn active" data-category="all">全部</button>
+        <button class="filter-btn" data-category="">
+          ⚙️ 開發工具 <span class="count">8</span>
+        </button>
+<button class="filter-btn" data-category="ai">
+          🤖 AI工具 <span class="count">7</span>
+        </button>
+<button class="filter-btn" data-category="">
+          🛠️ 工具 <span class="count">5</span>
+        </button>
+<button class="filter-btn" data-category="">
+          ✨ 創意 <span class="count">5</span>
+        </button>
+<button class="filter-btn" data-category="">
+          🎮 遊戲 <span class="count">4</span>
+        </button>
+<button class="filter-btn" data-category="">
+          📚 學習 <span class="count">4</span>
+        </button>
+<button class="filter-btn" data-category="">
+          🔒 安全 <span class="count">4</span>
+        </button>
+<button class="filter-btn" data-category="">
+          📊 分析 <span class="count">4</span>
+        </button>
+<button class="filter-btn" data-category="">
+          💼 商務 <span class="count">3</span>
+        </button>
+<button class="filter-btn" data-category="">
+          ⚡ 功能 <span class="count">3</span>
+        </button>
+<button class="filter-btn" data-category="">
+          🎬 多媒體 <span class="count">2</span>
+        </button>
+<button class="filter-btn" data-category="">
+          🎭 藝術 <span class="count">2</span>
+        </button>
+<button class="filter-btn" data-category="">
+          🎨 設計工具 <span class="count">1</span>
+        </button>
+<button class="filter-btn" data-category="">
+          👁️ 隱私 <span class="count">1</span>
+        </button>
+<button class="filter-btn" data-category="">
+          📈 數據可視化 <span class="count">1</span>
+        </button>
+<button class="filter-btn" data-category="">
+          💬 通訊 <span class="count">1</span>
+        </button>
+<button class="filter-btn" data-category="">
+          👥 協作 <span class="count">1</span>
+        </button>
+<button class="filter-btn" data-category="">
+          📡 網路 <span class="count">1</span>
+        </button>
+<button class="filter-btn" data-category="iot">
+          🌐 IoT <span class="count">1</span>
+        </button>
+<button class="filter-btn" data-category="">
+          🚀 進階 <span class="count">1</span>
+        </button>
+<button class="filter-btn" data-category="">
+          🎉 娛樂 <span class="count">1</span>
+        </button>
+<button class="filter-btn" data-category="">
+          🧭 導覽 <span class="count">1</span>
+        </button>
+<button class="filter-btn" data-category="">
+          ⚙️ 硬體 <span class="count">1</span>
+        </button>
+<button class="filter-btn" data-category="">
+          👍 社交 <span class="count">1</span>
+        </button>
+<button class="filter-btn" data-category="">
+          📖 文檔 <span class="count">1</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 特色推薦區 -->
+  <div class="featured-section">
+    <h3>⭐ 精選推薦</h3>
+    <div class="featured-grid">
+      <div class="feature-card featured" data-id="ai-interview" onclick="navigateTo('ai-interview')">
+          <div class="feature-icon">🤖</div>
+          <h3>AI 面試模擬器</h3>
+          <p class="description">AI驅動的面試模擬練習，提供即時反饋</p>
+          <div class="feature-meta">
+            <span class="category">工具</span>
+          </div>
+        </div>
+<div class="feature-card featured" data-id="ai-navigation" onclick="navigateTo('ai-navigation')">
+          <div class="feature-icon">🧭</div>
+          <h3>AI 智能導覽</h3>
+          <p class="description">智能功能推薦和導覽系統</p>
+          <div class="feature-meta">
+            <span class="category">導覽</span>
+          </div>
+        </div>
+<div class="feature-card featured" data-id="ar-card" onclick="navigateTo('ar-card')">
+          <div class="feature-icon">🎫</div>
+          <h3>AR 名片</h3>
+          <p class="description">AR 擴增實境名片體驗</p>
+          <div class="feature-meta">
+            <span class="category">創意</span>
+          </div>
+        </div>
+<div class="feature-card featured" data-id="code-editor" onclick="navigateTo('code-editor')">
+          <div class="feature-icon">📝</div>
+          <h3>網頁程式碼編輯器</h3>
+          <p class="description">功能完整的 HTML/CSS/JS 線上編輯和預覽</p>
+          <div class="feature-meta">
+            <span class="category">開發工具</span>
+          </div>
+        </div>
+<div class="feature-card featured" data-id="innovation-suite" onclick="navigateTo('innovation-suite')">
+          <div class="feature-icon">⚡</div>
+          <h3>進階功能套件</h3>
+          <p class="description">多項新穎創新功能集合</p>
+          <div class="feature-meta">
+            <span class="category">功能</span>
+          </div>
+        </div>
+<div class="feature-card featured" data-id="music-visualizer" onclick="navigateTo('music-visualizer')">
+          <div class="feature-icon">🎵</div>
+          <h3>音樂視覺化器</h3>
+          <p class="description">基於音訊的實時視覺效果</p>
+          <div class="feature-meta">
+            <span class="category">多媒體</span>
+          </div>
+        </div>
+<div class="feature-card featured" data-id="shader-art" onclick="navigateTo('shader-art')">
+          <div class="feature-icon">✨</div>
+          <h3>WebGL 著色器藝術</h3>
+          <p class="description">實時 WebGL 著色器藝術和視覺化</p>
+          <div class="feature-meta">
+            <span class="category">藝術</span>
+          </div>
+        </div>
+<div class="feature-card featured" data-id="feature-analytics" onclick="navigateTo('feature-analytics')">
+          <div class="feature-icon">📊</div>
+          <h3>功能分析儀表板</h3>
+          <p class="description">實時追蹤功能使用統計和熱門排行</p>
+          <div class="feature-meta">
+            <span class="category">分析</span>
+          </div>
+        </div>
+<div class="feature-card featured" data-id="ai-recommendation-engine" onclick="navigateTo('ai-recommendation-engine')">
+          <div class="feature-icon">🤖</div>
+          <h3>AI 智能推薦引擎</h3>
+          <p class="description">根據技能和興趣提供個性化功能推薦</p>
+          <div class="feature-meta">
+            <span class="category">AI工具</span>
+          </div>
+        </div>
+<div class="feature-card featured" data-id="interactive-tutorials" onclick="navigateTo('interactive-tutorials')">
+          <div class="feature-icon">📚</div>
+          <h3>互動教程中心</h3>
+          <p class="description">分步驟學習如何使用高級功能</p>
+          <div class="feature-meta">
+            <span class="category">學習</span>
+          </div>
+        </div>
+    </div>
+  </div>
+
+  <!-- 功能網格 -->
+  <div class="features-section">
+    <h3>📚 完整功能列表</h3>
+    <div class="features-grid" id="features-grid">
+      <div class="feature-card" data-id="ai-interview" data-category="" 
+              data-tags="AI 工具 面試" onclick="navigateTo('ai-interview')">
+          <div class="feature-icon">🤖</div>
+          <h4>AI 面試模擬器</h4>
+          <p class="description">AI驅動的面試模擬練習，提供即時反饋</p>
+          <div class="feature-meta">
+            <span class="category">工具</span>
+            <span class="tag">AI</span><span class="tag">工具</span><span class="tag">面試</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="ai-navigation" data-category="" 
+              data-tags="AI 導覽 推薦" onclick="navigateTo('ai-navigation')">
+          <div class="feature-icon">🧭</div>
+          <h4>AI 智能導覽</h4>
+          <p class="description">智能功能推薦和導覽系統</p>
+          <div class="feature-meta">
+            <span class="category">導覽</span>
+            <span class="tag">AI</span><span class="tag">導覽</span><span class="tag">推薦</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="api-tester" data-category="" 
+              data-tags="開發工具 API 測試" onclick="navigateTo('api-tester')">
+          <div class="feature-icon">🔌</div>
+          <h4>API 測試工具</h4>
+          <p class="description">完整的 REST API 測試和除錯工具</p>
+          <div class="feature-meta">
+            <span class="category">開發工具</span>
+            <span class="tag">開發工具</span><span class="tag">API</span><span class="tag">測試</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="ar-card" data-category="" 
+              data-tags="AR 創意 XR" onclick="navigateTo('ar-card')">
+          <div class="feature-icon">🎫</div>
+          <h4>AR 名片</h4>
+          <p class="description">AR 擴增實境名片體驗</p>
+          <div class="feature-meta">
+            <span class="category">創意</span>
+            <span class="tag">AR</span><span class="tag">創意</span><span class="tag">XR</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="auto-summary" data-category="ai" 
+              data-tags="AI NLP 文字" onclick="navigateTo('auto-summary')">
+          <div class="feature-icon">📋</div>
+          <h4>自動摘要生成</h4>
+          <p class="description">基於 TensorFlow 的文字自動摘要</p>
+          <div class="feature-meta">
+            <span class="category">AI工具</span>
+            <span class="tag">AI</span><span class="tag">NLP</span><span class="tag">文字</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="base64-converter" data-category="" 
+              data-tags="編碼 工具" onclick="navigateTo('base64-converter')">
+          <div class="feature-icon">🔐</div>
+          <h4>Base64 轉換器</h4>
+          <p class="description">文字和圖片 Base64 編碼/解碼</p>
+          <div class="feature-meta">
+            <span class="category">工具</span>
+            <span class="tag">編碼</span><span class="tag">工具</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="booking-system" data-category="" 
+              data-tags="商務 日程 互動" onclick="navigateTo('booking-system')">
+          <div class="feature-icon">📅</div>
+          <h4>預約系統</h4>
+          <p class="description">互動式預約和排程系統演示</p>
+          <div class="feature-meta">
+            <span class="category">商務</span>
+            <span class="tag">商務</span><span class="tag">日程</span><span class="tag">互動</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="breakout-game" data-category="" 
+              data-tags="遊戲 Canvas 娛樂" onclick="navigateTo('breakout-game')">
+          <div class="feature-icon">🎮</div>
+          <h4>打磚塊遊戲</h4>
+          <p class="description">經典打磚塊遊戲，展示 Canvas 動畫</p>
+          <div class="feature-meta">
+            <span class="category">遊戲</span>
+            <span class="tag">遊戲</span><span class="tag">Canvas</span><span class="tag">娛樂</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="business-card" data-category="" 
+              data-tags="創意 商務 卡片" onclick="navigateTo('business-card')">
+          <div class="feature-icon">🏢</div>
+          <h4>電子商務名片</h4>
+          <p class="description">動態互動式商務名片展示</p>
+          <div class="feature-meta">
+            <span class="category">創意</span>
+            <span class="tag">創意</span><span class="tag">商務</span><span class="tag">卡片</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="code-collab" data-category="" 
+              data-tags="開發工具 協作 編輯器" onclick="navigateTo('code-collab')">
+          <div class="feature-icon">👥</div>
+          <h4>程式碼協作編輯器</h4>
+          <p class="description">即時協作代碼編輯和執行</p>
+          <div class="feature-meta">
+            <span class="category">開發工具</span>
+            <span class="tag">開發工具</span><span class="tag">協作</span><span class="tag">編輯器</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="code-editor" data-category="" 
+              data-tags="開發工具 編輯器 預覽" onclick="navigateTo('code-editor')">
+          <div class="feature-icon">📝</div>
+          <h4>網頁程式碼編輯器</h4>
+          <p class="description">功能完整的 HTML/CSS/JS 線上編輯和預覽</p>
+          <div class="feature-meta">
+            <span class="category">開發工具</span>
+            <span class="tag">開發工具</span><span class="tag">編輯器</span><span class="tag">預覽</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="code-puzzle" data-category="" 
+              data-tags="學習 遊戲 編程" onclick="navigateTo('code-puzzle')">
+          <div class="feature-icon">🧩</div>
+          <h4>程式碼謎題</h4>
+          <p class="description">互動式程式碼學習和解謎遊戲</p>
+          <div class="feature-meta">
+            <span class="category">學習</span>
+            <span class="tag">學習</span><span class="tag">遊戲</span><span class="tag">編程</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="code-review" data-category="" 
+              data-tags="AI 開發工具 程式碼" onclick="navigateTo('code-review')">
+          <div class="feature-icon">🔍</div>
+          <h4>程式碼智能審查</h4>
+          <p class="description">AI 驅動的程式碼品質分析和建議</p>
+          <div class="feature-meta">
+            <span class="category">開發工具</span>
+            <span class="tag">AI</span><span class="tag">開發工具</span><span class="tag">程式碼</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="color-picker" data-category="" 
+              data-tags="設計 工具 顏色" onclick="navigateTo('color-picker')">
+          <div class="feature-icon">🎨</div>
+          <h4>調色盤工具</h4>
+          <p class="description">高級色彩選擇器和調色盤生成器</p>
+          <div class="feature-meta">
+            <span class="category">設計工具</span>
+            <span class="tag">設計</span><span class="tag">工具</span><span class="tag">顏色</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="contribution-3d" data-category="" 
+              data-tags="3D 可視化 GitHub" onclick="navigateTo('contribution-3d')">
+          <div class="feature-icon">📊</div>
+          <h4>貢獻 3D 視覺化</h4>
+          <p class="description">GitHub 貢獻的 3D 互動視覺化</p>
+          <div class="feature-meta">
+            <span class="category">數據可視化</span>
+            <span class="tag">3D</span><span class="tag">可視化</span><span class="tag">GitHub</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="ctf-challenges" data-category="" 
+              data-tags="安全 遊戲 學習" onclick="navigateTo('ctf-challenges')">
+          <div class="feature-icon">🛡️</div>
+          <h4>CTF 挑戰賽</h4>
+          <p class="description">資訊安全 CTF 挑戰演練</p>
+          <div class="feature-meta">
+            <span class="category">安全</span>
+            <span class="tag">安全</span><span class="tag">遊戲</span><span class="tag">學習</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="digital-footprint" data-category="" 
+              data-tags="隱私 分析 工具" onclick="navigateTo('digital-footprint')">
+          <div class="feature-icon">👣</div>
+          <h4>數位足跡分析</h4>
+          <p class="description">分析和展示個人網路足跡</p>
+          <div class="feature-meta">
+            <span class="category">隱私</span>
+            <span class="tag">隱私</span><span class="tag">分析</span><span class="tag">工具</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="digital-twin" data-category="iot" 
+              data-tags="IoT 3D 模擬" onclick="navigateTo('digital-twin')">
+          <div class="feature-icon">👥</div>
+          <h4>數位雙生</h4>
+          <p class="description">虛擬和現實映射的互動體驗</p>
+          <div class="feature-meta">
+            <span class="category">IoT</span>
+            <span class="tag">IoT</span><span class="tag">3D</span><span class="tag">模擬</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="dynamic-pricing" data-category="" 
+              data-tags="商務 數據 演算法" onclick="navigateTo('dynamic-pricing')">
+          <div class="feature-icon">💰</div>
+          <h4>動態定價名片</h4>
+          <p class="description">實時定價算法和數據展示</p>
+          <div class="feature-meta">
+            <span class="category">商務</span>
+            <span class="tag">商務</span><span class="tag">數據</span><span class="tag">演算法</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="emotion-analysis" data-category="ai" 
+              data-tags="AI NLP 分析" onclick="navigateTo('emotion-analysis')">
+          <div class="feature-icon">😊</div>
+          <h4>情緒分析儀表板</h4>
+          <p class="description">文字情感分析和情緒檢測</p>
+          <div class="feature-meta">
+            <span class="category">AI工具</span>
+            <span class="tag">AI</span><span class="tag">NLP</span><span class="tag">分析</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="encrypted-message" data-category="" 
+              data-tags="安全 加密 通訊" onclick="navigateTo('encrypted-message')">
+          <div class="feature-icon">🔒</div>
+          <h4>加密訊息</h4>
+          <p class="description">端對端加密訊息傳遞</p>
+          <div class="feature-meta">
+            <span class="category">安全</span>
+            <span class="tag">安全</span><span class="tag">加密</span><span class="tag">通訊</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="eye-tracking" data-category="ai" 
+              data-tags="AI 視覺 追蹤" onclick="navigateTo('eye-tracking')">
+          <div class="feature-icon">👁️</div>
+          <h4>眼動追蹤</h4>
+          <p class="description">基於網路攝像頭的眼動追蹤器</p>
+          <div class="feature-meta">
+            <span class="category">AI工具</span>
+            <span class="tag">AI</span><span class="tag">視覺</span><span class="tag">追蹤</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="face-interaction" data-category="ai" 
+              data-tags="AI 視覺 互動" onclick="navigateTo('face-interaction')">
+          <div class="feature-icon">😄</div>
+          <h4>臉部互動</h4>
+          <p class="description">人臉識別和表情驅動的互動</p>
+          <div class="feature-meta">
+            <span class="category">AI工具</span>
+            <span class="tag">AI</span><span class="tag">視覺</span><span class="tag">互動</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="fake-bsod" data-category="" 
+              data-tags="娛樂 惡作劇" onclick="navigateTo('fake-bsod')">
+          <div class="feature-icon">💀</div>
+          <h4>虛假 BSOD</h4>
+          <p class="description">好玩的 Windows 藍屏死亡模擬器</p>
+          <div class="feature-meta">
+            <span class="category">娛樂</span>
+            <span class="tag">娛樂</span><span class="tag">惡作劇</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="gesture-control" data-category="ai" 
+              data-tags="AI 視覺 互動" onclick="navigateTo('gesture-control')">
+          <div class="feature-icon">🤚</div>
+          <h4>手勢控制</h4>
+          <p class="description">手部動作識別和手勢控制</p>
+          <div class="feature-meta">
+            <span class="category">AI工具</span>
+            <span class="tag">AI</span><span class="tag">視覺</span><span class="tag">互動</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="haptic-feedback" data-category="" 
+              data-tags="硬體 API 體驗" onclick="navigateTo('haptic-feedback')">
+          <div class="feature-icon">📳</div>
+          <h4>觸覺反饋</h4>
+          <p class="description">展示設備振動和觸覺反饋能力</p>
+          <div class="feature-meta">
+            <span class="category">硬體</span>
+            <span class="tag">硬體</span><span class="tag">API</span><span class="tag">體驗</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="hash-calculator" data-category="" 
+              data-tags="開發工具 加密 工具" onclick="navigateTo('hash-calculator')">
+          <div class="feature-icon">🔢</div>
+          <h4>雜湊計算器</h4>
+          <p class="description">支援多種演算法的檔案和文字雜湊</p>
+          <div class="feature-meta">
+            <span class="category">開發工具</span>
+            <span class="tag">開發工具</span><span class="tag">加密</span><span class="tag">工具</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="honeypot" data-category="" 
+              data-tags="安全 防禦" onclick="navigateTo('honeypot')">
+          <div class="feature-icon">🍯</div>
+          <h4>蜜罐陷阱</h4>
+          <p class="description">機器人檢測和安全演示</p>
+          <div class="feature-meta">
+            <span class="category">安全</span>
+            <span class="tag">安全</span><span class="tag">防禦</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="innovation-suite" data-category="" 
+              data-tags="創新 套件" onclick="navigateTo('innovation-suite')">
+          <div class="feature-icon">⚡</div>
+          <h4>進階功能套件</h4>
+          <p class="description">多項新穎創新功能集合</p>
+          <div class="feature-meta">
+            <span class="category">功能</span>
+            <span class="tag">創新</span><span class="tag">套件</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="json-formatter" data-category="" 
+              data-tags="開發工具 JSON 工具" onclick="navigateTo('json-formatter')">
+          <div class="feature-icon">📋</div>
+          <h4>JSON 格式化工具</h4>
+          <p class="description">JSON 驗證、格式化和視覺化</p>
+          <div class="feature-meta">
+            <span class="category">開發工具</span>
+            <span class="tag">開發工具</span><span class="tag">JSON</span><span class="tag">工具</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="learning-heatmap" data-category="" 
+              data-tags="學習 數據 可視化" onclick="navigateTo('learning-heatmap')">
+          <div class="feature-icon">🔥</div>
+          <h4>學習熱力圖</h4>
+          <p class="description">追蹤學習進度的互動熱力圖</p>
+          <div class="feature-meta">
+            <span class="category">學習</span>
+            <span class="tag">學習</span><span class="tag">數據</span><span class="tag">可視化</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="live-chat" data-category="" 
+              data-tags="通訊 即時 互動" onclick="navigateTo('live-chat')">
+          <div class="feature-icon">💬</div>
+          <h4>即時聊天</h4>
+          <p class="description">實時聊天和訊息系統演示</p>
+          <div class="feature-meta">
+            <span class="category">通訊</span>
+            <span class="tag">通訊</span><span class="tag">即時</span><span class="tag">互動</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="markdown-preview" data-category="" 
+              data-tags="開發工具 編輯器 Markdown" onclick="navigateTo('markdown-preview')">
+          <div class="feature-icon">📝</div>
+          <h4>Markdown 編輯器</h4>
+          <p class="description">即時 Markdown 編輯和預覽</p>
+          <div class="feature-meta">
+            <span class="category">開發工具</span>
+            <span class="tag">開發工具</span><span class="tag">編輯器</span><span class="tag">Markdown</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="mouse-art" data-category="" 
+              data-tags="創意 Canvas 藝術" onclick="navigateTo('mouse-art')">
+          <div class="feature-icon">🖌️</div>
+          <h4>滑鼠繪畫</h4>
+          <p class="description">用滑鼠自由繪畫的互動畫布</p>
+          <div class="feature-meta">
+            <span class="category">創意</span>
+            <span class="tag">創意</span><span class="tag">Canvas</span><span class="tag">藝術</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="multiplayer-canvas" data-category="" 
+              data-tags="協作 Canvas 即時" onclick="navigateTo('multiplayer-canvas')">
+          <div class="feature-icon">👥</div>
+          <h4>多人協作畫布</h4>
+          <p class="description">即時多人繪畫和協作</p>
+          <div class="feature-meta">
+            <span class="category">協作</span>
+            <span class="tag">協作</span><span class="tag">Canvas</span><span class="tag">即時</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="music-visualizer" data-category="" 
+              data-tags="多媒體 音樂 視覺化" onclick="navigateTo('music-visualizer')">
+          <div class="feature-icon">🎵</div>
+          <h4>音樂視覺化器</h4>
+          <p class="description">基於音訊的實時視覺效果</p>
+          <div class="feature-meta">
+            <span class="category">多媒體</span>
+            <span class="tag">多媒體</span><span class="tag">音樂</span><span class="tag">視覺化</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="packet-visualization" data-category="" 
+              data-tags="網路 分析 可視化" onclick="navigateTo('packet-visualization')">
+          <div class="feature-icon">📡</div>
+          <h4>網路封包視覺化</h4>
+          <p class="description">網路流量和封包分析可視化</p>
+          <div class="feature-meta">
+            <span class="category">網路</span>
+            <span class="tag">網路</span><span class="tag">分析</span><span class="tag">可視化</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="password-strength" data-category="" 
+              data-tags="安全 工具 檢查" onclick="navigateTo('password-strength')">
+          <div class="feature-icon">🔐</div>
+          <h4>密碼強度檢查</h4>
+          <p class="description">實時密碼安全強度評估</p>
+          <div class="feature-meta">
+            <span class="category">安全</span>
+            <span class="tag">安全</span><span class="tag">工具</span><span class="tag">檢查</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="premium-content" data-category="" 
+              data-tags="商務 支付" onclick="navigateTo('premium-content')">
+          <div class="feature-icon">💎</div>
+          <h4>付費內容解鎖</h4>
+          <p class="description">訂閱和付費內容管理系統演示</p>
+          <div class="feature-meta">
+            <span class="category">商務</span>
+            <span class="tag">商務</span><span class="tag">支付</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="push-notification" data-category="" 
+              data-tags="功能 通知" onclick="navigateTo('push-notification')">
+          <div class="feature-icon">🔔</div>
+          <h4>推播通知</h4>
+          <p class="description">Web Push API 推播通知演示</p>
+          <div class="feature-meta">
+            <span class="category">功能</span>
+            <span class="tag">功能</span><span class="tag">通知</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="pwa-info" data-category="" 
+              data-tags="進階 PWA" onclick="navigateTo('pwa-info')">
+          <div class="feature-icon">📱</div>
+          <h4>PWA 資訊</h4>
+          <p class="description">PWA 功能檢測和相關資訊</p>
+          <div class="feature-meta">
+            <span class="category">進階</span>
+            <span class="tag">進階</span><span class="tag">PWA</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="qrcode-generator" data-category="" 
+              data-tags="工具 二維碼" onclick="navigateTo('qrcode-generator')">
+          <div class="feature-icon">📲</div>
+          <h4>二維碼生成器</h4>
+          <p class="description">快速二維碼生成和自訂義</p>
+          <div class="feature-meta">
+            <span class="category">工具</span>
+            <span class="tag">工具</span><span class="tag">二維碼</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="quantum-art" data-category="" 
+              data-tags="藝術 量子 生成" onclick="navigateTo('quantum-art')">
+          <div class="feature-icon">🌌</div>
+          <h4>量子藝術</h4>
+          <p class="description">量子算法驅動的生成藝術</p>
+          <div class="feature-meta">
+            <span class="category">藝術</span>
+            <span class="tag">藝術</span><span class="tag">量子</span><span class="tag">生成</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="recommendation-wall" data-category="" 
+              data-tags="社交 互動" onclick="navigateTo('recommendation-wall')">
+          <div class="feature-icon">👍</div>
+          <h4>推薦信牆</h4>
+          <p class="description">互動式推薦信和讚美牆</p>
+          <div class="feature-meta">
+            <span class="category">社交</span>
+            <span class="tag">社交</span><span class="tag">互動</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="regex-tester" data-category="" 
+              data-tags="開發工具 Regex 工具" onclick="navigateTo('regex-tester')">
+          <div class="feature-icon">🔤</div>
+          <h4>正規表達式測試器</h4>
+          <p class="description">互動式正規表達式測試和學習</p>
+          <div class="feature-meta">
+            <span class="category">開發工具</span>
+            <span class="tag">開發工具</span><span class="tag">Regex</span><span class="tag">工具</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="rpg-card" data-category="" 
+              data-tags="遊戲 RPG 卡片" onclick="navigateTo('rpg-card')">
+          <div class="feature-icon">🎮</div>
+          <h4>RPG 角色卡</h4>
+          <p class="description">可互動的 RPG 角色卡生成器</p>
+          <div class="feature-meta">
+            <span class="category">遊戲</span>
+            <span class="tag">遊戲</span><span class="tag">RPG</span><span class="tag">卡片</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="shader-art" data-category="" 
+              data-tags="藝術 WebGL 3D" onclick="navigateTo('shader-art')">
+          <div class="feature-icon">✨</div>
+          <h4>WebGL 著色器藝術</h4>
+          <p class="description">實時 WebGL 著色器藝術和視覺化</p>
+          <div class="feature-meta">
+            <span class="category">藝術</span>
+            <span class="tag">藝術</span><span class="tag">WebGL</span><span class="tag">3D</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="skill-battle" data-category="" 
+              data-tags="遊戲 互動 RPG" onclick="navigateTo('skill-battle')">
+          <div class="feature-icon">⚔️</div>
+          <h4>技能對戰模擬</h4>
+          <p class="description">技能和經驗值系統的互動遊戲</p>
+          <div class="feature-meta">
+            <span class="category">遊戲</span>
+            <span class="tag">遊戲</span><span class="tag">互動</span><span class="tag">RPG</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="skill-growth" data-category="" 
+              data-tags="學習 成長 追蹤" onclick="navigateTo('skill-growth')">
+          <div class="feature-icon">📈</div>
+          <h4>技能成長追蹤</h4>
+          <p class="description">個人技能進度和成長可視化</p>
+          <div class="feature-meta">
+            <span class="category">學習</span>
+            <span class="tag">學習</span><span class="tag">成長</span><span class="tag">追蹤</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="time-capsule" data-category="" 
+              data-tags="創意 時間 互動" onclick="navigateTo('time-capsule')">
+          <div class="feature-icon">⏰</div>
+          <h4>時間膠囊</h4>
+          <p class="description">保存和回顧時刻的互動時間膠囊</p>
+          <div class="feature-meta">
+            <span class="category">創意</span>
+            <span class="tag">創意</span><span class="tag">時間</span><span class="tag">互動</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="timezone-converter" data-category="" 
+              data-tags="工具 時間" onclick="navigateTo('timezone-converter')">
+          <div class="feature-icon">🌍</div>
+          <h4>時區轉換器</h4>
+          <p class="description">全球時區轉換和會議時間查找</p>
+          <div class="feature-meta">
+            <span class="category">工具</span>
+            <span class="tag">工具</span><span class="tag">時間</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="treasure-hunt" data-category="" 
+              data-tags="遊戲 地圖 互動" onclick="navigateTo('treasure-hunt')">
+          <div class="feature-icon">🗺️</div>
+          <h4>寶藏獵人</h4>
+          <p class="description">地理位置和謎題驅動的狩獵遊戲</p>
+          <div class="feature-meta">
+            <span class="category">遊戲</span>
+            <span class="tag">遊戲</span><span class="tag">地圖</span><span class="tag">互動</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="unit-converter" data-category="" 
+              data-tags="工具 計算" onclick="navigateTo('unit-converter')">
+          <div class="feature-icon">📏</div>
+          <h4>單位轉換器</h4>
+          <p class="description">全面的單位換算工具</p>
+          <div class="feature-meta">
+            <span class="category">工具</span>
+            <span class="tag">工具</span><span class="tag">計算</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="usage-heatmap" data-category="" 
+              data-tags="分析 可視化" onclick="navigateTo('usage-heatmap')">
+          <div class="feature-icon">🔥</div>
+          <h4>網站使用熱力圖</h4>
+          <p class="description">網站使用模式的熱力圖分析</p>
+          <div class="feature-meta">
+            <span class="category">分析</span>
+            <span class="tag">分析</span><span class="tag">可視化</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="version-museum" data-category="" 
+              data-tags="文檔 歷史" onclick="navigateTo('version-museum')">
+          <div class="feature-icon">🏛️</div>
+          <h4>版本博物館</h4>
+          <p class="description">網站版本演進歷史展示</p>
+          <div class="feature-meta">
+            <span class="category">文檔</span>
+            <span class="tag">文檔</span><span class="tag">歷史</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="visitor-map" data-category="" 
+              data-tags="分析 地圖" onclick="navigateTo('visitor-map')">
+          <div class="feature-icon">🗺️</div>
+          <h4>訪客地圖</h4>
+          <p class="description">訪客地理位置的互動地圖</p>
+          <div class="feature-meta">
+            <span class="category">分析</span>
+            <span class="tag">分析</span><span class="tag">地圖</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="voice-assistant" data-category="ai" 
+              data-tags="AI 語音" onclick="navigateTo('voice-assistant')">
+          <div class="feature-icon">🎤</div>
+          <h4>語音助手</h4>
+          <p class="description">語音識別和語音命令助手</p>
+          <div class="feature-meta">
+            <span class="category">AI工具</span>
+            <span class="tag">AI</span><span class="tag">語音</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="voice-synthesis" data-category="" 
+              data-tags="多媒體 語音" onclick="navigateTo('voice-synthesis')">
+          <div class="feature-icon">🔊</div>
+          <h4>語音合成</h4>
+          <p class="description">文字到語音的合成和播放</p>
+          <div class="feature-meta">
+            <span class="category">多媒體</span>
+            <span class="tag">多媒體</span><span class="tag">語音</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="wakatime-dashboard" data-category="" 
+              data-tags="分析 生產力" onclick="navigateTo('wakatime-dashboard')">
+          <div class="feature-icon">⏱️</div>
+          <h4>WakaTime 儀表板</h4>
+          <p class="description">WakaTime 編碼活動數據可視化</p>
+          <div class="feature-meta">
+            <span class="category">分析</span>
+            <span class="tag">分析</span><span class="tag">生產力</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="weather-theme" data-category="" 
+              data-tags="功能 主題" onclick="navigateTo('weather-theme')">
+          <div class="feature-icon">🌤️</div>
+          <h4>天氣主題切換</h4>
+          <p class="description">基於天氣的動態主題切換</p>
+          <div class="feature-meta">
+            <span class="category">功能</span>
+            <span class="tag">功能</span><span class="tag">主題</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="xray-mode" data-category="" 
+              data-tags="創意 視覺化" onclick="navigateTo('xray-mode')">
+          <div class="feature-icon">🦴</div>
+          <h4>X 光透視模式</h4>
+          <p class="description">網頁元素的 X 光透視視圖</p>
+          <div class="feature-meta">
+            <span class="category">創意</span>
+            <span class="tag">創意</span><span class="tag">視覺化</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="feature-analytics" data-category="" 
+              data-tags="分析 統計 儀表板" onclick="navigateTo('feature-analytics')">
+          <div class="feature-icon">📊</div>
+          <h4>功能分析儀表板</h4>
+          <p class="description">實時追蹤功能使用統計和熱門排行</p>
+          <div class="feature-meta">
+            <span class="category">分析</span>
+            <span class="tag">分析</span><span class="tag">統計</span><span class="tag">儀表板</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="ai-recommendation-engine" data-category="ai" 
+              data-tags="AI 推薦 個性化" onclick="navigateTo('ai-recommendation-engine')">
+          <div class="feature-icon">🤖</div>
+          <h4>AI 智能推薦引擎</h4>
+          <p class="description">根據技能和興趣提供個性化功能推薦</p>
+          <div class="feature-meta">
+            <span class="category">AI工具</span>
+            <span class="tag">AI</span><span class="tag">推薦</span><span class="tag">個性化</span>
+          </div>
+        </div>
+<div class="feature-card" data-id="interactive-tutorials" data-category="" 
+              data-tags="學習 教程 指引" onclick="navigateTo('interactive-tutorials')">
+          <div class="feature-icon">📚</div>
+          <h4>互動教程中心</h4>
+          <p class="description">分步驟學習如何使用高級功能</p>
+          <div class="feature-meta">
+            <span class="category">學習</span>
+            <span class="tag">學習</span><span class="tag">教程</span><span class="tag">指引</span>
+          </div>
+        </div>
+    </div>
+  </div>
+
+  <!-- 加載更多 -->
+  <div class="load-more">
+    <button id="load-more-btn" class="load-more-btn" onclick="loadMoreFeatures()">
+      載入更多功能 ↓
+    </button>
+  </div>
+</div>
+
+<!-- 統計信息 -->
+<div class="feature-stats">
+  <div class="stat">
+    <span class="stat-number">64</span>
+    <span class="stat-label">總功能數</span>
+  </div>
+  <div class="stat">
+    <span class="stat-number">25</span>
+    <span class="stat-label">分類</span>
+  </div>
+  <div class="stat">
+    <span class="stat-number">10</span>
+    <span class="stat-label">精選推薦</span>
+  </div>
+</div>
+    

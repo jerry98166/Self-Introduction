@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="功能使用分析儀表板 - 即時統計和洞察">
+    <title>📊 功能分析儀表板</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #333;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 3rem; }
+        .header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .header p { font-size: 1.1rem; opacity: 0.9; }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50px;
+            transition: all 0.3s;
+        }
+        .back-link:hover { background: rgba(255,255,255,0.3); }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        
+        .card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.3); }
+        
+        .stat-card {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 1rem 0;
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin: 2rem 0;
+        }
+        
+        .feature-list {
+            list-style: none;
+        }
+        
+        .feature-item {
+            padding: 1rem;
+            background: #f9fafb;
+            border-left: 4px solid #667eea;
+            margin-bottom: 0.5rem;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .feature-item:hover { background: #f0f4ff; }
+        
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .badge-hot { background: #fecaca; color: #991b1b; }
+        .badge-active { background: #a7f3d0; color: #065f46; }
+        .badge-rising { background: #fcd34d; color: #92400e; }
+        
+        .insights {
+            background: #f0f9ff;
+            border-left: 4px solid #3b82f6;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+        }
+        
+        .insights h3 {
+            color: #1e40af;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .insights ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .insights li {
+            padding: 0.5rem 0;
+            color: #1e3a8a;
+            border-bottom: 1px solid #e0f2fe;
+        }
+        
+        .insights li:before {
+            content: "▸ ";
+            color: #3b82f6;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            .header h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../pages/lab.html" class="back-link">← 返回功能實驗室</a>
+        
+        <div class="header">
+            <h1>📊 功能使用分析儀表板</h1>
+            <p>即時追蹤和統計所有功能的使用情況</p>
+        </div>
+        
+        <div class="dashboard-grid">
+            <div class="card stat-card">
+                <div class="stat-label">🔥 本週熱門</div>
+                <div class="stat-number" id="hotCount">12</div>
+                <div class="stat-label">個功能被執行</div>
+            </div>
+            
+            <div class="card stat-card">
+                <div class="stat-label">👥 活躍用戶</div>
+                <div class="stat-number" id="userCount">387</div>
+                <div class="stat-label">過去24小時</div>
+            </div>
+            
+            <div class="card stat-card">
+                <div class="stat-label">⏱️ 平均時間</div>
+                <div class="stat-number" id="avgTime">2.4</div>
+                <div class="stat-label">分鐘每功能</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>📈 功能使用趨勢 (過去7天)</h2>
+            <div class="chart-container">
+                <canvas id="trendsChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="dashboard-grid">
+            <div class="card">
+                <h2>🔥 熱門功能排行</h2>
+                <ul class="feature-list">
+                    <li class="feature-item">
+                        <span>🤖 AI 面試模擬器</span>
+                        <span class="badge badge-hot">🔥 850 次</span>
+                    </li>
+                    <li class="feature-item">
+                        <span>🎨 調色盤工具</span>
+                        <span class="badge badge-hot">🔥 720 次</span>
+                    </li>
+                    <li class="feature-item">
+                        <span>🧩 程式碼謎題</span>
+                        <span class="badge badge-active">活躍 580 次</span>
+                    </li>
+                    <li class="feature-item">
+                        <span>📝 JSON 格式化</span>
+                        <span class="badge badge-active">活躍 512 次</span>
+                    </li>
+                    <li class="feature-item">
+                        <span>🎵 音樂視覺化</span>
+                        <span class="badge badge-rising">上升 445 次</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h2>📊 分類統計</h2>
+                <div class="chart-container">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>💡 智能洞察</h2>
+            <div class="insights">
+                <h3>📌 主要發現</h3>
+                <ul>
+                    <li><strong>高參與度：</strong> AI 工具類功能本週增長 +35%，說明用戶對智能功能的興趣持續升高</li>
+                    <li><strong>使用峰值：</strong> 週二至週四晚間 8-10 PM 為最高使用時段，建議在此期間發布新功能</li>
+                    <li><strong>用戶留存：</strong> 開發工具類功能平均停留時間最長 (4.2 分鐘)，表明高信息密度</li>
+                    <li><strong>轉化優化：</strong> 遊戲化功能的首次使用率為 23%，可考慮改進導引體驗</li>
+                    <li><strong>地域分佈：</strong> 亞太地區用戶佔 62%，建議優先考慮中文本地化</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>🎯 功能效果評分</h2>
+            <div class="chart-container">
+                <canvas id="performanceChart"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <script src="../assets/js/security-hardening.js"></script>
+    <script>
+        // 模擬數據生成
+        const trendData = [15, 22, 18, 31, 28, 35, 42];
+        const trendLabels = ['週一', '週二', '週三', '週四', '週五', '週六', '週日'];
+        
+        const categoryData = {
+            '工具': 120,
+            'AI 工具': 95,
+            '開發工具': 110,
+            '遊戲': 85,
+            '學習': 72,
+            '其他': 65
+        };
+        
+        const features = [
+            { name: 'AI 面試模擬器', score: 92 },
+            { name: '調色盤工具', score: 88 },
+            { name: '程式碼謎題', score: 86 },
+            { name: 'JSON 格式化', score: 84 },
+            { name: '音樂視覺化', score: 82 },
+            { name: 'WebGL 著色器藝術', score: 79 }
+        ];
+        
+        // 趨勢圖表
+        const trendsCtx = document.getElementById('trendsChart').getContext('2d');
+        new Chart(trendsCtx, {
+            type: 'line',
+            data: {
+                labels: trendLabels,
+                datasets: [{
+                    label: '功能執行次數',
+                    data: trendData,
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#667eea',
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, max: 50 }
+                }
+            }
+        });
+        
+        // 分類圖表
+        const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+        new Chart(categoryCtx, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(categoryData),
+                datasets: [{
+                    data: Object.values(categoryData),
+                    backgroundColor: [
+                        '#667eea', '#764ba2', '#f093fb',
+                        '#4facfe', '#00f2fe', '#43e97b'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+        
+        // 性能評分圖表
+        const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+        new Chart(performanceCtx, {
+            type: 'bar',
+            data: {
+                labels: features.map(f => f.name),
+                datasets: [{
+                    label: '效果評分 (0-100)',
+                    data: features.map(f => f.score),
+                    backgroundColor: features.map((f, i) => {
+                        const colors = ['#10b981', '#06b6d4', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
+                        return colors[i % colors.length];
+                    })
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { beginAtZero: true, max: 100 }
+                }
+            }
+        });
+        
+        // 日期範圍選擇器
+        const hotCount = document.getElementById('hotCount');
+        const userCount = document.getElementById('userCount');
+        const avgTime = document.getElementById('avgTime');
+        
+        // 動畫計數
+        function animateCounter(element, target, duration = 1000) {
+            let current = 0;
+            const increment = target / (duration / 50);
+            const interval = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target;
+                    clearInterval(interval);
+                } else {
+                    element.textContent = Math.floor(current);
+                }
+            }, 50);
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            animateCounter(hotCount, 12);
+            animateCounter(userCount, 387);
+            
+            let avgDisplay = 0;
+            const avgInterval = setInterval(() => {
+                avgDisplay += 0.1;
+                if (avgDisplay >= 2.4) {
+                    avgTime.textContent = '2.4';
+                    clearInterval(avgInterval);
+                } else {
+                    avgTime.textContent = avgDisplay.toFixed(1);
+                }
+            }, 30);
+        });
+    </script>
+</body>
+</html>

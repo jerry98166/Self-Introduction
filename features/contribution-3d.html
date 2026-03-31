@@ -379,7 +379,7 @@
 
     <div class="tooltip" id="tooltip"></div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
         // Three.js 場景設置
         let scene, camera, renderer, controls;
@@ -712,7 +712,8 @@
         }
 
         // 啟動
-        init();
+        document.addEventListener('DOMContentLoaded', init);
     </script>
+    <script defer src="../assets/js/security-hardening.js"></script>
 </body>
 </html>

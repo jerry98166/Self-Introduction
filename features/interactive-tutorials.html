@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="互動教程中心 - 學習如何使用高級功能">
+    <title>📚 互動教程中心</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #1f2937;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #667eea;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            color: #6b7280;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: #667eea;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            background: #f3f4f6;
+            border-radius: 50px;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .back-link:hover { background: #e5e7eb; }
+        
+        .tutorial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .tutorial-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+            border-left: 5px solid #667eea;
+        }
+        
+        .tutorial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            border-left-color: #764ba2;
+        }
+        
+        .tutorial-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .tutorial-card h3 {
+            color: #1f2937;
+            margin-bottom: 0.75rem;
+        }
+        
+        .tutorial-card p {
+            color: #6b7280;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        
+        .difficulty {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .difficulty.beginner {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .difficulty.intermediate {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .difficulty.advanced {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .tutorial-duration {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-top: 1rem;
+        }
+        
+        /* 詳細教程模式 */
+        .tutorial-detail {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        
+        .tutorial-detail.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .tutorial-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .tutorial-header h2 {
+            color: #1f2937;
+            font-size: 1.8rem;
+        }
+        
+        .close-tutorial {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .close-tutorial:hover {
+            color: #ef4444;
+            transform: rotate(90deg);
+        }
+        
+        .tutorial-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        
+        .step {
+            background: #f9fafb;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .step h4 {
+            color: #667eea;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .step-number {
+            width: 30px;
+            height: 30px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        
+        .step p {
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .step-code {
+            background: #1f2937;
+            color: #a1d8ff;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .tip {
+            background: #dbeafe;
+            border-left: 4px solid #3b82f6;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            color: #1e40af;
+        }
+        
+        .progress-bar {
+            background: #e5e7eb;
+            height: 8px;
+            border-radius: 10px;
+            margin: 2rem 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: space-between;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+        
+        .certification {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 2rem;
+        }
+        
+        .certification h3 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            .tutorial-grid { grid-template-columns: 1fr; }
+            .header h1 { font-size: 1.8rem; }
+            .tutorial-header { flex-direction: column; gap: 1rem; }
+            .action-buttons { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../pages/lab.html" class="back-link">← 返回功能實驗室</a>
+        
+        <div class="header">
+            <h1>📚 互動教程中心</h1>
+            <p>學習如何充分利用高級功能</p>
+        </div>
+        
+        <!-- 教程列表 -->
+        <div id="tutorialListView">
+            <div class="tutorial-grid" id="tutorialGrid"></div>
+        </div>
+        
+        <!-- 詳細教程內容 -->
+        <div id="tutorialDetailView" style="display:none;">
+            <div id="tutorialDetailContent"></div>
+        </div>
+    </div>
+    
+    <script src="../assets/js/security-hardening.js"></script>
+    <script>
+        // 教程數據
+        const TUTORIALS = [
+            {
+                id: 'ai-interview-tutorial',
+                title: 'AI 面試模擬器',
+                icon: '🤖',
+                difficulty: 'beginner',
+                duration: '10 分鐘',
+                description: '學習如何使用 AI 進行有效的面試練習',
+                steps: [
+                    {
+                        title: '選擇面試類型',
+                        content: '首先，從技術面試或行為面試中選擇您想要練習的類型。',
+                        tip: '不同的面試類型需要不同的準備策略'
+                    },
+                    {
+                        title: '輸入背景信息',
+                        content: '填入您當前的職位、經驗年限和目標職位',
+                        tip: 'AI 會根據這些信息提供更個性化的建議'
+                    },
+                    {
+                        title: '開始模擬',
+                        content: 'AI 會提出問題，您可以以文字或語音回答',
+                        tip: '嘗試在兩分鐘內完整回答每個問題'
+                    },
+                    {
+                        title: '查看反饋',
+                        content: '完成後，您會收到詳細的反饋和改進建議',
+                        tip: '重點關注核心技能，多次練習相同類型的問題'
+                    }
+                ]
+            },
+            {
+                id: 'regex-tutorial',
+                title: '正規表達式大師',
+                icon: '🔤',
+                difficulty: 'intermediate',
+                duration: '15 分鐘',
+                description: '掌握複雜的正規表達式模式',
+                steps: [
+                    {
+                        title: '基礎語法',
+                        content: '了解 . (任意字符), * (0個以上), + (1個以上) 等基礎概念'
+                    },
+                    {
+                        title: '字符類',
+                        content: '使用 [abc] 匹配字符集, [^abc] 匹配非字符集'
+                    },
+                    {
+                        title: '分組和捕獲',
+                        content: '使用 () 進行分組, 使用 \\\\1 進行反向引用'
+                    },
+                    {
+                        title: '實踐項目',
+                        content: '嘗試驗證 Email, 電話號碼和 URL 格式'
+                    }
+                ]
+            },
+            {
+                id: 'webgl-tutorial',
+                title: 'WebGL 著色器藝術',
+                icon: '✨',
+                difficulty: 'advanced',
+                duration: '30 分鐘',
+                description: '創建令人驚豔的實時 3D 視覺化',
+                steps: [
+                    {
+                        title: '著色器基礎',
+                        content: '了解頂點著色器和片段著色器的角色'
+                    },
+                    {
+                        title: 'GLSL 語言',
+                        content: '學習 GLSL ES 語法和常用函數'
+                    },
+                    {
+                        title: '變換和動畫',
+                        content: '使用 uniform 和 varying 進行變換'
+                    },
+                    {
+                        title: '高級視覺化',
+                        content: '結合 Perlin 噪聲和距離場進行複雜效果'
+                    }
+                ]
+            },
+            {
+                id: 'ctf-tutorial',
+                title: 'CTF 資訊安全挑戰',
+                icon: '🛡️',
+                difficulty: 'advanced', 
+                duration: '45 分鐘',
+                description: '參與實戰資訊安全挑戰',
+                steps: [
+                    {
+                        title: '挑戰分類',
+                        content: '了解 Crypto, Web, Forensics, Binary 等不同類型'
+                    },
+                    {
+                        title: '必要工具',
+                        content: 'Burp Suite, Wireshark, GDB 等工具介紹'
+                    },
+                    {
+                        title: '解題技巧',
+                        content: '分析、試錯、閱讀源代碼的完整流程'
+                    },
+                    {
+                        title: '遞交 Flag',
+                        content: '驗證您的答案, 獲得積分和成就徽章'
+                    }
+                ]
+            },
+            {
+                id: 'visualization-tutorial',
+                title: '數據可視化藝術',
+                icon: '📊',
+                difficulty: 'intermediate',
+                duration: '20 分鐘',
+                description: '使用 Chart.js 創建美麗的圖表',
+                steps: [
+                    {
+                        title: '圖表類型',
+                        content: '柱狀圖、折線圖、餅圖、雷達圖等選擇'
+                    },
+                    {
+                        title: '配置選項',
+                        content: '自定義顏色、標籤和動畫效果'
+                    },
+                    {
+                        title: '數據綁定',
+                        content: '動態更新圖表數據的技巧'
+                    },
+                    {
+                        title: '交互性',
+                        content: '添加点擊事件和工具提示'
+                    }
+                ]
+            },
+            {
+                id: 'api-testing-tutorial',
+                title: 'API 測試精通',
+                icon: '🔌',
+                difficulty: 'intermediate',
+                duration: '18 分鐘',
+                description: '掌握 REST API 測試的完整流程',
+                steps: [
+                    {
+                        title: 'HTTP 方法',
+                        content: 'GET, POST, PUT, DELETE, PATCH 的用途'
+                    },
+                    {
+                        title: '請求格式',
+                        content: 'Headers, Body, Query Parameters 的設置'
+                    },
+                    {
+                        title: '認證和授權',
+                        content: '處理 API Keys 和 Bearer Tokens'
+                    },
+                    {
+                        title: '錯誤排查',
+                        content: 'HTTP 狀態碼解讀和問題調試'
+                    }
+                ]
+            }
+        ];
+        
+        // 初始化教程列表
+        function initTutorials() {
+            const grid = document.getElementById('tutorialGrid');
+            grid.innerHTML = TUTORIALS.map(tutorial =>
+                '<div class="tutorial-card" onclick="openTutorial(\'' + tutorial.id + '\')">' +
+                '<div class="tutorial-icon">' + tutorial.icon + '</div>' +
+                '<h3>' + tutorial.title + '</h3>' +
+                '<p>' + tutorial.description + '</p>' +
+                '<span class="difficulty ' + tutorial.difficulty + '">' + 
+                (tutorial.difficulty === 'beginner' ? '初級' : tutorial.difficulty === 'intermediate' ? '中級' : '高級') +
+                '</span>' +
+                '<div class="tutorial-duration">⏱️ ' + tutorial.duration + '</div>' +
+                '</div>'
+            ).join('');
+        }
+        
+        // 打開詳細教程
+        function openTutorial(tutorialId) {
+            const tutorial = TUTORIALS.find(t => t.id === tutorialId);
+            if (!tutorial) return;
+            
+            document.getElementById('tutorialListView').style.display = 'none';
+            document.getElementById('tutorialDetailView').style.display = 'block';
+            
+            const content = document.getElementById('tutorialDetailContent');
+            content.innerHTML = 
+                '<div class="tutorial-detail active">' +
+                '<div class="tutorial-header">' +
+                '<div><h2>' + tutorial.icon + ' ' + tutorial.title + '</h2></div>' +
+                '<button class="close-tutorial" onclick="closeTutorial()">×</button>' +
+                '</div>' +
+                '<div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>' +
+                '<div class="tutorial-content">' +
+                tutorial.steps.map((step, idx) =>
+                    '<div class="step">' +
+                    '<h4><span class="step-number">' + (idx + 1) + '</span> ' + step.title + '</h4>' +
+                    '<p>' + step.content + '</p>' +
+                    (step.tip ? '<div class="tip">💡 提示: ' + step.tip + '</div>' : '') +
+                    '</div>'
+                ).join('') +
+                '</div>' +
+                '<div class="action-buttons">' +
+                '<button class="btn btn-secondary" onclick="closeTutorial()">← 返回列表</button>' +
+                '<button class="btn btn-primary" onclick="completeTutorial(\'' + tutorial.id + '\')">完成教程 ✓</button>' +
+                '</div>' +
+                '<div class="certification">' +
+                '<h3>🏆 完成此教程</h3>' +
+                '<p>您將獲得徽章和成就認證</p>' +
+                '</div>' +
+                '</div>';
+        }
+        
+        // 關閉詳細教程
+        function closeTutorial() {
+            document.getElementById('tutorialListView').style.display = 'block';
+            document.getElementById('tutorialDetailView').style.display = 'none';
+        }
+        
+        // 完成教程
+        function completeTutorial(tutorialId) {
+            const tutorial = TUTORIALS.find(t => t.id === tutorialId);
+            alert('🎉 恭喜！您已完成「' + tutorial.title + '」教程\\n\\n已獲得成就徽章！');
+            closeTutorial();
+        }
+        
+        // 頁面加載時初始化
+        document.addEventListener('DOMContentLoaded', initTutorials);
+    </script>
+</body>
+</html>

@@ -1886,16 +1886,379 @@ img {
 }
 
 /* ========================================
-   動畫類
+   ✨ 按鈕互動增強 - 波浪和涟漪效果
 ======================================== */
+
+/* 涟漪效果 */
+@keyframes ripple {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+.btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.btn:active::before {
+    animation: ripple 0.6s ease-out;
+}
+
+/* ========================================
+   卡片提升效果 - 3D深度
+======================================== */
+
+.project-card,
+.skill-category,
+.education-card,
+.achievement-badge {
+    perspective: 1000px;
+    position: relative;
+}
+
+.project-card::before,
+.skill-category::before,
+.education-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: none;
+    pointer-events: none;
+    border-radius: inherit;
+    transition: all 0.4s ease;
+}
+
+.project-card:hover,
+.skill-category:hover,
+.education-card:hover {
+    box-shadow: 
+        0 20px 40px rgba(99,102,241,0.15),
+        0 0 20px rgba(99,102,241,0.08) inset !important;
+}
+
+/* ========================================
+   文字漸入動畫
+======================================== */
+
 @keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(20px);
     }
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+.section-title {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.section-description {
+    animation: fadeInUp 0.6s ease-out 0.2s both;
+}
+
+/* ========================================
+   懸停時文字亮度變化
+======================================== */
+
+.nav-link:hover {
+    text-shadow: 0 0 8px rgba(99,102,241,0.3);
+}
+
+/* ========================================
+   主題/語言/音樂按鈕提升動畫
+======================================== */
+
+.theme-toggle,
+.language-toggle,
+.music-toggle,
+.print-resume,
+.back-to-top {
+    box-shadow: 
+        0 4px 14px rgba(99,102,241,0.2),
+        0 0 0 rgba(99,102,241,0) inset;
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.theme-toggle:hover,
+.language-toggle:hover,
+.music-toggle:hover,
+.print-resume:hover,
+.back-to-top:hover {
+    box-shadow: 
+        0 12px 24px rgba(99,102,241,0.35),
+        0 0 20px rgba(99,102,241,0.1) inset !important;
+}
+
+/* ========================================
+   進階輪轉與縮放
+======================================== */
+
+.hero-title {
+    letter-spacing: -1px;
+}
+
+.logo:hover {
+    transform: scale(1.08) rotateZ(2deg);
+    text-shadow: 0 0 20px rgba(99,102,241,0.3);
+}
+
+/* ========================================
+   進階過渡 - 色彩變化平滑
+======================================== */
+
+a, button {
+    transition: color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease !important;
+}
+
+/* ========================================
+   輸入框焦點光暈
+======================================== */
+
+.form-group input:focus,
+.form-group textarea:focus,
+.text-input:focus {
+    box-shadow: 
+        0 0 0 3px rgba(99,102,241,0.1),
+        0 0 16px rgba(99,102,241,0.2) inset !important;
+}
+
+/* ========================================
+   加強頁尾社交連結動畫
+======================================== */
+
+.social-link {
+    position: relative;
+    overflow: hidden;
+}
+
+.social-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 30%, rgba(255,255,255,0.15) 50%, transparent 70%);
+    transform: translateX(-110%);
+    transition: transform 0.5s ease;
+}
+
+.social-link:hover::after {
+    transform: translateX(110%);
+}
+
+/* ========================================
+   標籤懸停位移
+======================================== */
+
+.tag {
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+    position: relative;
+}
+
+.tag::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.tag:hover::before {
+    opacity: 1;
+}
+
+/* ========================================
+   時間軸項目交錯動畫
+======================================== */
+
+.timeline-item {
+    animation: fadeInUp 0.6s ease-out both;
+}
+
+.timeline-item:nth-child(1) { animation-delay: 0.1s; }
+.timeline-item:nth-child(2) { animation-delay: 0.2s; }
+.timeline-item:nth-child(3) { animation-delay: 0.3s; }
+.timeline-item:nth-child(4) { animation-delay: 0.4s; }
+.timeline-item:nth-child(5) { animation-delay: 0.5s; }
+
+/* ========================================
+   聯絡表單標籤動畫
+======================================== */
+
+.form-group label {
+    transition: color 0.3s ease;
+}
+
+.form-group input:focus ~ label,
+.form-group textarea:focus ~ label,
+.form-group input:not(:placeholder-shown) ~ label,
+.form-group textarea:not(:placeholder-shown) ~ label {
+    color: var(--primary-color);
+}
+
+/* ========================================
+   進度條動畫 - 無限迴圈
+======================================== */
+
+.skill-progress-bar {
+    animation: slideRight 1.5s ease-in-out;
+}
+
+@keyframes slideRight {
+    from { width: 0; opacity: 0; }
+    to { width: 100%; opacity: 1; }
+}
+
+/* ========================================
+   下拉箭頭脈衝
+======================================== */
+
+.scroll-indicator span {
+    animation: scrollAnimation 1.5s ease-in-out infinite;
+}
+
+/* ========================================
+   滑來滑去效果 - 段落
+======================================== */
+
+.about-description,
+.section-description {
+    animation: slideInLeft 0.6s ease-out;
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ========================================
+   反向滑動 - 圖像
+======================================== */
+
+.hero-image,
+.about-image-wrapper {
+    animation: slideInRight 0.6s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ========================================
+   認證徽章彩虹脈衝
+======================================== */
+
+.achievement-badge.unlocked {
+    animation: rainbowGlow 2s ease-in-out infinite;
+}
+
+@keyframes rainbowGlow {
+    0%, 100% {
+        box-shadow: 0 0 15px rgba(99,102,241,0.3);
+    }
+    25% {
+        box-shadow: 0 0 25px rgba(168,85,247,0.3);
+    }
+    50% {
+        box-shadow: 0 0 35px rgba(236,72,153,0.3);
+    }
+    75% {
+        box-shadow: 0 0 25px rgba(245,158,11,0.3);
+    }
+}
+
+/* ========================================
+   懸停時色彩轉變
+======================================== */
+
+.project-card:hover .project-title {
+    background: linear-gradient(135deg, var(--accent-color) 0%, var(--primary-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ========================================
+   計數器滑動
+======================================== */
+
+@keyframes countUp {
+    from { 
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stat-number {
+    animation: countUp 0.6s ease-out;
+}
+
+/* ========================================
+   響應式設計 - 手機上的優化
+======================================== */
+
+@media (max-width: 768px) {
+    .btn::before {
+        display: none;
+    }
+    
+    .project-card:hover,
+    .skill-category:hover,
+    .education-card:hover {
+        transform: translateY(-8px) !important;
+    }
+}
+
+/* ========================================
+   減少動畫偏好
+======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
 }
 
@@ -2072,6 +2435,88 @@ img {
     color: white;
 }
 
+/* 音樂播放器容器和面板 */
+.music-player-container {
+    position: fixed;
+    top: 240px;
+    right: 30px;
+    z-index: 1000;
+}
+
+.music-panel {
+    position: absolute;
+    top: -180px;
+    right: 0;
+    width: 200px;
+    background: rgba(255,255,255,0.12) !important;
+    backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(99,102,241,0.25) !important;
+    border-radius: 16px;
+    padding: 1rem;
+    box-shadow: 0 8px 24px rgba(99,102,241,0.15) !important;
+    animation: slideDown 0.3s ease;
+}
+
+[data-theme="dark"] .music-panel {
+    background: rgba(20,20,35,0.70) !important;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.music-panel-header {
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid rgba(99,102,241,0.2);
+}
+
+.music-panel-header h4 {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.music-scores-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.score-btn {
+    padding: 0.6rem 1rem;
+    background: transparent;
+    border: 1.5px solid rgba(99,102,241,0.3);
+    color: var(--text-secondary);
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    justify-content: center;
+}
+
+.score-btn:hover {
+    background: rgba(99,102,241,0.1);
+    border-color: rgba(99,102,241,0.5);
+    color: var(--primary-color);
+}
+
+.score-btn.active {
+    background: var(--gradient-hero);
+    border-color: rgba(99,102,241,0.8);
+    color: white;
+    box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+}
+
+.score-btn i {
+    font-size: 0.9rem;
+}
+
 /* 音樂播放器按鈕 */
 .music-toggle {
     position: fixed;
@@ -2111,7 +2556,7 @@ img {
 
 @keyframes pulse {
     0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
+    50% { transform: scale(1.08); }
 }
 
 /* 列印履歷按鈕 */
@@ -2562,6 +3007,250 @@ img {
     .achievements-grid {
         grid-template-columns: 1fr;
     }
+}
+
+/* ========================================
+   🚀 性能優化 - Loading & 延遲渲染
+======================================== */
+
+/* 關鍵 CSS 優先載入 */
+.hero, .nav-menu, .btn-primary {
+    font-display: swap;
+}
+
+/* 圖片延遲加載 */
+img {
+    loading: lazy;
+}
+
+/* 減少重排 - 固定尺寸容器 */
+.image-wrapper {
+    width: 400px;
+    height: 400px;
+    contain: layout style paint;
+}
+
+/* ========================================
+   ⚡ 加載動畫增強
+======================================== */
+
+.preloader-content {
+    animation: slideUp 0.8s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.loader {
+    animation: spin 0.9s linear infinite;
+    filter: drop-shadow(0 0 10px rgba(99,102,241,0.4));
+}
+
+.loading-text {
+    animation: pulse-text 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-text {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+}
+
+/* ========================================
+   💡 按鈕狀態完整體驗
+======================================== */
+
+.btn-primary,
+.btn-secondary,
+.btn-submit,
+.share-btn {
+    position: relative;
+    overflow: hidden;
+    will-change: transform;
+}
+
+/* 按鈕按下效果 */
+.btn:active {
+    transform: scale(0.95);
+}
+
+/* 禁用狀態 */
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* ========================================
+   📱 移動端觸摸優化
+======================================== */
+
+@media (hover: none) and (pointer: coarse) {
+    .social-link,
+    .tag,
+    .project-card {
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .btn:hover {
+        transform: none;
+    }
+    
+    .btn:active {
+        background: var(--primary-dark) !important;
+    }
+}
+
+/* ========================================
+   🎨 深色模式詳細優化
+======================================== */
+
+[data-theme="dark"] {
+    color-scheme: dark;
+}
+
+[data-theme="dark"] .preloader {
+    background: linear-gradient(135deg, #0f172a, #1a1a2e);
+}
+
+[data-theme="dark"] .loader {
+    border-top-color: #818cf8;
+    border-right-color: #8b5cf6;
+}
+
+/* ========================================
+   📊 表單交互增強
+======================================== */
+
+.form-group input,
+.form-group textarea,
+.text-input {
+    caret-color: var(--primary-color);
+    font-smoothing: antialiased;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* 自動填充樣式 */
+.form-group input:-webkit-autofill,
+.form-group textarea:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px var(--bg-secondary) inset !important;
+    -webkit-text-fill-color: var(--text-primary) !important;
+}
+
+/* ========================================
+   🔔 通知和狀態變化
+======================================== */
+
+.form-message {
+    animation: slideDown 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ========================================
+   ⌨️ 鍵盤焦點指示
+======================================== */
+
+*:focus-visible {
+    outline: 3px solid var(--primary-color) !important;
+    outline-offset: 2px;
+}
+
+/* ========================================
+   💫 自定義選中文本顏色
+======================================== */
+
+::-moz-selection {
+    background: rgba(99,102,241,0.5) !important;
+    color: var(--text-primary) !important;
+}
+
+/* ========================================
+   📍 定位優化 - 固定元素
+======================================== */
+
+.navbar,
+.theme-toggle,
+.language-toggle,
+.music-toggle,
+.print-resume,
+.back-to-top,
+.scroll-progress {
+    position: fixed;
+    will-change: transform;
+}
+
+/* ========================================
+   🖱️ 鼠標懸停優化
+======================================== */
+
+@media (hover: hover) {
+    .project-card {
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    .project-card:hover {
+        transform: translateY(-12px) scale(1.02) !important;
+    }
+    
+    .skill-category:hover {
+        transform: translateY(-6px) !important;
+    }
+}
+
+/* ========================================
+   🎬 過渡優化 - 減少抖動
+======================================== */
+
+* {
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ========================================
+   📝 打字遊戲改進
+======================================== */
+
+.text-display {
+    font-kerning: auto;
+    font-feature-settings: "kern" 1;
+    word-break: break-word;
+}
+
+.text-input {
+    word-break: break-word;
+    word-wrap: break-word;
+}
+
+/* ========================================
+   ⚙️ 性能 - 含量可見性
+======================================== */
+
+.project-card,
+.skill-category,
+.education-card {
+    content-visibility: auto;
+}
+
+.section {
+    contain: layout style paint;
 }
 
 /* 列印樣式 */
@@ -3583,4 +4272,473 @@ img {
     .career-metrics { grid-template-columns: repeat(2, 1fr); }
     .services-grid { grid-template-columns: 1fr; }
     .learning-grid { grid-template-columns: 1fr; }
+}
+
+/* ========================================
+   ✨ UI Polish & Visual Enhancements
+======================================== */
+
+/* ── Extra colour tokens ── */
+:root {
+    --glow-primary: rgba(99,102,241,0.55);
+    --glow-secondary: rgba(245,158,11,0.45);
+    --gradient-hero: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+    --gradient-warm: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+    --mesh-1: radial-gradient(ellipse 80% 80% at 20% 20%, rgba(99,102,241,0.13) 0%, transparent 60%);
+    --mesh-2: radial-gradient(ellipse 60% 60% at 80% 80%, rgba(236,72,153,0.10) 0%, transparent 60%);
+    --mesh-3: radial-gradient(ellipse 50% 50% at 50% 10%,  rgba(245,158,11,0.08) 0%, transparent 55%);
+}
+[data-theme="dark"] {
+    --mesh-1: radial-gradient(ellipse 80% 80% at 20% 20%, rgba(99,102,241,0.18) 0%, transparent 60%);
+    --mesh-2: radial-gradient(ellipse 60% 60% at 80% 80%, rgba(236,72,153,0.14) 0%, transparent 60%);
+    --mesh-3: radial-gradient(ellipse 50% 50% at 50% 10%,  rgba(245,158,11,0.10) 0%, transparent 55%);
+}
+
+/* ── Mesh-gradient hero background ── */
+.hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--mesh-1), var(--mesh-2), var(--mesh-3);
+    pointer-events: none;
+    z-index: 0;
+}
+.hero .container { position: relative; z-index: 1; }
+
+/* ── Even sections mesh tint ── */
+.section:nth-child(even)::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--mesh-1);
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 0;
+}
+.section:nth-child(even) .container { position: relative; z-index: 1; }
+
+/* ── Beautiful preloader ── */
+.preloader {
+    background: var(--bg-primary) !important;
+}
+.preloader::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--mesh-1), var(--mesh-2);
+}
+.preloader-content {
+    position: relative;
+    z-index: 1;
+}
+.loader {
+    width: 70px !important;
+    height: 70px !important;
+    border: 3px solid transparent !important;
+    border-top-color: #6366f1 !important;
+    border-right-color: #8b5cf6 !important;
+    border-radius: 50% !important;
+    animation: spin 0.9s linear infinite !important;
+    box-shadow: 0 0 22px rgba(99,102,241,0.35) !important;
+    margin-bottom: 1.5rem !important;
+}
+.loader::after {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border: 3px solid transparent;
+    border-bottom-color: #ec4899;
+    border-left-color: #f59e0b;
+    border-radius: 50%;
+    animation: spin 1.3s linear infinite reverse;
+}
+.loading-text {
+    background: var(--gradient-hero);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    letter-spacing: 1px;
+}
+
+/* ── Gradient section titles ── */
+.section-title {
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.section-divider {
+    width: 60px !important;
+    height: 4px !important;
+    background: var(--gradient-hero) !important;
+    border-radius: 4px !important;
+    box-shadow: 0 0 10px var(--glow-primary);
+}
+
+/* ── Navbar glassmorphism ── */
+.navbar {
+    background: rgba(255,255,255,0.75) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    border-bottom: 1px solid rgba(99,102,241,0.12) !important;
+    box-shadow: 0 2px 24px rgba(99,102,241,0.08) !important;
+}
+[data-theme="dark"] .navbar {
+    background: rgba(17,24,39,0.80) !important;
+    border-bottom-color: rgba(255,255,255,0.06) !important;
+}
+.navbar.scrolled {
+    box-shadow: 0 4px 30px rgba(99,102,241,0.15) !important;
+}
+.logo-text {
+    background: var(--gradient-hero);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ── Gradient primary button with shimmer ── */
+.btn-primary {
+    background: var(--gradient-hero) !important;
+    border: none !important;
+    box-shadow: 0 4px 18px var(--glow-primary) !important;
+    position: relative;
+    overflow: hidden;
+}
+.btn-primary::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -80%;
+    width: 50%;
+    height: 200%;
+    background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.25) 50%, transparent 70%);
+    transform: skewX(-20deg);
+    transition: left 0.5s ease;
+}
+.btn-primary:hover::after { left: 130%; }
+.btn-primary:hover {
+    box-shadow: 0 8px 28px var(--glow-primary) !important;
+    transform: translateY(-3px) !important;
+}
+
+/* ── Secondary button improved ── */
+.btn-secondary {
+    border: 2px solid transparent !important;
+    background: linear-gradient(var(--bg-primary), var(--bg-primary)) padding-box,
+                var(--gradient-hero) border-box !important;
+    color: var(--primary-color) !important;
+}
+.btn-secondary:hover {
+    background: var(--gradient-hero) !important;
+    color: white !important;
+    box-shadow: 0 6px 22px var(--glow-primary) !important;
+}
+
+/* ── Hero title gradient highlight ── */
+.hero-title .highlight {
+    background: var(--gradient-hero);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.hero-title .highlight::after { display: none; }
+
+/* ── Profile image glowing ring ── */
+.image-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    background: var(--gradient-hero);
+    z-index: -1;
+    filter: blur(10px);
+    opacity: 0.35;
+    animation: ringPulse 3s ease-in-out infinite;
+}
+@keyframes ringPulse {
+    0%, 100% { opacity: 0.3; filter: blur(10px); }
+    50%       { opacity: 0.5; filter: blur(14px); }
+}
+.profile-image {
+    border: 4px solid transparent !important;
+    background: linear-gradient(var(--bg-primary), var(--bg-primary)) padding-box,
+                var(--gradient-hero) border-box !important;
+}
+
+/* ── Hero subtitle gradient ── */
+.hero-subtitle {
+    background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.cursor {
+    -webkit-text-fill-color: var(--secondary-color) !important;
+}
+
+/* ── Hero info glassmorphism pill ── */
+.hero-info {
+    background: rgba(255,255,255,0.08) !important;
+    backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(99,102,241,0.20) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 4px 18px rgba(99,102,241,0.08) !important;
+}
+[data-theme="dark"] .hero-info {
+    background: rgba(30,30,50,0.45) !important;
+}
+#visitor-count, #clock-time {
+    background: var(--gradient-hero);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ── Social links colour on hover ── */
+.social-link:hover {
+    background: var(--gradient-hero) !important;
+    box-shadow: 0 6px 18px var(--glow-primary) !important;
+}
+
+/* ── Skill progress bar gradient glow ── */
+.skill-progress-bar {
+    background: var(--gradient-hero) !important;
+    box-shadow: 0 0 8px var(--glow-primary);
+}
+
+/* ── Timeline icon & date gradient ── */
+.timeline-icon {
+    background: var(--gradient-hero) !important;
+    box-shadow: 0 0 18px var(--glow-primary) !important;
+}
+.timeline-date {
+    background: var(--gradient-hero) !important;
+}
+.timeline::before {
+    background: linear-gradient(180deg, #6366f1, #8b5cf6, #ec4899) !important;
+}
+
+/* ── Contact icon gradient ── */
+.contact-icon {
+    background: var(--gradient-hero) !important;
+    box-shadow: 0 4px 14px var(--glow-primary) !important;
+}
+
+/* ── Contact form glass card ── */
+.contact-form {
+    background: rgba(255,255,255,0.06) !important;
+    backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(99,102,241,0.18) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 12px 40px rgba(99,102,241,0.10) !important;
+}
+[data-theme="dark"] .contact-form {
+    background: rgba(20,20,35,0.55) !important;
+}
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: transparent !important;
+    background: linear-gradient(var(--bg-secondary), var(--bg-secondary)) padding-box,
+                var(--gradient-hero) border-box !important;
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.12) !important;
+}
+.form-title {
+    background: var(--gradient-hero);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.btn-submit {
+    background: var(--gradient-hero) !important;
+    box-shadow: 0 6px 20px var(--glow-primary) !important;
+    position: relative;
+    overflow: hidden;
+}
+.btn-submit::after {
+    content: '';
+    position: absolute;
+    top: -50%; left: -80%;
+    width: 50%; height: 200%;
+    background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.22) 50%, transparent 70%);
+    transform: skewX(-20deg);
+    transition: left 0.5s ease;
+}
+.btn-submit:hover::after { left: 130%; }
+.btn-submit:hover {
+    box-shadow: 0 10px 30px var(--glow-primary) !important;
+}
+
+/* ── Footer gradient top border ── */
+.footer {
+    border-top: 3px solid transparent;
+    background: linear-gradient(var(--bg-dark), var(--bg-dark)) padding-box,
+                var(--gradient-hero) border-box !important;
+}
+.footer-bottom {
+    border-top: 1px solid rgba(99,102,241,0.2) !important;
+}
+
+/* ── Scroll progress bar gradient ── */
+.scroll-progress {
+    background: var(--gradient-hero) !important;
+    box-shadow: 0 0 8px var(--glow-primary);
+}
+
+/* ── Theme / language / music toggles unified style ── */
+.theme-toggle,
+.language-toggle,
+.music-toggle,
+.print-resume {
+    background: rgba(255,255,255,0.10) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(99,102,241,0.25) !important;
+    box-shadow: 0 4px 16px rgba(99,102,241,0.12) !important;
+    transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1) !important;
+}
+.theme-toggle { background: var(--gradient-hero) !important; border: none !important; }
+.theme-toggle:hover,
+.language-toggle:hover,
+.music-toggle:hover,
+.print-resume:hover {
+    transform: scale(1.15) !important;
+    box-shadow: 0 8px 24px var(--glow-primary) !important;
+    border-color: rgba(99,102,241,0.6) !important;
+}
+[data-theme="dark"] .language-toggle,
+[data-theme="dark"] .music-toggle,
+[data-theme="dark"] .print-resume {
+    background: rgba(20,20,35,0.65) !important;
+}
+
+/* ── Back-to-top gradient ── */
+.back-to-top {
+    background: var(--gradient-hero) !important;
+    box-shadow: 0 4px 18px var(--glow-primary) !important;
+    border: none !important;
+}
+.back-to-top:hover {
+    transform: translateY(-6px) !important;
+    box-shadow: 0 10px 28px var(--glow-primary) !important;
+}
+
+/* ── Online status pill ── */
+.online-status {
+    background: rgba(255,255,255,0.10) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(16,185,129,0.30) !important;
+    box-shadow: 0 4px 16px rgba(16,185,129,0.12) !important;
+}
+[data-theme="dark"] .online-status {
+    background: rgba(20,20,35,0.60) !important;
+}
+
+/* ── Education icon gradient ── */
+.education-icon {
+    background: var(--gradient-hero) !important;
+    box-shadow: 0 6px 18px var(--glow-primary) !important;
+}
+
+/* ── Achievement badge icon gradient ── */
+.badge-icon {
+    background: var(--gradient-hero) !important;
+    box-shadow: 0 6px 20px var(--glow-primary) !important;
+}
+
+/* ── Section header sub-gradient ── */
+.section-description {
+    max-width: 640px;
+}
+
+/* ── Custom scrollbar gradient thumb ── */
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #6366f1, #8b5cf6) !important;
+    border-radius: 6px;
+}
+
+/* ── Selection gradient ── */
+::selection {
+    background: rgba(99,102,241,0.4) !important;
+    color: var(--text-primary) !important;
+}
+
+/* ── Chatbot & terminal toggle gradient ── */
+.chatbot-toggle {
+    box-shadow: 0 6px 24px rgba(102,126,234,0.45) !important;
+}
+.chatbot-toggle:hover {
+    box-shadow: 0 10px 32px rgba(102,126,234,0.60) !important;
+}
+
+/* ── Card hover: drop unified glow ── */
+.skill-category:hover,
+.education-card:hover,
+.achievement-badge:hover {
+    box-shadow: 0 16px 42px rgba(99,102,241,0.18) !important;
+}
+
+/* ── Share buttons refined ── */
+.share-btn {
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.3px;
+    transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1) !important;
+}
+.share-btn:hover {
+    transform: translateY(-4px) scale(1.04) !important;
+    filter: brightness(1.1);
+}
+
+/* ── Form-message polished ── */
+.form-message.success {
+    background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(16,185,129,0.06)) !important;
+    border: 1px solid rgba(16,185,129,0.30) !important;
+    color: #059669 !important;
+    border-radius: 12px !important;
+}
+.form-message.error {
+    background: linear-gradient(135deg, rgba(239,68,68,0.12), rgba(239,68,68,0.06)) !important;
+    border: 1px solid rgba(239,68,68,0.30) !important;
+    border-radius: 12px !important;
+}
+
+/* ── Newsletter form ── */
+.newsletter-form input {
+    border-radius: 25px 0 0 25px !important;
+    border: 1px solid rgba(99,102,241,0.20) !important;
+}
+.newsletter-form button {
+    background: var(--gradient-hero) !important;
+    border-radius: 0 25px 25px 0 !important;
+}
+
+/* ── Stat number gradient ── */
+.stat-number {
+    background: var(--gradient-hero);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ── Tag hover glow ── */
+.tag:hover {
+    box-shadow: 0 4px 14px rgba(99,102,241,0.30) !important;
+}
+
+/* ── Scroll indicator gradient ── */
+.scroll-indicator span {
+    background: var(--gradient-hero) !important;
+}
+
+/* ── Section alt-bg refined ── */
+.section:nth-child(even) {
+    background: var(--bg-secondary) !important;
+}
+
+/* ── Responsive polish ── */
+@media (max-width: 768px) {
+    .hero::before { opacity: 0.7; }
+    .image-wrapper::before { filter: blur(12px); }
 }

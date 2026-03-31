@@ -244,8 +244,26 @@ npm run setup-hooks
 - **[功能實驗室文檔.md](docs/guides/功能實驗室文檔.md)** - 所有功能列表
 - **[DEPLOYMENT-GUIDE.md](docs/guides/DEPLOYMENT-GUIDE.md)** - 部署與上線指南
 - **[IMAGE-OPTIMIZATION.md](docs/guides/IMAGE-OPTIMIZATION.md)** - 圖片優化指南
+- **[SECURITY-HARDENING.md](docs/guides/SECURITY-HARDENING.md)** - 資安強化與部署安全建議
+- **[SCALE-UPGRADE-ROADMAP.md](docs/guides/SCALE-UPGRADE-ROADMAP.md)** - 規模化升級路線圖
 - **[功能完成總結報告.md](docs/reports/功能完成總結報告.md)** - 完整技術報告
 - **[PROJECT_STRUCTURE.md](docs/reports/PROJECT_STRUCTURE.md)** - 最新專案結構說明
+
+## 🔐 安全檢查（推薦）
+
+本專案提供兩層檢查：
+
+```bash
+npm run health-check
+npm run security-check
+npm run scale-check
+npm run verify-all
+```
+
+- `health-check`: 連結、功能映射、危險協議等基礎檢查
+- `security-check`: 安全基線檢查（安全腳本注入完整性、CSP 關鍵指令）
+- `scale-check`: 規模化指標檢查，並生成 `docs/reports/SCALE-READINESS-REPORT.md`
+- `verify-all`: 一次執行完整檢查（健康 + 資安 + 規模化）
 
 ## 🎯 效能指標
 

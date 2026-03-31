@@ -25,7 +25,12 @@
             background: rgba(255,255,255,0.1);
             padding: 25px;
             border-radius: 15px;
-                                                                                                                                                  border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
             border: 2px solid rgba(255,255,255,0.3);
             background: rgba(255,255,255,0.2);
             color: white;
@@ -83,7 +88,7 @@
             <a href="../pages/lab.html" class="back-btn">← 返回功能實驗室</a>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <script>
         function generateQR() {
             const text = document.getElementById('qrInput').value;
@@ -106,7 +111,8 @@
         }
         
         // Generate default QR code
-        generateQR();
+        document.addEventListener('DOMContentLoaded', generateQR);
     </script>
+    <script defer src="../assets/js/security-hardening.js"></script>
 </body>
 </html>
