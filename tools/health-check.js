@@ -221,6 +221,77 @@ function checkDangerousProtocols() {
     return findings;
 }
 
+function checkCspStrength() {
+    const indexPath = path.join(root, 'index.html');
+    if (!fs.existsSync(indexPath)) {
+        return {
+            exists: false,
+            hasCsp: false,
+            disallowedTokens: [],
+            missingDirectives: []
+        };
+    }
+
+    const content = read(indexPath);
+    const metaMatch = content.match(/<meta\s+http-equiv="Content-Security-Policy"\s+content="([^"]+)"\s*\/?>/i);
+    if (!metaMatch) {
+        return {
+            exists: true,
+            hasCsp: false,
+            disallowedTokens: [],
+            missingDirectives: ["meta Content-Security-Policy"]
+        };
+    }
+
+    const csp = metaMatch[1];
+    const required = [
+        "object-src 'none'",
+        "base-uri 'self'",
+        "form-action 'self'",
+        "frame-ancestors 'none'"
+    ];
+    const disallowed = ["'unsafe-inline'", "'unsafe-eval'"];
+    const scriptSrcDirective = (csp
+        .split(';')
+        .map((item) => item.trim())
+        .find((item) => item.startsWith('script-src ')) || '');
+
+    return {
+        exists: true,
+        hasCsp: true,
+        disallowedTokens: disallowed.filter((token) => scriptSrcDirective.includes(token)),
+        missingDirectives: required.filter((directive) => !csp.includes(directive))
+    };
+}
+
+function checkDocsExecutablePatterns() {
+    const docsRoot = path.join(root, 'docs');
+    if (!fs.existsSync(docsRoot)) return [];
+
+    const docsFiles = walk(docsRoot, (p) => p.endsWith('.md') || p.endsWith('.html'));
+    const findings = [];
+
+    for (const filePath of docsFiles) {
+        const rel = path.relative(root, filePath);
+        const lines = read(filePath).split(/\r?\n/);
+
+        lines.forEach((line, index) => {
+            const lineNum = index + 1;
+            if (/<script\b/i.test(line)) {
+                findings.push({ file: rel, line: lineNum, type: 'script tag pattern in docs' });
+            }
+            if (/\son[a-z]+\s*=\s*['"]/i.test(line)) {
+                findings.push({ file: rel, line: lineNum, type: 'inline event handler pattern in docs' });
+            }
+            if (/(href|src)\s*=\s*['"]\s*javascript:/i.test(line)) {
+                findings.push({ file: rel, line: lineNum, type: 'javascript protocol pattern in docs' });
+            }
+        });
+    }
+
+    return findings;
+}
+
 function main() {
     const htmlResult = checkHtmlRefs();
     const featureResult = checkFeatureRegistry();
@@ -228,6 +299,8 @@ function main() {
     const unsafeHtmlFindings = checkUnsafeHtmlInterpolation();
     const securityIncludeResult = checkSecurityHardeningInclude();
     const dangerousProtocolFindings = checkDangerousProtocols();
+    const cspStrengthResult = checkCspStrength();
+    const docsExecutableFindings = checkDocsExecutablePatterns();
 
     console.log('=== Project Health Check ===');
     console.log(`HTML files scanned: ${htmlResult.htmlFilesCount}`);
@@ -256,6 +329,9 @@ function main() {
     console.log(`- Unsafe HTML interpolation findings: ${unsafeHtmlFindings.length}`);
     console.log(`- Pages missing security-hardening.js: ${securityIncludeResult.missing.length}`);
     console.log(`- Dangerous javascript: href/src findings: ${dangerousProtocolFindings.length}`);
+    console.log(`- index.html CSP missing directives: ${cspStrengthResult.missingDirectives.length}`);
+    console.log(`- index.html CSP disallowed tokens: ${cspStrengthResult.disallowedTokens.length}`);
+    console.log(`- Docs executable-pattern findings: ${docsExecutableFindings.length}`);
 
     if (featureResult.unmatchedIds.length > 0) {
         for (const id of featureResult.unmatchedIds) {
@@ -307,6 +383,30 @@ function main() {
         }
     }
 
+    if (cspStrengthResult.missingDirectives.length > 0) {
+        console.log('  CSP missing directives:');
+        for (const directive of cspStrengthResult.missingDirectives) {
+            console.log(`  - ${directive}`);
+        }
+    }
+
+    if (cspStrengthResult.disallowedTokens.length > 0) {
+        console.log('  CSP disallowed tokens present:');
+        for (const token of cspStrengthResult.disallowedTokens) {
+            console.log(`  - ${token}`);
+        }
+    }
+
+    if (docsExecutableFindings.length > 0) {
+        console.log('  Docs executable patterns detail (top 20):');
+        for (const item of docsExecutableFindings.slice(0, 20)) {
+            console.log(`  - ${item.file}:${item.line} (${item.type})`);
+        }
+        if (docsExecutableFindings.length > 20) {
+            console.log(`  ... and ${docsExecutableFindings.length - 20} more`);
+        }
+    }
+
     const hasError =
         htmlResult.missing.length > 0 ||
         featureResult.unmatchedIds.length > 0 ||
@@ -314,7 +414,10 @@ function main() {
         featurePageResult.missingPages.length > 0 ||
         unsafeHtmlFindings.length > 0 ||
         securityIncludeResult.missing.length > 0 ||
-        dangerousProtocolFindings.length > 0;
+        dangerousProtocolFindings.length > 0 ||
+        cspStrengthResult.missingDirectives.length > 0 ||
+        cspStrengthResult.disallowedTokens.length > 0 ||
+        false;
     if (hasError) {
         process.exitCode = 1;
         console.log('\nResult: FAILED');

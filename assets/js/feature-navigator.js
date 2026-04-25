@@ -1073,19 +1073,52 @@ function filterByCategory(categoryName) {
  */
 function renderFeatureCards(features, containerElement) {
   const displayed = features.slice(0, navState.displayedCount);
-  
-  containerElement.innerHTML = displayed.map(f =>
-    `<div class="feature-card" data-id="${f.id}" data-category="${f.category}" 
-          onclick="navigateTo('${f.id}')" role="button" tabindex="0">
-      <div class="feature-icon">${f.emoji}</div>
-      <h4>${f.name}</h4>
-      <p class="description">${f.description}</p>
-      <div class="feature-meta">
-        <span class="category">${f.category}</span>
-        ${f.tags.map(t => `<span class="tag">${t}</span>`).join('')}
-      </div>
-    </div>`
-  ).join('');
+
+  containerElement.replaceChildren();
+
+  displayed.forEach((f) => {
+    const card = document.createElement('div');
+    card.className = 'feature-card';
+    card.dataset.id = f.id;
+    card.dataset.category = f.category;
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    card.addEventListener('click', () => navigateTo(f.id));
+    card.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      navigateTo(f.id);
+    });
+
+    const icon = document.createElement('div');
+    icon.className = 'feature-icon';
+    icon.textContent = f.emoji;
+
+    const title = document.createElement('h4');
+    title.textContent = f.name;
+
+    const description = document.createElement('p');
+    description.className = 'description';
+    description.textContent = f.description;
+
+    const meta = document.createElement('div');
+    meta.className = 'feature-meta';
+
+    const category = document.createElement('span');
+    category.className = 'category';
+    category.textContent = f.category;
+    meta.appendChild(category);
+
+    f.tags.forEach((t) => {
+      const tag = document.createElement('span');
+      tag.className = 'tag';
+      tag.textContent = t;
+      meta.appendChild(tag);
+    });
+
+    card.append(icon, title, description, meta);
+    containerElement.appendChild(card);
+  });
   
   // 顯示/隱藏「加載更多」按鈕
   const loadMoreBtn = document.getElementById('load-more-btn');

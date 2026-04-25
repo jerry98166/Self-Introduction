@@ -62,7 +62,7 @@ function checkDangerousProtocols(htmlFiles) {
 function checkIndexCsp() {
     const indexPath = path.join(root, 'index.html');
     if (!fs.existsSync(indexPath)) {
-        return { exists: false, missingDirectives: [] };
+        return { exists: false, missingDirectives: [], disallowedTokens: [] };
     }
 
     const content = read(indexPath);
@@ -71,7 +71,8 @@ function checkIndexCsp() {
         return {
             exists: true,
             hasCsp: false,
-            missingDirectives: ['meta Content-Security-Policy']
+            missingDirectives: ['meta Content-Security-Policy'],
+            disallowedTokens: []
         };
     }
 
@@ -82,13 +83,20 @@ function checkIndexCsp() {
         "form-action 'self'",
         "frame-ancestors 'none'"
     ];
+    const disallowed = ["'unsafe-inline'", "'unsafe-eval'"];
 
     const missingDirectives = required.filter((directive) => !csp.includes(directive));
+    const scriptSrcDirective = (csp
+        .split(';')
+        .map((item) => item.trim())
+        .find((item) => item.startsWith('script-src ')) || '');
+    const disallowedTokens = disallowed.filter((token) => scriptSrcDirective.includes(token));
 
     return {
         exists: true,
         hasCsp: true,
-        missingDirectives
+        missingDirectives,
+        disallowedTokens
     };
 }
 
@@ -111,6 +119,7 @@ function main() {
         console.log('index.html CSP meta: MISSING');
     } else {
         console.log(`index.html CSP required directives missing: ${cspCheck.missingDirectives.length}`);
+        console.log(`index.html CSP disallowed tokens present: ${cspCheck.disallowedTokens.length}`);
     }
 
     if (scriptCheck.missing.length > 0) {
@@ -137,13 +146,19 @@ function main() {
         cspCheck.missingDirectives.forEach((item) => console.log(`- ${item}`));
     }
 
+    if (cspCheck.exists && cspCheck.hasCsp && cspCheck.disallowedTokens.length > 0) {
+        console.log('\nDisallowed CSP tokens found in index.html:');
+        cspCheck.disallowedTokens.forEach((item) => console.log(`- ${item}`));
+    }
+
     const hasError =
         scriptCheck.missing.length > 0 ||
         scriptCheck.duplicated.length > 0 ||
         protocolCheck.length > 0 ||
         !cspCheck.exists ||
         !cspCheck.hasCsp ||
-        cspCheck.missingDirectives.length > 0;
+        cspCheck.missingDirectives.length > 0 ||
+        cspCheck.disallowedTokens.length > 0;
 
     if (hasError) {
         console.log('\nResult: FAILED');

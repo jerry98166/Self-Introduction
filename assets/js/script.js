@@ -117,6 +117,62 @@ const particleCount = window.innerWidth < 768 ? 24 : 50;
 const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const isSaveDataMode = !!(navigator.connection && navigator.connection.saveData);
 
+const globalKeydownHandlers = [];
+let isGlobalKeydownBound = false;
+
+const REMOTE_TRANSLATION_CONSENT_KEY = 'allow-remote-translation';
+const MAX_REMOTE_TRANSLATION_ITEMS = 80;
+
+function isTypingTarget(target) {
+    const targetTag = (target && target.tagName) ? target.tagName.toLowerCase() : '';
+    return targetTag === 'input' || targetTag === 'textarea' || targetTag === 'select' || target?.isContentEditable;
+}
+
+function registerGlobalShortcut(handler) {
+    globalKeydownHandlers.push(handler);
+}
+
+function bindGlobalKeydownListener() {
+    if (isGlobalKeydownBound) return;
+    isGlobalKeydownBound = true;
+
+    document.addEventListener('keydown', (e) => {
+        for (const handler of globalKeydownHandlers) {
+            const handled = handler(e);
+            if (handled) {
+                break;
+            }
+        }
+    });
+}
+
+function isRemoteTranslationEnabled() {
+    return localStorage.getItem(REMOTE_TRANSLATION_CONSENT_KEY) === 'true';
+}
+
+function updateActiveLink() {
+    const navLinks = document.querySelectorAll('.nav-link');
+    if (navLinks.length === 0) return;
+
+    const sections = document.querySelectorAll('.section, .hero');
+    const scrollPos = window.scrollY + 150;
+
+    sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.offsetHeight;
+        const sectionId = section.getAttribute('id');
+
+        if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${sectionId}`) {
+                    link.classList.add('active');
+                }
+            });
+        }
+    });
+}
+
 // 優化滾動事件 - 使用節流
 const onScroll = throttle(() => {
     const navbar = document.getElementById('navbar');
@@ -129,6 +185,8 @@ const onScroll = throttle(() => {
     }
     updateActiveLink();
 }, 100);
+
+bindGlobalKeydownListener();
 
 // ========================================
 // 立即移除 Preloader（避免卡住）
@@ -170,6 +228,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const safeInit = (fn) => { try { fn(); } catch(e) { console.warn(fn.name + ' failed:', e); } };
 
     // 首屏必要功能
+    safeInit(initAnalyticsTracking);
     safeInit(initNavigation);
     safeInit(initThemeToggle);
     safeInit(initBackToTop);
@@ -390,32 +449,13 @@ function initNavigation() {
         }
     });
 
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            closeMobileMenu();
-        }
+    registerGlobalShortcut((e) => {
+        if (e.key !== 'Escape') return false;
+        closeMobileMenu();
+        return true;
     });
-    
-    // 更新活動連結
-    function updateActiveLink() {
-        const sections = document.querySelectorAll('.section, .hero');
-        const scrollPos = window.scrollY + 150;
-        
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            const sectionHeight = section.offsetHeight;
-            const sectionId = section.getAttribute('id');
-            
-            if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
-                navLinks.forEach(link => {
-                    link.classList.remove('active');
-                    if (link.getAttribute('href') === `#${sectionId}`) {
-                        link.classList.add('active');
-                    }
-                });
-            }
-        });
-    }
+
+    updateActiveLink();
 }
 
 // ========================================
@@ -425,12 +465,14 @@ function initThemeToggle() {
     const themeToggle = document.getElementById('theme-toggle');
     if (!themeToggle) return;
 
+    // 防止重複初始化
+    if (themeToggle.dataset.themeBound === 'true') return;
+
     const body = document.body;
     const icon = themeToggle.querySelector('i');
     if (!icon) return;
 
     themeToggle.dataset.themeBound = 'true';
-    themeToggle.setAttribute('aria-pressed', 'false');
     
     // 檢查本地儲存的主題設定
     const savedTheme = localStorage.getItem('theme') || 'light';
@@ -448,13 +490,12 @@ function initThemeToggle() {
         themeToggle.setAttribute('aria-pressed', newTheme === 'dark' ? 'true' : 'false');
     });
 
-    document.addEventListener('keydown', (e) => {
-        if ((e.key === 't' || e.key === 'T') && !e.ctrlKey && !e.metaKey && !e.altKey) {
-            const targetTag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
-            if (targetTag === 'input' || targetTag === 'textarea' || targetTag === 'select') return;
-            e.preventDefault();
-            themeToggle.click();
-        }
+    registerGlobalShortcut((e) => {
+        if (!(e.key === 't' || e.key === 'T') || e.ctrlKey || e.metaKey || e.altKey) return false;
+        if (isTypingTarget(e.target)) return false;
+        e.preventDefault();
+        themeToggle.click();
+        return true;
     });
     
     function updateThemeIcon(theme) {
@@ -866,24 +907,40 @@ function trackEvent(category, action, label) {
     }
 }
 
+function initAnalyticsTracking() {
+    const gaMeta = document.querySelector('meta[name="ga-measurement-id"]');
+    if (!gaMeta) return;
+
+    const measurementId = (gaMeta.getAttribute('content') || '').trim();
+    const isValidMeasurementId = /^G-[A-Z0-9]+$/.test(measurementId) && measurementId !== 'G-XXXXXXXXXX';
+    if (!isValidMeasurementId) {
+        console.warn('GA measurement ID is missing or placeholder. Analytics disabled.');
+        return;
+    }
+
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function gtag() {
+        window.dataLayer.push(arguments);
+    };
+
+    loadExternalScript(`https://www.googletagmanager.com/gtag/js?id=${measurementId}`)
+        .then(() => {
+            window.gtag('js', new Date());
+            window.gtag('config', measurementId, {
+                anonymize_ip: true,
+                cookie_flags: 'SameSite=None;Secure'
+            });
+        })
+        .catch((error) => {
+            console.warn('Failed to load Google Analytics:', error);
+        });
+}
+
 // 追蹤按鈕點擊
 document.querySelectorAll('.btn').forEach(btn => {
     btn.addEventListener('click', function() {
         trackEvent('Button', 'Click', this.textContent.trim());
     });
-});
-
-// ========================================
-// 鍵盤快捷鍵
-// ========================================
-document.addEventListener('keydown', (e) => {
-    // ESC 關閉手機選單
-    if (e.key === 'Escape') {
-        const navMenu = document.getElementById('nav-menu');
-        if (navMenu && navMenu.classList.contains('active')) {
-            navMenu.classList.remove('active');
-        }
-    }
 });
 
 // ========================================
@@ -1059,7 +1116,8 @@ async function translatePageToEnglish() {
     if (isTranslatableText(document.title)) unique.add(document.title);
 
     const mapping = {};
-    const tasks = Array.from(unique).map(async (source) => {
+    const limitedSources = Array.from(unique).slice(0, MAX_REMOTE_TRANSLATION_ITEMS);
+    const tasks = limitedSources.map(async (source) => {
         try {
             mapping[source] = await translateToEnglish(source);
         } catch (error) {
@@ -1114,6 +1172,12 @@ function initLanguageToggle() {
     
     langToggle.addEventListener('click', async () => {
         currentLanguage = currentLanguage === 'zh' ? 'en' : 'zh';
+        if (currentLanguage === 'en' && !isRemoteTranslationEnabled()) {
+            const shouldEnableRemoteTranslation = window.confirm('是否允許使用第三方翻譯服務補翻英文？這可能會傳送部分頁面文字到外部 API。');
+            if (shouldEnableRemoteTranslation) {
+                localStorage.setItem(REMOTE_TRANSLATION_CONSENT_KEY, 'true');
+            }
+        }
         localStorage.setItem('language', currentLanguage);
         langText.textContent = currentLanguage === 'zh' ? 'EN' : '中';
         langToggle.setAttribute('aria-pressed', currentLanguage === 'en' ? 'true' : 'false');
@@ -1121,13 +1185,12 @@ function initLanguageToggle() {
         unlockAchievement('explorer');
     });
 
-    document.addEventListener('keydown', (e) => {
-        if ((e.key === 'l' || e.key === 'L') && !e.ctrlKey && !e.metaKey && !e.altKey) {
-            const targetTag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
-            if (targetTag === 'input' || targetTag === 'textarea' || targetTag === 'select') return;
-            e.preventDefault();
-            langToggle.click();
-        }
+    registerGlobalShortcut((e) => {
+        if (!(e.key === 'l' || e.key === 'L') || e.ctrlKey || e.metaKey || e.altKey) return false;
+        if (isTypingTarget(e.target)) return false;
+        e.preventDefault();
+        langToggle.click();
+        return true;
     });
 }
 
@@ -1147,6 +1210,10 @@ async function updateLanguage() {
 
     if (currentLanguage === 'zh') {
         restoreOriginalLanguageContent();
+        return;
+    }
+
+    if (!isRemoteTranslationEnabled()) {
         return;
     }
 
@@ -1313,13 +1380,12 @@ function initMusicPlayer() {
     }
 
     // 鍵盤快捷鍵
-    document.addEventListener('keydown', (e) => {
-        if ((e.key === 'm' || e.key === 'M') && !e.ctrlKey && !e.metaKey && !e.altKey) {
-            const targetTag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
-            if (targetTag === 'input' || targetTag === 'textarea' || targetTag === 'select') return;
-            e.preventDefault();
-            toggleMusic();
-        }
+    registerGlobalShortcut((e) => {
+        if (!(e.key === 'm' || e.key === 'M') || e.ctrlKey || e.metaKey || e.altKey) return false;
+        if (isTypingTarget(e.target)) return false;
+        e.preventDefault();
+        toggleMusic();
+        return true;
     });
 }
 
@@ -1687,7 +1753,26 @@ function initTypingGame() {
 
 // 社交分享功能
 function initSocialShare() {
-    // 分享函數已在HTML中內聯定義
+    const shareSection = document.querySelector('.social-share-section');
+    if (!shareSection) return;
+
+    shareSection.addEventListener('click', (event) => {
+        const button = event.target.closest('.share-btn[data-share]');
+        if (!button) return;
+
+        const shareTarget = button.getAttribute('data-share');
+        if (shareTarget === 'facebook') {
+            shareOnFacebook();
+        } else if (shareTarget === 'twitter') {
+            shareOnTwitter();
+        } else if (shareTarget === 'linkedin') {
+            shareOnLinkedIn();
+        } else if (shareTarget === 'whatsapp') {
+            shareOnWhatsApp();
+        } else if (shareTarget === 'copy-link') {
+            copyPageLink();
+        }
+    });
 }
 
 function shareOnFacebook() {

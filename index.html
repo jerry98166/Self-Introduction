@@ -35,7 +35,7 @@
     <meta name="twitter:creator" content="@Jerry59877">
     
     <!-- ========== 安全性標頭 ========== -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://unpkg.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://translate.googleapis.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:; frame-ancestors 'none'; upgrade-insecure-requests; block-all-mixed-content;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-AZpiaDl6f5OwlT4+KUhRkxt0CuJxzYaccDEgXog6i4w=' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://unpkg.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://translate.googleapis.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:; frame-ancestors 'none'; upgrade-insecure-requests; block-all-mixed-content;">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
@@ -60,9 +60,9 @@
     <!-- ========== CSS 樣式表 ========== -->
     <link rel="preload" href="assets/css/styles.css" as="style">
     <link rel="stylesheet" href="assets/css/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" as="style">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <noscript>
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     </noscript>
@@ -70,17 +70,8 @@
     <!-- ========== 預載重要圖片 ========== -->
     <link rel="preload" href="images/profile.webp" as="image" type="image/webp">
     
-    <!-- ========== Google Analytics（請替換為您的 GA ID）========== -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-XXXXXXXXXX', {
-            'anonymize_ip': true,
-            'cookie_flags': 'SameSite=None;Secure'
-        });
-    </script>
+    <!-- ========== Google Analytics（請填入正式 GA ID，例如 G-ABC1234567）========== -->
+    <meta name="ga-measurement-id" content="">
     
     <!-- ========== 結構化資料（Schema.org）========== -->
     <script type="application/ld+json">
@@ -193,14 +184,17 @@
                     <span></span>
                 </button>
                 <ul class="nav-menu" id="nav-menu">
-                    <li v-for="item in navLinks" :key="item.href">
-                        <a
-                            :href="item.href"
-                            :class="['nav-link', item.extraClass || '', item.active ? 'active' : '']"
-                            :data-zh="item.zh"
-                            :data-en="item.en"
-                        >{{ item.zh }}</a>
-                    </li>
+                    <li><a href="#home" class="nav-link active" data-zh="首頁" data-en="Home">首頁</a></li>
+                    <li><a href="pages/about.html" class="nav-link" data-zh="關於我" data-en="About">關於我</a></li>
+                    <li><a href="pages/skills.html" class="nav-link" data-zh="技能" data-en="Skills">技能</a></li>
+                    <li><a href="pages/experience.html" class="nav-link" data-zh="經歷" data-en="Experience">經歷</a></li>
+                    <li><a href="pages/projects.html" class="nav-link" data-zh="作品集" data-en="Projects">作品集</a></li>
+                    <li><a href="pages/education.html" class="nav-link" data-zh="學歷" data-en="Education">學歷</a></li>
+                    <li><a href="pages/typing-game.html" class="nav-link" data-zh="小遊戲" data-en="Typing Game">小遊戲</a></li>
+                    <li><a href="pages/achievements.html" class="nav-link" data-zh="成就徽章" data-en="Achievements">成就徽章</a></li>
+                    <li><a href="pages/lab.html" class="nav-link nav-lab" data-zh="🧪 功能實驗室" data-en="🧪 Feature Lab">🧪 功能實驗室</a></li>
+                    <li><a href="pages/admin.html" class="nav-link nav-admin" data-zh="⚙️ 管理後台" data-en="⚙️ Admin Panel">⚙️ 管理後台</a></li>
+                    <li><a href="#contact" class="nav-link" data-zh="聯絡我" data-en="Contact">聯絡我</a></li>
                 </ul>
             </div>
         </div>
@@ -233,16 +227,26 @@
                         </a>
                     </div>
                     <div class="social-links">
-                        <a
-                            v-for="link in heroSocialLinks"
-                            :key="link.href"
-                            :href="link.href"
-                            :target="link.external ? '_blank' : null"
-                            :rel="link.external ? 'noopener noreferrer' : null"
-                            class="social-link"
-                            :aria-label="link.label"
-                        >
-                            <i :class="link.icon"></i>
+                        <a href="https://github.com/jerry98166" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/in/%E5%AD%9F%E9%BA%9F-%E9%AB%98-b88773191/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="https://x.com/Jerry59877" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Twitter/X">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="https://www.youtube.com/@%E9%AB%98%E5%AD%9F%E9%BA%9F-u1b" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="YouTube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                        <a href="https://www.instagram.com/jerry98166/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://www.facebook.com/allen.jerry.357827" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Facebook">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                        <a href="mailto:11028201@cycu.org.tw" class="social-link" aria-label="Email">
+                            <i class="fas fa-envelope"></i>
                         </a>
                     </div>
                     <!-- 訪客計數器和實時時鐘 -->
@@ -378,23 +382,23 @@
             <div class="social-share-section">
                 <h3 class="share-title" data-zh="分享本頁面" data-en="Share This Page">分享本頁面</h3>
                 <div class="share-buttons">
-                    <button class="share-btn facebook" onclick="shareOnFacebook()">
+                    <button class="share-btn facebook" data-share="facebook">
                         <i class="fab fa-facebook-f"></i>
                         <span data-zh="Facebook" data-en="Facebook">Facebook</span>
                     </button>
-                    <button class="share-btn twitter" onclick="shareOnTwitter()">
+                    <button class="share-btn twitter" data-share="twitter">
                         <i class="fab fa-twitter"></i>
                         <span data-zh="Twitter" data-en="Twitter">Twitter</span>
                     </button>
-                    <button class="share-btn linkedin" onclick="shareOnLinkedIn()">
+                    <button class="share-btn linkedin" data-share="linkedin">
                         <i class="fab fa-linkedin-in"></i>
                         <span data-zh="LinkedIn" data-en="LinkedIn">LinkedIn</span>
                     </button>
-                    <button class="share-btn whatsapp" onclick="shareOnWhatsApp()">
+                    <button class="share-btn whatsapp" data-share="whatsapp">
                         <i class="fab fa-whatsapp"></i>
                         <span data-zh="WhatsApp" data-en="WhatsApp">WhatsApp</span>
                     </button>
-                    <button class="share-btn copy-link" onclick="copyPageLink()">
+                    <button class="share-btn copy-link" data-share="copy-link">
                         <i class="fas fa-link"></i>
                         <span data-zh="複製連結" data-en="Copy Link">複製連結</span>
                     </button>
@@ -504,9 +508,10 @@
                 <div class="footer-section">
                     <h3 class="footer-title">快速連結</h3>
                     <ul class="footer-links">
-                        <li v-for="link in footerQuickLinks" :key="link.href">
-                            <a :href="link.href">{{ link.text }}</a>
-                        </li>
+                        <li><a href="#home">首頁</a></li>
+                        <li><a href="pages/about.html">關於我</a></li>
+                        <li><a href="pages/skills.html">技能</a></li>
+                        <li><a href="pages/projects.html">作品集</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
@@ -532,33 +537,14 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; {{ currentYear }} 高孟麟. All rights reserved.</p>
+                <p>&copy; <span id="current-year">2026</span> 高孟麟. All rights reserved.</p>
                 <p>Made with <i class="fas fa-heart"></i> and <i class="fas fa-coffee"></i></p>
             </div>
         </div>
     </footer>
 
     </div>
-    <script>
-        (function () {
-            function forceHidePreloader() {
-                var preloader = document.getElementById('preloader');
-                if (!preloader) return;
-                preloader.classList.add('hidden');
-                preloader.style.display = 'none';
-            }
-
-            window.addEventListener('load', function () {
-                setTimeout(forceHidePreloader, 1200);
-            }, { once: true });
-
-            // Ultimate fallback: never let preloader block the page forever.
-            setTimeout(forceHidePreloader, 5000);
-        })();
-    </script>
     <script defer src="assets/js/performance-optimization.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
-    <script defer src="assets/js/vue-app.js"></script>
     <script defer src="assets/js/script.js"></script>
     <script defer src="assets/js/security-hardening.js"></script>
     <script defer src="assets/js/ux-enhancement.js"></script>
