@@ -30,14 +30,16 @@ const { createApp } = Vue;
             return { navLinks };
         },
         template: `
-            <li v-for="item in navLinks" :key="item.href">
-                <a
-                    :href="item.href"
-                    :class="['nav-link', item.extraClass || '', item.active ? 'active' : '']"
-                    :data-zh="item.zh"
-                    :data-en="item.en"
-                >{{ item.zh }}</a>
-            </li>
+            <ul class="nav-menu" id="nav-menu">
+                <li v-for="item in navLinks" :key="item.href">
+                    <a
+                        :href="item.href"
+                        :class="['nav-link', item.extraClass || '', item.active ? 'active' : '']"
+                        :data-zh="item.zh"
+                        :data-en="item.en"
+                    >{{ item.zh }}</a>
+                </li>
+            </ul>
         `
     }).mount('#nav-menu');
 })();

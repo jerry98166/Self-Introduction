@@ -7,17 +7,14 @@
 
         const style = document.createElement('style');
         style.id = STYLE_ID;
-        style.textContent = [
             '.skip-link{position:absolute;left:16px;top:-64px;z-index:4000;background:#0f172a;color:#fff;padding:10px 14px;border-radius:8px;text-decoration:none;box-shadow:0 8px 20px rgba(0,0,0,.25);transition:top .2s ease;}',
             '.skip-link:focus{top:16px;}',
             'a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #f59e0b;outline-offset:2px;}',
             '.subpage-float-btn{position:fixed !important;right:24px !important;width:46px !important;height:46px !important;border:none !important;border-radius:999px !important;color:#fff !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;box-shadow:0 10px 24px rgba(15,23,42,.3) !important;z-index:2500 !important;}',
-            '#language-toggle.subpage-float-btn,.global-language-toggle.subpage-float-btn{bottom:186px !important;background:#334155 !important;}',
-            '#theme-toggle.subpage-float-btn,.global-theme-toggle.subpage-float-btn{bottom:132px !important;background:#475569 !important;}',
             '#back-to-top.subpage-float-btn,.global-back-to-top.subpage-float-btn{bottom:24px !important;background:#6366f1 !important;display:flex !important;}',
             '.subpage-float-btn:hover{filter:brightness(1.08);}',
             '.subpage-float-btn.subpage-hidden{display:none !important;}',
-            '@media (max-width:768px){.subpage-float-btn{right:16px !important;}#language-toggle.subpage-float-btn,.global-language-toggle.subpage-float-btn{bottom:178px !important;}#theme-toggle.subpage-float-btn,.global-theme-toggle.subpage-float-btn{bottom:124px !important;}#back-to-top.subpage-float-btn,.global-back-to-top.subpage-float-btn{bottom:16px !important;}}',
+            '@media (max-width:768px){.subpage-float-btn{right:16px !important;}#back-to-top.subpage-float-btn,.global-back-to-top.subpage-float-btn{bottom:16px !important;}}',
             '@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto;}*,*::before,*::after{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important;}}'
         ].join('');
 
@@ -130,7 +127,6 @@
             button.innerHTML = '<i class="fas fa-moon" aria-hidden="true"></i>';
         }
 
-        button.classList.add('subpage-float-btn');
         button.setAttribute('aria-label', '切換主題');
         button.title = '切換主題';
 
@@ -167,65 +163,6 @@
         }
     }
 
-    function ensureLanguageToggle() {
-        let button = document.getElementById('language-toggle');
-        if (!button) {
-            button = document.createElement('button');
-            button.type = 'button';
-            button.id = 'language-toggle';
-            button.className = 'global-language-toggle';
-            button.innerHTML = '<span class="lang-text">EN</span>';
-            document.body.appendChild(button);
-        }
-
-        if (!button.querySelector('.lang-text')) {
-            button.innerHTML = '<span class="lang-text">EN</span>';
-        }
-
-        button.classList.add('subpage-float-btn');
-        button.setAttribute('aria-label', '切換語言');
-        button.title = '切換語言';
-
-        if (button.dataset.languageBound === 'true') {
-            return;
-        }
-
-        const langText = button.querySelector('.lang-text');
-        let currentLanguage = localStorage.getItem('language') || 'zh';
-
-        const applyLanguage = (lang) => {
-            currentLanguage = lang;
-            localStorage.setItem('language', lang);
-            button.setAttribute('aria-pressed', lang === 'en' ? 'true' : 'false');
-            if (langText) {
-                langText.textContent = lang === 'zh' ? 'EN' : '中';
-            }
-
-            document.querySelectorAll('[data-zh][data-en]').forEach((el) => {
-                const text = lang === 'zh' ? el.getAttribute('data-zh') : el.getAttribute('data-en');
-                if (text !== null) {
-                    el.textContent = text;
-                }
-            });
-        };
-
-        button.dataset.languageBound = 'true';
-        applyLanguage(currentLanguage);
-
-        button.addEventListener('click', () => {
-            applyLanguage(currentLanguage === 'zh' ? 'en' : 'zh');
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if ((e.key === 'l' || e.key === 'L') && !e.ctrlKey && !e.metaKey && !e.altKey) {
-                const targetTag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
-                if (targetTag === 'input' || targetTag === 'textarea' || targetTag === 'select') return;
-                e.preventDefault();
-                button.click();
-            }
-        });
-    }
-
     function normalizeAriaLabels() {
         const mapping = {
             'theme-toggle': '切換主題',
@@ -249,7 +186,6 @@
         ensureBackToTop();
         normalizeAriaLabels();
         initMobileMenuAccessibility();
-        ensureLanguageToggle();
         ensureThemeToggle();
     }
 

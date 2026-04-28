@@ -1030,11 +1030,11 @@ function parseTranslateResponse(data) {
         .trim();
 }
 
-async function translateToEnglish(text) {
-    const key = `zh-en:${text}`;
+async function translateToLang(text, targetLang) {
+    const key = `zh-${targetLang}:${text}`;
     if (translationCache[key]) return translationCache[key];
 
-    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=zh-TW&tl=en&dt=t&q=${encodeURIComponent(text)}`;
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=zh-TW&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
     const response = await fetch(url);
     if (!response.ok) throw new Error(`Translate API failed: ${response.status}`);
 
@@ -1105,7 +1105,7 @@ function collectAttrTargetsForTranslation() {
     return targets;
 }
 
-async function translatePageToEnglish() {
+async function translatePageToLang(targetLang) {
     const textTargets = collectTextNodesForTranslation();
     const attrTargets = collectAttrTargetsForTranslation();
     const unique = new Set();
@@ -1114,11 +1114,20 @@ async function translatePageToEnglish() {
     attrTargets.forEach(({ value }) => unique.add(value));
     if (isTranslatableText(document.title)) unique.add(document.title);
 
+    // Also collect data-zh attributes for translation if target is not EN
+    const elementsWithZhEn = document.querySelectorAll('[data-zh]');
+    if (targetLang !== 'en') {
+        elementsWithZhEn.forEach(el => {
+            const zhText = el.getAttribute('data-zh');
+            if (isTranslatableText(zhText)) unique.add(zhText);
+        });
+    }
+
     const mapping = {};
     const limitedSources = Array.from(unique).slice(0, MAX_REMOTE_TRANSLATION_ITEMS);
     const tasks = limitedSources.map(async (source) => {
         try {
-            mapping[source] = await translateToEnglish(source);
+            mapping[source] = await translateToLang(source, targetLang);
         } catch (error) {
             console.warn('Translation failed:', source, error);
             mapping[source] = source;
@@ -1134,6 +1143,15 @@ async function translatePageToEnglish() {
     attrTargets.forEach(({ el, attr, value }) => {
         el.setAttribute(attr, mapping[value] || value);
     });
+
+    if (targetLang !== 'en') {
+        elementsWithZhEn.forEach(el => {
+            const zhText = el.getAttribute('data-zh');
+            if (mapping[zhText]) {
+                el.textContent = mapping[zhText];
+            }
+        });
+    }
 
     if (isTranslatableText(document.title)) {
         document.title = mapping[document.title] || document.title;
@@ -1156,56 +1174,64 @@ function restoreOriginalLanguageContent() {
 }
 
 function initLanguageToggle() {
-    const langToggle = document.getElementById('language-toggle');
-    if (!langToggle) return;
+    const langOptions = document.querySelectorAll('.lang-option');
+    if (!langOptions.length) return;
 
-    const langText = langToggle.querySelector('.lang-text');
-    if (!langText) return;
-
-    langToggle.dataset.languageBound = 'true';
-    langToggle.setAttribute('aria-pressed', currentLanguage === 'en' ? 'true' : 'false');
-    langToggle.title = '切換語言';
-
-    langText.textContent = currentLanguage === 'zh' ? 'EN' : '中';
+    // Remove aria-pressed and old toggle logic
+    // Add dropdown logic for mobile if needed, but CSS handles hover.
+    
+    // Check local storage or default to zh
+    currentLanguage = localStorage.getItem('language') || 'zh';
+    
+    const updateActiveOption = () => {
+        langOptions.forEach(opt => {
+            if (opt.getAttribute('data-lang') === currentLanguage) {
+                opt.classList.add('active');
+            } else {
+                opt.classList.remove('active');
+            }
+        });
+    };
+    
+    updateActiveOption();
     updateLanguage();
     
-    langToggle.addEventListener('click', async () => {
-        currentLanguage = currentLanguage === 'zh' ? 'en' : 'zh';
-        if (currentLanguage === 'en' && !isRemoteTranslationEnabled()) {
-            const shouldEnableRemoteTranslation = window.confirm('是否允許使用第三方翻譯服務補翻英文？這可能會傳送部分頁面文字到外部 API。');
-            if (shouldEnableRemoteTranslation) {
-                localStorage.setItem(REMOTE_TRANSLATION_CONSENT_KEY, 'true');
+    langOptions.forEach(option => {
+        option.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const selectedLang = option.getAttribute('data-lang');
+            if (selectedLang === currentLanguage) return;
+            
+            if (selectedLang !== 'zh' && !isRemoteTranslationEnabled()) {
+                const shouldEnableRemoteTranslation = window.confirm('是否允許使用第三方翻譯服務補翻內容？這可能會傳送部分頁面文字到外部 API。');
+                if (shouldEnableRemoteTranslation) {
+                    localStorage.setItem(REMOTE_TRANSLATION_CONSENT_KEY, 'true');
+                } else {
+                    return; // 拒絕則不切換
+                }
             }
-        }
-        localStorage.setItem('language', currentLanguage);
-        langText.textContent = currentLanguage === 'zh' ? 'EN' : '中';
-        langToggle.setAttribute('aria-pressed', currentLanguage === 'en' ? 'true' : 'false');
-        await updateLanguage();
-        unlockAchievement('explorer');
-    });
-
-    registerGlobalShortcut((e) => {
-        if (!(e.key === 'l' || e.key === 'L') || e.ctrlKey || e.metaKey || e.altKey) return false;
-        if (isTypingTarget(e.target)) return false;
-        e.preventDefault();
-        langToggle.click();
-        return true;
+            
+            currentLanguage = selectedLang;
+            localStorage.setItem('language', currentLanguage);
+            updateActiveOption();
+            
+            await updateLanguage();
+            unlockAchievement('explorer');
+        });
     });
 }
 
 async function updateLanguage() {
     const elements = document.querySelectorAll('[data-zh][data-en]');
     
-    elements.forEach(el => {
-        const zhText = el.getAttribute('data-zh');
-        const enText = el.getAttribute('data-en');
-        
-        if (currentLanguage === 'zh') {
-            el.textContent = zhText;
-        } else {
-            el.textContent = enText;
-        }
-    });
+    // 如果有原生的 en 屬性，且目標是 en，優先使用原生
+    if (currentLanguage === 'en' || currentLanguage === 'zh') {
+        elements.forEach(el => {
+            const zhText = el.getAttribute('data-zh');
+            const enText = el.getAttribute('data-en');
+            el.textContent = currentLanguage === 'zh' ? zhText : enText;
+        });
+    }
 
     if (currentLanguage === 'zh') {
         restoreOriginalLanguageContent();
@@ -1216,7 +1242,7 @@ async function updateLanguage() {
         return;
     }
 
-    await translatePageToEnglish();
+    await translatePageToLang(currentLanguage);
 }
 
 // 音樂播放器

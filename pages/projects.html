@@ -3,202 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="高孟麟的作品集 - 展示我的專案作品、技術能力和創新成果">
-    <title>作品集 | 高孟麟 - 全端工程師</title>
-    
-    <!-- Favicon -->
+    <title>作品集 - 高孟麟 | 全端工程師</title>
+    <meta name="description" content="展示高孟麟的專案作品、技術創新與實踐經驗。">
     <link rel="icon" type="image/svg+xml" href="../assets/images/icons/favicon.svg">
     <link rel="icon" type="image/png" sizes="32x32" href="../assets/images/icons/favicon-32x32.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/icons/apple-touch-icon.png">
-    
-    <!-- Font Awesome -->
+    <link rel="stylesheet" href="../assets/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet"></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet"></noscript>
     
     <style>
-        :root {
-            --primary-color: #6366f1;
-            --secondary-color: #8b5cf6;
-            --accent-color: #ec4899;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --text-primary: #1f2937;
-            --text-secondary: #6b7280;
-            --text-light: #9ca3af;
-            --bg-primary: #ffffff;
-            --bg-secondary: #f9fafb;
-            --bg-dark: #111827;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --gradient-success: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
-        }
-
-        [data-theme="dark"] {
-            --text-primary: #f9fafb;
-            --text-secondary: #d1d5db;
-            --bg-primary: #1f2937;
-            --bg-secondary: #111827;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Poppins', 'Noto Sans TC', sans-serif;
-            color: var(--text-primary);
-            background: var(--bg-secondary);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        /* Header Section */
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 6rem 2rem 4rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
-            animation: float 20s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-
-        .header-content {
-            position: relative;
-            z-index: 1;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .back-btn {
-            position: absolute;
-            top: 2rem;
-            left: 2rem;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 0.8rem 1.5rem;
-            border-radius: 50px;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-            z-index: 10;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .back-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateX(-5px);
-        }
-
-        .header-title {
-            font-size: 4rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            letter-spacing: -1px;
-        }
-
-        .header-subtitle {
-            font-size: 1.5rem;
-            opacity: 0.95;
-            font-weight: 300;
-            margin-bottom: 2rem;
-        }
-
-        .header-stats {
-            display: flex;
-            justify-content: center;
-            gap: 3rem;
-            margin-top: 2rem;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            display: block;
-        }
-
-        .stat-label {
-            font-size: 1rem;
-            opacity: 0.9;
-            margin-top: 0.5rem;
-        }
-
-        /* Theme Toggle */
-        .theme-toggle {
-            position: fixed;
-            top: 2rem;
-            right: 2rem;
-            width: 50px;
-            height: 50px;
-            background: white;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: var(--shadow-lg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            color: var(--primary-color);
-            z-index: 1000;
-            transition: all 0.3s ease;
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1) rotate(15deg);
-            box-shadow: var(--shadow-xl);
-        }
-
         /* Filter Section */
         .filter-section {
-            background: var(--bg-primary);
-            padding: 2rem;
-            box-shadow: var(--shadow-md);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            margin-bottom: 3rem;
+            position: relative;
+            z-index: 10;
         }
 
         .filter-container {
-            max-width: 1400px;
-            margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 2rem;
             flex-wrap: wrap;
+            background: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
         }
 
         .filter-buttons {
@@ -208,9 +40,9 @@
         }
 
         .filter-btn {
-            padding: 0.8rem 1.5rem;
+            padding: 0.6rem 1.2rem;
             background: var(--bg-secondary);
-            border: 2px solid transparent;
+            border: 1px solid var(--border-color);
             border-radius: 50px;
             cursor: pointer;
             font-weight: 500;
@@ -221,6 +53,7 @@
         .filter-btn:hover {
             background: var(--primary-color);
             color: white;
+            border-color: var(--primary-color);
             transform: translateY(-2px);
         }
 
@@ -228,6 +61,7 @@
             background: var(--primary-color);
             color: white;
             border-color: var(--primary-color);
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
         }
 
         .search-box {
@@ -235,8 +69,15 @@
             align-items: center;
             background: var(--bg-secondary);
             border-radius: 50px;
-            padding: 0.8rem 1.5rem;
-            min-width: 300px;
+            padding: 0.6rem 1.5rem;
+            min-width: 250px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        
+        .search-box:focus-within {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
 
         .search-box input {
@@ -246,38 +87,31 @@
             flex: 1;
             font-size: 1rem;
             color: var(--text-primary);
+            margin-left: 0.8rem;
         }
 
         .search-box i {
             color: var(--text-secondary);
         }
 
-        /* Container */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 4rem 2rem;
-        }
-
         /* Projects Grid */
         .projects-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 2.5rem;
-            margin-top: 2rem;
         }
 
         /* Project Card */
         .project-card {
-            background: var(--bg-primary);
             border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
-            border: 1px solid rgba(99, 102, 241, 0.1);
             animation: fadeInUp 0.6s ease-out forwards;
             opacity: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
 
         .project-card:nth-child(1) { animation-delay: 0.1s; }
@@ -289,53 +123,36 @@
         .project-card:nth-child(7) { animation-delay: 0.7s; }
 
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .project-card:hover {
-            transform: translateY(-12px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.25);
+            transform: translateY(-12px);
+            box-shadow: var(--shadow-lg);
             border-color: rgba(99, 102, 241, 0.3);
         }
 
         /* Featured Project */
         .project-card-featured {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%);
-            border: 2px solid rgba(99, 102, 241, 0.3);
-        }
-
-        .project-card-featured:hover {
-            box-shadow: 0 25px 50px rgba(99, 102, 241, 0.35);
+            border: 2px solid rgba(99, 102, 241, 0.5);
         }
 
         .project-badge {
             position: absolute;
             top: 20px;
             right: 20px;
-            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            background: linear-gradient(135deg, #ffd700 0%, #f59e0b 100%);
             color: #000;
-            padding: 8px 16px;
+            padding: 6px 14px;
             border-radius: 25px;
             display: flex;
             align-items: center;
             gap: 6px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 700;
             z-index: 10;
             box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
-            animation: pulse-badge 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse-badge {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
         }
 
         .project-image {
@@ -348,7 +165,6 @@
         .project-image .image-placeholder {
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
             display: flex;
             align-items: center;
             justify-content: center;
@@ -367,16 +183,14 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.95) 0%, rgba(168, 85, 247, 0.95) 100%);
+            background: rgba(0, 0, 0, 0.7);
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            padding: 1rem;
+            gap: 1.5rem;
             opacity: 0;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(5px);
         }
 
         .project-card:hover .project-overlay {
@@ -384,27 +198,31 @@
         }
 
         .project-link {
-            width: 55px;
-            height: 55px;
+            width: 50px;
+            height: 50px;
             background: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--primary-color);
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             text-decoration: none;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         .project-link:hover {
-            transform: scale(1.15) rotate(15deg);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            transform: scale(1.15);
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.6);
         }
 
         .project-info {
-            padding: 2rem;
+            padding: 1.8rem;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
         }
 
         .project-header {
@@ -415,50 +233,31 @@
         }
 
         .project-title {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 700;
             margin-bottom: 0;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .project-status {
-            display: flex;
-            gap: 0.5rem;
+            color: var(--text-primary);
         }
 
         .status-badge {
-            padding: 5px 12px;
+            padding: 4px 10px;
             border-radius: 20px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 600;
             letter-spacing: 0.5px;
             text-transform: uppercase;
         }
 
-        .status-active {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-        }
-
-        .status-completed {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            color: white;
-        }
-
-        .status-development {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            color: white;
-        }
+        .status-active { background: #10b981; color: white; }
+        .status-completed { background: #3b82f6; color: white; }
+        .status-development { background: #f59e0b; color: white; }
 
         .project-description {
             color: var(--text-secondary);
             margin-bottom: 1.5rem;
-            line-height: 1.7;
+            line-height: 1.6;
             font-size: 0.95rem;
+            flex: 1;
         }
 
         .project-features {
@@ -472,22 +271,14 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 8px 12px;
-            background: rgba(99, 102, 241, 0.08);
+            padding: 6px 10px;
+            background: var(--bg-secondary);
             border-radius: 8px;
             font-size: 0.85rem;
             color: var(--text-primary);
-            transition: all 0.3s ease;
         }
 
-        .feature-item:hover {
-            background: rgba(99, 102, 241, 0.15);
-            transform: translateX(5px);
-        }
-
-        .feature-item i {
-            color: var(--primary-color);
-        }
+        .feature-item i { color: var(--primary-color); }
 
         .project-tags {
             display: flex;
@@ -497,235 +288,115 @@
         }
 
         .tag {
-            padding: 6px 14px;
-            background: rgba(99, 102, 241, 0.1);
-            color: var(--primary-color);
+            padding: 4px 12px;
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
             border-radius: 20px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 500;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(99, 102, 241, 0.2);
-        }
-
-        .tag:hover {
-            background: var(--primary-color);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-        }
-
-        .tag-primary {
-            background: rgba(99, 102, 241, 0.1);
-            color: #6366f1;
-            border-color: rgba(99, 102, 241, 0.3);
-        }
-
-        .tag-secondary {
-            background: rgba(168, 85, 247, 0.1);
-            color: #a855f7;
-            border-color: rgba(168, 85, 247, 0.3);
-        }
-
-        .tag-accent {
-            background: rgba(236, 72, 153, 0.1);
-            color: #ec4899;
-            border-color: rgba(236, 72, 153, 0.3);
-        }
-
-        .tag-success {
-            background: rgba(16, 185, 129, 0.1);
-            color: #10b981;
-            border-color: rgba(16, 185, 129, 0.3);
+            border: 1px solid var(--border-color);
         }
 
         .project-stats {
             display: flex;
             gap: 1.5rem;
             padding-top: 1rem;
-            border-top: 1px solid rgba(99, 102, 241, 0.1);
+            border-top: 1px solid var(--border-color);
+            margin-top: auto;
         }
 
         .project-stats .stat {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--text-secondary);
         }
 
-        .project-stats .stat i {
-            color: var(--primary-color);
-        }
+        .project-stats .stat i { color: var(--primary-color); }
 
         /* Empty State */
         .empty-state {
             text-align: center;
             padding: 4rem 2rem;
             color: var(--text-secondary);
+            background: var(--bg-primary);
+            border-radius: 20px;
+            border: 1px dashed var(--border-color);
         }
 
         .empty-state i {
-            font-size: 4rem;
+            font-size: 3rem;
             margin-bottom: 1rem;
             opacity: 0.5;
         }
 
-        .empty-state h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        /* Back to Top Button */
-        .back-to-top {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            width: 50px;
-            height: 50px;
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: var(--shadow-lg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            z-index: 999;
-        }
-
-        .back-to-top.show {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .back-to-top:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-xl);
-        }
-
-        /* Responsive */
         @media (max-width: 768px) {
-            .header {
-                padding: 4rem 1rem 3rem;
-            }
-
-            .header-title {
-                font-size: 2.5rem;
-            }
-
-            .header-subtitle {
-                font-size: 1.2rem;
-            }
-
-            .back-btn {
-                top: 1rem;
-                left: 1rem;
-                padding: 0.6rem 1rem;
-                font-size: 0.9rem;
-            }
-
-            .header-stats {
-                gap: 1.5rem;
-            }
-
-            .stat-number {
-                font-size: 2rem;
-            }
-
-            .filter-container {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .search-box {
-                min-width: auto;
-                width: 100%;
-            }
-
-            .projects-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-
-            .container {
-                padding: 2rem 1rem;
-            }
-
-            .project-card-featured {
-                margin-bottom: 1rem;
-            }
-
-            .project-badge {
-                top: 15px;
-                right: 15px;
-                padding: 6px 12px;
-                font-size: 0.8rem;
-            }
-
-            .project-info {
-                padding: 1.5rem;
-            }
-
-            .project-title {
-                font-size: 1.3rem;
-            }
-
-            .project-features {
-                grid-template-columns: 1fr;
-            }
-
-            .project-link {
-                width: 45px;
-                height: 45px;
-                font-size: 1.1rem;
-            }
+            .filter-container { flex-direction: column; align-items: stretch; }
+            .search-box { min-width: auto; width: 100%; }
         }
     </style>
+
 </head>
 <body>
-    <!-- Theme Toggle -->
-    <button id="theme-toggle" class="theme-toggle" aria-label="切換主題">
-        <i class="fas fa-moon"></i>
-    </button>
-
-    <!-- Header -->
-    <div class="header">
-        <a href="../index.html" class="back-btn">
-            <i class="fas fa-arrow-left"></i>
-            返回首頁
-        </a>
-        <div class="header-content">
-            <h1 class="header-title">
-                <i class="fas fa-briefcase"></i>
-                作品集
-            </h1>
-            <p class="header-subtitle">
-                探索我的專案作品 · 技術創新 · 實踐經驗
-            </p>
-            <div class="header-stats">
-                <div class="stat-item">
-                    <span class="stat-number" id="total-projects">7</span>
-                    <span class="stat-label">總專案數</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number">4</span>
-                    <span class="stat-label">技術領域</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number">10+</span>
-                    <span class="stat-label">使用技術</span>
-                </div>
-            </div>
+    <div id="preloader" class="preloader">
+        <div class="preloader-content">
+            <div class="loader"></div>
+            <p class="loading-text">載入中...</p>
         </div>
     </div>
 
-    <!-- Filter Section -->
-    <div class="filter-section">
+    <div id="scroll-progress" class="scroll-progress"></div>
+    <div id="cursor-follower" class="cursor-follower"></div>
+    <canvas id="particles-canvas"></canvas>
+    <div id="three-container"></div>
+
+    <button id="back-to-top" class="back-to-top"><i class="fas fa-arrow-up"></i></button>
+    <button id="chatbot-toggle" class="chatbot-toggle"><i class="fas fa-robot"></i></button>
+    <button id="terminal-toggle" class="terminal-toggle"><i class="fas fa-terminal"></i></button>
+
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <a href="../index.html" class="logo">
+                    <span class="logo-text">My Portfolio</span>
+                </a>
+                <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+                    <span></span><span></span><span></span>
+                </button>
+                <ul class="nav-menu" id="nav-menu">
+                    <!-- Vue dynamically injects navigation here -->
+                </ul>
+                <div class="nav-actions">
+                    <button id="theme-toggle" class="nav-theme-btn" aria-label="切換主題" title="切換深淺色"><i class="fas fa-moon"></i></button>
+                    <div class="lang-dropdown">
+                        <button id="language-toggle" class="nav-lang-btn" aria-label="切換語言" title="切換語言">
+                            <i class="fas fa-globe"></i>
+                        </button>
+                        <div class="lang-dropdown-menu">
+                            <a href="#" class="lang-option" data-lang="zh">繁體中文</a>
+                            <a href="#" class="lang-option" data-lang="en">English</a>
+                            <a href="#" class="lang-option" data-lang="ja">日本語</a>
+                            <a href="#" class="lang-option" data-lang="ko">한국어</a>
+                            <a href="#" class="lang-option" data-lang="es">Español</a>
+                            <a href="#" class="lang-option" data-lang="fr">Français</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title" data-zh="作品集" data-en="Projects">作品集</h2>
+                <div class="section-divider"></div>
+                <p class="section-description" data-zh="探索我的專案作品 · 技術創新 · 實踐經驗" data-en="Explore my projects, innovations, and experience">探索我的專案作品 · 技術創新 · 實踐經驗</p>
+            </div>
+            
+            <div class="filter-section">
+                
         <div class="filter-container">
             <div class="filter-buttons">
                 <button class="filter-btn active" data-filter="all">
@@ -749,11 +420,11 @@
                 <input type="text" id="search-input" placeholder="搜尋專案...">
             </div>
         </div>
-    </div>
+    
+            </div>
 
-    <!-- Projects Container -->
-    <div class="container">
-        <div class="projects-grid" id="projects-grid">
+            <div class="projects-grid" id="projects-grid">
+                
             <!-- 中原大學嚮導 - 精選專案 -->
             <div class="project-card project-card-featured glass-card hover-glow" data-category="web ai">
                 <div class="project-badge">
@@ -1167,22 +838,75 @@
                     </div>
                 </div>
             </div>
-        </div>
+        
+            </div>
 
-        <!-- Empty State -->
-        <div class="empty-state" id="empty-state" style="display: none;">
+            <div class="empty-state" id="empty-state" style="display: none;">
+                
             <i class="fas fa-search"></i>
             <h3>找不到相符的專案</h3>
             <p>請嘗試其他搜尋關鍵字或篩選條件</p>
+        
+            </div>
+        </div>
+    </section>
+
+    <!-- Chatbot and Terminal -->
+    <div id="chatbot-panel" class="chatbot-panel">
+        <div class="chatbot-header">
+            <div class="chatbot-title"><i class="fas fa-robot"></i><span>AI 助手</span></div>
+            <div class="chatbot-actions">
+                <button class="chatbot-minimize"><i class="fas fa-minus"></i></button>
+                <button class="chatbot-close"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+        <div class="chatbot-body">
+            <div class="chatbot-messages" id="chatbot-messages">
+                <div class="chat-message bot-message">
+                    <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                    <div class="message-content"><p>您好！我是 AI 助手。</p></div>
+                </div>
+            </div>
+        </div>
+        <div class="chatbot-footer">
+            <input type="text" id="chatbot-input" placeholder="輸入問題...">
+            <button id="chatbot-send" class="btn-send"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 
-    <!-- Back to Top Button -->
-    <button id="back-to-top" class="back-to-top" aria-label="回到頂部">
-        <i class="fas fa-arrow-up"></i>
-    </button>
+    <div id="terminal-panel" class="terminal-panel">
+        <div class="terminal-header">
+            <div class="terminal-title"><i class="fas fa-terminal"></i><span>Terminal v1.0.0</span></div>
+            <div class="terminal-actions">
+                <button class="terminal-minimize"><i class="fas fa-minus"></i></button>
+                <button class="terminal-close"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+        <div class="terminal-body" id="terminal-body">
+            <div class="terminal-output">
+                <div class="terminal-line">Welcome to Portfolio Terminal v1.0.0</div>
+                <div class="terminal-line">Type 'help' for available commands.</div>
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span class="terminal-prompt">visitor@portfolio:~$</span>
+            <input type="text" id="terminal-input" class="terminal-input" autofocus>
+        </div>
+    </div>
 
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 高孟麟. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+    <script defer src="../assets/js/vue-subpages.js"></script>
+    <script defer src="../assets/js/script.js"></script>
     <script>
+        
         // Filter Functionality
         const filterBtns = document.querySelectorAll('.filter-btn');
         const projectCards = document.querySelectorAll('.project-card');
@@ -1257,8 +981,8 @@
         projectCards.forEach(card => {
             observer.observe(card);
         });
+    
     </script>
-    <script defer src="../assets/js/script.js"></script>
     <script defer src="../assets/js/subpage-ux.js"></script>
     <script defer src="../assets/js/security-hardening.js"></script>
 </body>

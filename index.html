@@ -125,16 +125,6 @@
         <!-- Three.js 3D 背景 -->
         <div id="three-container"></div>
 
-        <!-- 深色/淺色模式切換按鈕 -->
-        <button id="theme-toggle" class="theme-toggle" aria-label="切換主題">
-            <i class="fas fa-moon"></i>
-        </button>
-
-        <!-- 語言切換按鈕 -->
-        <button id="language-toggle" class="language-toggle" aria-label="切換語言">
-            <span class="lang-text">EN</span>
-        </button>
-
         <!-- 回到頂部按鈕 -->
         <button id="back-to-top" class="back-to-top" aria-label="回到頂部">
             <i class="fas fa-arrow-up"></i>
@@ -178,7 +168,8 @@
                         <li><a href="pages/education.html" class="nav-link" data-zh="學歷" data-en="Education">學歷</a></li>
                         <li><a href="pages/mini-games.html" class="nav-link" data-zh="小遊戲" data-en="Mini Games">小遊戲</a>
                         </li>
-                        <li><a href="pages/joke-generator.html" class="nav-link" data-zh="😄 笑話生成器" data-en="Joke Generator">🎨
+                        <li><a href="pages/joke-generator.html" class="nav-link" data-zh="😄 笑話生成器"
+                                data-en="Joke Generator">🎨
                                 像素畫板</a></li>
                         <li><a href="pages/lab.html" class="nav-link nav-lab" data-zh="🧪 功能實驗室"
                                 data-en="🧪 Feature Lab">🧪 功能實驗室</a></li>
@@ -186,9 +177,25 @@
                                 data-en="⚙️ Admin Panel">⚙️ 管理後台</a></li>
                         <li><a href="#contact" class="nav-link" data-zh="聯絡我" data-en="Contact">聯絡我</a></li>
                     </ul>
+                <div class="nav-actions">
+                    <button id="theme-toggle" class="nav-theme-btn" aria-label="切換主題" title="切換深淺色"><i class="fas fa-moon"></i></button>
+                    <div class="lang-dropdown">
+                        <button id="language-toggle" class="nav-lang-btn" aria-label="切換語言" title="切換語言">
+                            <i class="fas fa-globe"></i>
+                        </button>
+                        <div class="lang-dropdown-menu">
+                            <a href="#" class="lang-option" data-lang="zh">繁體中文</a>
+                            <a href="#" class="lang-option" data-lang="en">English</a>
+                            <a href="#" class="lang-option" data-lang="ja">日本語</a>
+                            <a href="#" class="lang-option" data-lang="ko">한국어</a>
+                            <a href="#" class="lang-option" data-lang="es">Español</a>
+                            <a href="#" class="lang-option" data-lang="fr">Français</a>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </nav>
+        </div>
+    </nav>
 
         <main id="main-content">
             <!-- Hero 區域 -->
