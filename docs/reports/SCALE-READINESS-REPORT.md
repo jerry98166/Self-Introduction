@@ -1,6 +1,6 @@
 # SCALE READINESS REPORT
 
-Generated: 2026-04-25T17:18:46.582Z
+Generated: 2026-04-26T18:44:06.538Z
 
 ## Summary
 
@@ -12,7 +12,7 @@ Generated: 2026-04-25T17:18:46.582Z
 
 - HTML files: 78
 - CSS files: 2
-- JS files: 14
+- JS files: 16
 - Image files: 8
 - docs files: 14
 - Feature pages: 64
@@ -22,7 +22,7 @@ Generated: 2026-04-25T17:18:46.582Z
 ## Largest Files
 
 - assets/css/styles.css: 100.36 KB
-- assets/js/script.js: 82.45 KB
+- assets/js/script.js: 83.40 KB
 - pages/projects.html: 46.02 KB
 - temp/nav-snippet.html: 41.16 KB
 - projects/cycu-guide.html: 31.34 KB

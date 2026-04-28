@@ -67,7 +67,7 @@ pages/
 ├── projects.html           - 項目列表
 ├── achievements.html       - 成就頁面
 ├── privacy.html            - 隱私政策
-├── typing-game.html        - 打字遊戲
+├── typing-game.html        - 小遊戲
 └── about.html              - 關於頁面
 ```
 

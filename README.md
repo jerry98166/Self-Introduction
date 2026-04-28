@@ -19,7 +19,7 @@
 - ✅ 深色/淺色主題切換
 - ✅ 中英文雙語切換
 - ✅ 3D 背景動畫（Three.js）
-- ✅ 打字遊戲
+- ✅ 小遊戲
 - ✅ 留言板系統
 - ✅ 在線狀態顯示
 - ✅ 音樂播放器
@@ -82,8 +82,8 @@ Self-Introduction/
 │   ├── experience.html
 │   ├── projects.html
 │   ├── education.html
-│   ├── achievements.html
-│   ├── typing-game.html
+│   ├── joke-generator.html
+│   ├── mini-games.html
 │   ├── lab.html
 │   ├── admin.html
 │   └── privacy.html

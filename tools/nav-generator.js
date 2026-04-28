@@ -12,7 +12,7 @@ const fs = require('fs');
 const path = require('path');
 
 // =========== 配置 ===========
-const MANIFEST_PATH = path.join(__dirname, '../feature-manifest.json');
+const MANIFEST_PATH = path.join(__dirname, '../assets/images/icons/feature-manifest.json');
 const LAB_TEMPLATE_PATH = path.join(__dirname, '../pages/lab.html');
 const OUTPUT_NAV_SNIPPET = path.join(__dirname, '../temp/nav-snippet.html');
 const OUTPUT_FEATURE_DB = path.join(__dirname, '../assets/js/feature-navigator.js');

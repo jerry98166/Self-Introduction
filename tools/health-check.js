@@ -72,7 +72,7 @@ function checkHtmlRefs() {
 function checkFeatureRegistry() {
     const labHtmlPath = path.join(root, 'pages', 'lab.html');
     const labJsPath = path.join(root, 'assets', 'js', 'lab.js');
-    const manifestPath = path.join(root, 'feature-manifest.json');
+    const manifestPath = path.join(root, 'assets', 'images', 'icons', 'feature-manifest.json');
 
     if (!fs.existsSync(labHtmlPath) || !fs.existsSync(labJsPath)) {
         return {
@@ -88,8 +88,8 @@ function checkFeatureRegistry() {
 
     // Check if using dynamic navigation (feature-navigator.js)
     const useDynamicNav = labHtml.includes('feature-navigator.js') &&
-                         labHtml.includes('navigator-container');
-    
+        labHtml.includes('navigator-container');
+
     // If using dynamic navigation, validate manifest instead
     if (useDynamicNav && fs.existsSync(manifestPath)) {
         const manifestJson = JSON.parse(read(manifestPath));
@@ -426,5 +426,26 @@ function main() {
 
     console.log('\nResult: PASSED');
 }
+
+main();
+
+htmlResult.missing.length > 0 ||
+    featureResult.unmatchedIds.length > 0 ||
+    (!featureResult.dynamicNavigation && featureResult.missingInLabIds.length > 0) ||
+    featurePageResult.missingPages.length > 0 ||
+    unsafeHtmlFindings.length > 0 ||
+    securityIncludeResult.missing.length > 0 ||
+    dangerousProtocolFindings.length > 0 ||
+    cspStrengthResult.missingDirectives.length > 0 ||
+    cspStrengthResult.disallowedTokens.length > 0 ||
+    false;
+if (hasError) {
+    process.exitCode = 1;
+    console.log('\nResult: FAILED');
+    return;
+}
+
+console.log('\nResult: PASSED');
+
 
 main();

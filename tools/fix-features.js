@@ -10,7 +10,7 @@ const path = require('path');
 
 const root = path.resolve(__dirname, '..');
 const featuresDir = path.join(root, 'features');
-const manifestPath = path.join(root, 'feature-manifest.json');
+const manifestPath = path.join(root, 'assets', 'images', 'icons', 'feature-manifest.json');
 
 // 讀取 manifest
 const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));

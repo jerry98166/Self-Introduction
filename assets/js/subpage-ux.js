@@ -1,12 +1,6 @@
 (function () {
     const STYLE_ID = 'global-subpage-ux-style';
     const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let fallbackAudioContext = null;
-    let fallbackTimer = null;
-    let fallbackPlaying = false;
-    let fallbackStep = 0;
-
-    const fallbackPianoScore = [261.63, 293.66, 329.63, 392.0, 392.0, 329.63, 293.66, 261.63];
 
     function injectStyles() {
         if (document.getElementById(STYLE_ID)) return;
@@ -20,12 +14,10 @@
             '.subpage-float-btn{position:fixed !important;right:24px !important;width:46px !important;height:46px !important;border:none !important;border-radius:999px !important;color:#fff !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;box-shadow:0 10px 24px rgba(15,23,42,.3) !important;z-index:2500 !important;}',
             '#language-toggle.subpage-float-btn,.global-language-toggle.subpage-float-btn{bottom:186px !important;background:#334155 !important;}',
             '#theme-toggle.subpage-float-btn,.global-theme-toggle.subpage-float-btn{bottom:132px !important;background:#475569 !important;}',
-            '#music-toggle.subpage-float-btn,.global-music-toggle.subpage-float-btn{bottom:78px !important;background:#0f172a !important;}',
             '#back-to-top.subpage-float-btn,.global-back-to-top.subpage-float-btn{bottom:24px !important;background:#6366f1 !important;display:flex !important;}',
-            '#music-toggle.subpage-float-btn.playing,.global-music-toggle.subpage-float-btn.playing{background:#065f46 !important;}',
             '.subpage-float-btn:hover{filter:brightness(1.08);}',
             '.subpage-float-btn.subpage-hidden{display:none !important;}',
-            '@media (max-width:768px){.subpage-float-btn{right:16px !important;}#language-toggle.subpage-float-btn,.global-language-toggle.subpage-float-btn{bottom:178px !important;}#theme-toggle.subpage-float-btn,.global-theme-toggle.subpage-float-btn{bottom:124px !important;}#music-toggle.subpage-float-btn,.global-music-toggle.subpage-float-btn{bottom:70px !important;}#back-to-top.subpage-float-btn,.global-back-to-top.subpage-float-btn{bottom:16px !important;}}',
+            '@media (max-width:768px){.subpage-float-btn{right:16px !important;}#language-toggle.subpage-float-btn,.global-language-toggle.subpage-float-btn{bottom:178px !important;}#theme-toggle.subpage-float-btn,.global-theme-toggle.subpage-float-btn{bottom:124px !important;}#back-to-top.subpage-float-btn,.global-back-to-top.subpage-float-btn{bottom:16px !important;}}',
             '@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto;}*,*::before,*::after{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important;}}'
         ].join('');
 
@@ -121,110 +113,6 @@
             toggle.classList.remove('active');
             syncExpanded();
         });
-    }
-
-    function bindFallbackPiano(button) {
-        if (button.dataset.musicBound === 'true') return;
-
-        const playNote = (frequency) => {
-            const now = fallbackAudioContext.currentTime;
-            const osc = fallbackAudioContext.createOscillator();
-            const harmonic = fallbackAudioContext.createOscillator();
-            const gain = fallbackAudioContext.createGain();
-
-            osc.type = 'triangle';
-            harmonic.type = 'sine';
-            osc.frequency.setValueAtTime(frequency, now);
-            harmonic.frequency.setValueAtTime(frequency * 2, now);
-
-            gain.gain.setValueAtTime(0.0001, now);
-            gain.gain.exponentialRampToValueAtTime(0.16, now + 0.015);
-            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
-
-            osc.connect(gain);
-            harmonic.connect(gain);
-            gain.connect(fallbackAudioContext.destination);
-
-            osc.start(now);
-            harmonic.start(now);
-            osc.stop(now + 0.38);
-            harmonic.stop(now + 0.38);
-        };
-
-        const stop = () => {
-            if (fallbackTimer) {
-                clearTimeout(fallbackTimer);
-                fallbackTimer = null;
-            }
-        };
-
-        const schedule = () => {
-            if (!fallbackPlaying) return;
-            playNote(fallbackPianoScore[fallbackStep % fallbackPianoScore.length]);
-            fallbackStep += 1;
-            fallbackTimer = setTimeout(schedule, 420);
-        };
-
-        const update = () => {
-            button.classList.toggle('playing', fallbackPlaying);
-            button.setAttribute('aria-pressed', fallbackPlaying ? 'true' : 'false');
-        };
-
-        const toggle = () => {
-            if (prefersReducedMotion) return;
-            if (!fallbackAudioContext) {
-                fallbackAudioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (fallbackAudioContext.state === 'suspended') {
-                fallbackAudioContext.resume();
-            }
-
-            fallbackPlaying = !fallbackPlaying;
-            if (fallbackPlaying) {
-                schedule();
-            } else {
-                stop();
-            }
-            update();
-        };
-
-        button.dataset.musicBound = 'true';
-        button.setAttribute('aria-pressed', 'false');
-        button.addEventListener('click', toggle);
-
-        document.addEventListener('keydown', (e) => {
-            if ((e.key === 'm' || e.key === 'M') && !e.ctrlKey && !e.metaKey && !e.altKey) {
-                const targetTag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
-                if (targetTag === 'input' || targetTag === 'textarea' || targetTag === 'select') return;
-                e.preventDefault();
-                toggle();
-            }
-        });
-    }
-
-    function ensureMusicToggle() {
-        let button = document.getElementById('music-toggle');
-
-        if (!button) {
-            button = document.createElement('button');
-            button.type = 'button';
-            button.id = 'music-toggle';
-            button.className = 'global-music-toggle';
-            button.setAttribute('aria-label', '鋼琴音樂');
-            button.title = '鋼琴音樂';
-            button.innerHTML = '<i class="fas fa-music" aria-hidden="true"></i>';
-            document.body.appendChild(button);
-        }
-
-        if (!button.querySelector('i')) {
-            button.innerHTML = '<i class="fas fa-music" aria-hidden="true"></i>';
-        }
-
-        button.classList.add('subpage-float-btn');
-        button.setAttribute('aria-label', '鋼琴音樂');
-        button.title = '鋼琴音樂';
-
-        bindFallbackPiano(button);
     }
 
     function ensureThemeToggle() {
@@ -342,7 +230,6 @@
         const mapping = {
             'theme-toggle': '切換主題',
             'language-toggle': '切換語言',
-            'music-toggle': '鋼琴音樂',
             'back-to-top': '回到頂部',
             'mobile-menu-toggle': '切換選單'
         };
@@ -364,7 +251,6 @@
         initMobileMenuAccessibility();
         ensureLanguageToggle();
         ensureThemeToggle();
-        ensureMusicToggle();
     }
 
     if (document.readyState === 'loading') {

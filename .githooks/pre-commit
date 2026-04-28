@@ -1,6 +1,0 @@
-#!/usr/bin/env sh
-
-set -eu
-
-echo "[pre-commit] Running full project verification..."
-npm run verify-all

@@ -14,8 +14,8 @@ const { createApp } = Vue;
         { href: 'experience.html', zh: '經歷', en: 'Experience' },
         { href: 'projects.html', zh: '作品集', en: 'Projects' },
         { href: 'education.html', zh: '學歷', en: 'Education' },
-        { href: 'typing-game.html', zh: '打字遊戲', en: 'Typing Game' },
-        { href: 'achievements.html', zh: '成就徽章', en: 'Achievements' },
+        { href: 'mini-games.html', zh: '小遊戲', en: 'Mini Games' },
+        { href: 'joke-generator.html', zh: '😄 笑話生成器', en: 'Joke Generator' },
         { href: 'lab.html', zh: '🧪 功能實驗室', en: '🧪 Feature Lab', extraClass: 'nav-lab' },
         { href: 'admin.html', zh: '⚙️ 管理後台', en: '⚙️ Admin Panel', extraClass: 'nav-admin' },
         { href: '../index.html#contact', zh: '聯絡我', en: 'Contact' }

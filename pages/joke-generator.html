@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>😄 笑話生成器 - 高孟麟 | 全端工程師</title>
+    <meta name="description" content="隨機生成有趣的冷笑話，放鬆一下心情！">
+    <link rel="icon" type="image/svg+xml" href="../assets/images/icons/favicon.svg">
+    <link rel="icon" type="image/png" href="../assets/images/icons/favicon-32x32.png">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet"></noscript>
+</head>
+<body>
+    <div id="preloader" class="preloader">
+        <div class="preloader-content">
+            <div class="loader"></div>
+            <p class="loading-text">載入中...</p>
+        </div>
+    </div>
+
+    <div id="scroll-progress" class="scroll-progress"></div>
+
+    <!-- 鼠標軌跡效果 -->
+    <div id="cursor-follower" class="cursor-follower"></div>
+    <!-- 粒子背景 -->
+    <canvas id="particles-canvas"></canvas>
+    <!-- Three.js 3D 背景 -->
+    <div id="three-container"></div>
+
+    <button id="theme-toggle" class="theme-toggle">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <button id="language-toggle" class="language-toggle">
+        <span class="lang-text">EN</span>
+    </button>
+
+    <button id="back-to-top" class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <button id="chatbot-toggle" class="chatbot-toggle" aria-label="AI 聊天機器人">
+        <i class="fas fa-robot"></i>
+    </button>
+
+    <button id="terminal-toggle" class="terminal-toggle" aria-label="互動終端機">
+        <i class="fas fa-terminal"></i>
+    </button>
+
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <a href="../index.html" class="logo">
+                    <span class="logo-text">My Portfolio</span>
+                </a>
+                <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="../index.html" class="nav-link">首頁</a></li>
+                    <li><a href="about.html" class="nav-link">關於我</a></li>
+                    <li><a href="skills.html" class="nav-link">技能</a></li>
+                    <li><a href="experience.html" class="nav-link">經歷</a></li>
+                    <li><a href="projects.html" class="nav-link">作品集</a></li>
+                    <li><a href="education.html" class="nav-link">學歷</a></li>
+                    <li><a href="mini-games.html" class="nav-link">小遊戲</a></li>
+                    <li><a href="joke-generator.html" class="nav-link active">😄 笑話生成器</a></li>
+                    <li><a href="lab.html" class="nav-link nav-lab">🧪 功能實驗室</a></li>
+                    <li><a href="admin.html" class="nav-link nav-admin">⚙️ 管理後台</a></li>
+                    <li><a href="../index.html#contact" class="nav-link">聯絡我</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <style>
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            max-width: 450px;
+            height: 250px;
+            perspective: 1000px;
+            margin: 0 auto 2rem;
+            cursor: pointer;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+        }
+        .flip-card-front {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+        }
+        .flip-card-back {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            transform: rotateY(180deg);
+        }
+        .joke-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            line-height: 1.6;
+        }
+        .hint-text {
+            margin-top: 1.5rem;
+            font-size: 0.95rem;
+            opacity: 0.8;
+            background: rgba(0,0,0,0.2);
+            padding: 4px 12px;
+            border-radius: 12px;
+        }
+        .flip-card:hover .flip-card-front {
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
+        }
+    </style>
+
+    <!-- 笑話生成器系統 -->
+    <section id="joke-generator" class="joke-generator section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title" data-zh="😄 笑話生成器" data-en="Joke Generator">😄 笑話生成器</h2>
+                <div class="section-divider"></div>
+                <p class="section-description" data-zh="隨機生成冷笑話，工作累了就翻張卡片放鬆一下吧！" data-en="Generate random cold jokes to relax a bit!">隨機生成冷笑話，工作累了就翻張卡片放鬆一下吧！</p>
+            </div>
+            
+            <div class="joke-container" style="text-align: center; padding: 2rem;">
+                
+                <div class="flip-card" id="joke-card" onclick="flipCard()">
+                    <div class="flip-card-inner" id="joke-inner">
+                        <div class="flip-card-front">
+                            <div class="joke-text" id="joke-setup">點擊下方按鈕，抽一個笑話！</div>
+                            <div class="hint-text" id="joke-hint" style="display: none;"><i class="fas fa-hand-pointer"></i> 點擊卡片看答案</div>
+                        </div>
+                        <div class="flip-card-back">
+                            <div class="joke-text" id="joke-punchline">準備好了嗎？</div>
+                            <div class="hint-text"><i class="fas fa-undo"></i> 點擊翻回</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button id="generate-btn" class="btn btn-primary hover-glow" style="padding: 0.8rem 2.5rem; font-size: 1.1rem; border-radius: 99px;">
+                        <i class="fas fa-magic"></i> 產生笑話
+                    </button>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- AI 聊天機器人面板 -->
+    <div id="chatbot-panel" class="chatbot-panel">
+        <div class="chatbot-header">
+            <div class="chatbot-title"><i class="fas fa-robot"></i><span>AI 助手</span></div>
+            <div class="chatbot-actions">
+                <button class="chatbot-minimize"><i class="fas fa-minus"></i></button>
+                <button class="chatbot-close"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+        <div class="chatbot-body">
+            <div class="chatbot-messages" id="chatbot-messages">
+                <div class="chat-message bot-message">
+                    <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                    <div class="message-content"><p>您好！我是 AI 助手。</p></div>
+                </div>
+            </div>
+            <div class="chatbot-quick-questions">
+                <button class="quick-question" data-question="技能">技能專長</button>
+                <button class="quick-question" data-question="經歷">工作經歷</button>
+                <button class="quick-question" data-question="專案">專案作品</button>
+                <button class="quick-question" data-question="聯絡">聯絡方式</button>
+            </div>
+        </div>
+        <div class="chatbot-footer">
+            <input type="text" id="chatbot-input" placeholder="輸入您的問題...">
+            <button id="chatbot-send" class="btn-send"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- 互動終端機面板 -->
+    <div id="terminal-panel" class="terminal-panel">
+        <div class="terminal-header">
+            <div class="terminal-title"><i class="fas fa-terminal"></i><span>Terminal v1.0.0</span></div>
+            <div class="terminal-actions">
+                <button class="terminal-minimize"><i class="fas fa-minus"></i></button>
+                <button class="terminal-close"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+        <div class="terminal-body" id="terminal-body">
+            <div class="terminal-output">
+                <div class="terminal-line">Welcome to Portfolio Terminal v1.0.0</div>
+                <div class="terminal-line">Type 'help' for available commands.</div>
+                <div class="terminal-line">────────────────────────────────────────</div>
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span class="terminal-prompt">visitor@portfolio:~$</span>
+            <input type="text" id="terminal-input" class="terminal-input" autofocus>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 高孟麟. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+    <script defer src="../assets/js/vue-subpages.js"></script>
+    <script defer src="../assets/js/script.js"></script>
+    <script>
+        // Joke Generator Logic
+        const jokes = [
+            { q: '小明理頭髮，結果理得太難看，他就哭了。請問他變成了什麼？', a: '理虧 (理哭)' },
+            { q: '有一天，綠豆跳樓，流了很多血，變成了什麼？', a: '紅豆' },
+            { q: '什麼動物最沒有方向感？', a: '麋鹿 (迷路)' },
+            { q: '香蕉跌倒了，變成什麼？', a: '茄子 (因為瘀青了)' },
+            { q: '蜘蛛人是什麼顏色？', a: '白色。因為蜘蛛人是「白目」' },
+            { q: '誰最不孝順？', a: '面速力。因為面速力達母 (打母)' },
+            { q: '什麼水果最會騙人？', a: '奇異果。因為「奇異果（欺負我）」' },
+            { q: '鯊魚不小心吞下一顆綠豆，變成什麼？', a: '綠豆沙 (綠豆鯊)' },
+            { q: '黑人吃黑白切，會變成什麼？', a: '黑人吃黑白切。' },
+            { q: '豆腐去當兵，變成了什麼？', a: '老兵豆腐。' },
+            { q: '什麼動物最喜歡貼在牆上？', a: '海豹 (海報)' },
+            { q: '什麼昆蟲最會保持安靜？', a: '螢火蟲。因為他會「閃」。' }
+        ];
+
+        let isFlipped = false;
+        
+        // Ensure DOM loaded before hooking events that aren't inline
+        document.addEventListener('DOMContentLoaded', () => {
+            const card = document.getElementById('joke-card');
+            const setupEl = document.getElementById('joke-setup');
+            const punchlineEl = document.getElementById('joke-punchline');
+            const hintEl = document.getElementById('joke-hint');
+            const genBtn = document.getElementById('generate-btn');
+
+            window.flipCard = function() {
+                if (setupEl.textContent === '點擊下方按鈕，抽一個笑話！') return;
+                isFlipped = !isFlipped;
+                if (isFlipped) {
+                    card.classList.add('flipped');
+                } else {
+                    card.classList.remove('flipped');
+                }
+            };
+
+            function setNewJoke() {
+                const randomJoke = jokes[Math.floor(Math.random() * jokes.length)];
+                setupEl.textContent = randomJoke.q;
+                punchlineEl.textContent = randomJoke.a;
+                hintEl.style.display = 'block';
+            }
+
+            genBtn.addEventListener('click', () => {
+                // If currently flipped, flip it back first
+                if (isFlipped) {
+                    card.classList.remove('flipped');
+                    isFlipped = false;
+                    // Wait for flip animation to finish before changing text
+                    setTimeout(setNewJoke, 500);
+                } else {
+                    card.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        card.style.transform = 'scale(1)';
+                        setNewJoke();
+                    }, 150);
+                }
+            });
+        });
+    </script>
+    <script defer src="../assets/js/subpage-ux.js"></script>
+    <script defer src="../assets/js/security-hardening.js"></script>
+</body>
+</html>

@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
     <!-- ========== 基礎 Meta 標籤 ========== -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    
+
     <!-- ========== SEO Meta 標籤 ========== -->
     <title>高孟麟 - 全端工程師 | 個人作品集與技能展示</title>
     <meta name="description" content="高孟麟的個人網站，全端工程師，專精於 React、Vue、Node.js 開發。查看我的專案作品、技術技能和專業經驗。">
@@ -14,7 +15,7 @@
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="googlebot" content="index, follow">
     <link rel="canonical" href="https://jerry98166.github.io/Self-Introduction/">
-    
+
     <!-- ========== Open Graph / Facebook ========== -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://jerry98166.github.io/Self-Introduction/">
@@ -25,7 +26,7 @@
     <meta property="og:image:height" content="630">
     <meta property="og:locale" content="zh_TW">
     <meta property="og:site_name" content="高孟麟的個人網站">
-    
+
     <!-- ========== Twitter Card ========== -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://jerry98166.github.io/Self-Introduction/">
@@ -33,46 +34,52 @@
     <meta name="twitter:description" content="專精於 React、Vue、Node.js 的全端工程師，查看我的專案作品與技術技能。">
     <meta name="twitter:image" content="https://jerry98166.github.io/Self-Introduction/images/twitter-card.jpg">
     <meta name="twitter:creator" content="@Jerry59877">
-    
+
     <!-- ========== 安全性標頭 ========== -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-AZpiaDl6f5OwlT4+KUhRkxt0CuJxzYaccDEgXog6i4w=' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://unpkg.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://translate.googleapis.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:; frame-ancestors 'none'; upgrade-insecure-requests; block-all-mixed-content;">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'sha256-AZpiaDl6f5OwlT4+KUhRkxt0CuJxzYaccDEgXog6i4w=' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://unpkg.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://translate.googleapis.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:; frame-ancestors 'none'; upgrade-insecure-requests; block-all-mixed-content;">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <meta name="format-detection" content="telephone=no">
-    
+
     <!-- ========== Favicon ========== -->
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-    <link rel="manifest" href="site.webmanifest">
+    <link rel="icon" type="image/svg+xml" href="assets/images/icons/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/icons/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/icons/apple-touch-icon.png">
+    <link rel="manifest" href="assets/images/icons/site.webmanifest">
     <meta name="theme-color" content="#6366f1">
     <meta name="msapplication-TileColor" content="#6366f1">
-    
+
     <!-- ========== Preconnect 效能優化 ========== -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="dns-prefetch" href="https://www.google-analytics.com">
-    
+
     <!-- ========== CSS 樣式表 ========== -->
     <link rel="preload" href="assets/css/styles.css" as="style">
     <link rel="stylesheet" href="assets/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" as="style">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+TC:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
     <noscript>
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+TC:wght@300;400;500;700&display=swap"
+            rel="stylesheet">
     </noscript>
-    
+
     <!-- ========== 預載重要圖片 ========== -->
     <link rel="preload" href="images/profile.webp" as="image" type="image/webp">
-    
+
     <!-- ========== Google Analytics（請填入正式 GA ID，例如 G-ABC1234567）========== -->
     <meta name="ga-measurement-id" content="">
-    
+
     <!-- ========== 結構化資料（Schema.org）========== -->
     <script type="application/ld+json">
     {
@@ -96,452 +103,454 @@
     }
     </script>
 </head>
+
 <body>
     <a href="#main-content" class="skip-link">跳到主要內容</a>
     <div id="app">
-    <!-- 加載畫面 -->
-    <div id="preloader" class="preloader">
-        <div class="preloader-content">
-            <div class="loader"></div>
-            <p class="loading-text" data-zh="載入中..." data-en="Loading...">載入中...</p>
+        <!-- 加載畫面 -->
+        <div id="preloader" class="preloader">
+            <div class="preloader-content">
+                <div class="loader"></div>
+                <p class="loading-text" data-zh="載入中..." data-en="Loading...">載入中...</p>
+            </div>
         </div>
-    </div>
 
-    <!-- 滾動進度條 -->
-    <div id="scroll-progress" class="scroll-progress"></div>
+        <!-- 滾動進度條 -->
+        <div id="scroll-progress" class="scroll-progress"></div>
 
-    <!-- 鼠標軌跡效果 -->
-    <div id="cursor-follower" class="cursor-follower"></div>
-    <!-- 粒子背景 -->
-    <canvas id="particles-canvas"></canvas>
-    <!-- Three.js 3D 背景 -->
-    <div id="three-container"></div>
-    
-    <!-- 深色/淺色模式切換按鈕 -->
-    <button id="theme-toggle" class="theme-toggle" aria-label="切換主題">
-        <i class="fas fa-moon"></i>
-    </button>
+        <!-- 鼠標軌跡效果 -->
+        <div id="cursor-follower" class="cursor-follower"></div>
+        <!-- 粒子背景 -->
+        <canvas id="particles-canvas"></canvas>
+        <!-- Three.js 3D 背景 -->
+        <div id="three-container"></div>
 
-    <!-- 語言切換按鈕 -->
-    <button id="language-toggle" class="language-toggle" aria-label="切換語言">
-        <span class="lang-text">EN</span>
-    </button>
-
-    <!-- 音樂播放器按鈕和面板 -->
-    <div class="music-player-container">
-        <button id="music-toggle" class="music-toggle" aria-label="音樂播放器">
-            <i class="fas fa-music"></i>
+        <!-- 深色/淺色模式切換按鈕 -->
+        <button id="theme-toggle" class="theme-toggle" aria-label="切換主題">
+            <i class="fas fa-moon"></i>
         </button>
-        
-        <div id="music-panel" class="music-panel" style="display: none;">
-            <div class="music-panel-header">
-                <h4 style="margin: 0; text-align: center;">選擇樂譜</h4>
-            </div>
-            <div class="music-scores-container">
-                <button class="score-btn active" data-score="welcome" title="經典旋律">
-                    <i class="fas fa-play-circle"></i> 歡迎樂
-                </button>
-                <button class="score-btn" data-score="peaceful" title="寧靜優美">
-                    <i class="fas fa-spa"></i> 寧靜夜晚
-                </button>
-                <button class="score-btn" data-score="festive" title="歡樂節慶">
-                    <i class="fas fa-party-horn"></i> 歡樂節慶
-                </button>
-            </div>
+
+        <!-- 語言切換按鈕 -->
+        <button id="language-toggle" class="language-toggle" aria-label="切換語言">
+            <span class="lang-text">EN</span>
+        </button>
+
+        <!-- 回到頂部按鈕 -->
+        <button id="back-to-top" class="back-to-top" aria-label="回到頂部">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+
+        <!-- AI 聊天機器人按鈕 -->
+        <button id="chatbot-toggle" class="chatbot-toggle" aria-label="AI 聊天機器人">
+            <i class="fas fa-robot"></i>
+        </button>
+
+        <!-- 互動終端機按鈕 -->
+        <button id="terminal-toggle" class="terminal-toggle" aria-label="互動終端機">
+            <i class="fas fa-terminal"></i>
+        </button>
+
+        <!-- 在線狀態指示器 -->
+        <div class="online-status">
+            <div class="status-dot"></div>
+            <span class="status-text" data-zh="在線" data-en="Online">在線</span>
         </div>
-    </div>
-    <!-- 回到頂部按鈕 -->
-    <button id="back-to-top" class="back-to-top" aria-label="回到頂部">
-        <i class="fas fa-arrow-up"></i>
-    </button>
 
-    <!-- AI 聊天機器人按鈕 -->
-    <button id="chatbot-toggle" class="chatbot-toggle" aria-label="AI 聊天機器人">
-        <i class="fas fa-robot"></i>
-    </button>
-
-    <!-- 互動終端機按鈕 -->
-    <button id="terminal-toggle" class="terminal-toggle" aria-label="互動終端機">
-        <i class="fas fa-terminal"></i>
-    </button>
-
-    <!-- 在線狀態指示器 -->
-    <div class="online-status">
-        <div class="status-dot"></div>
-        <span class="status-text" data-zh="在線" data-en="Online">在線</span>
-    </div>
-
-    <!-- 導航欄 -->
-    <nav class="navbar" id="navbar">
-        <div class="container">
-            <div class="nav-wrapper">
-                <a href="#home" class="logo">
-                    <span class="logo-text">My Portfolio</span>
-                </a>
-                <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="切換選單">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-                <ul class="nav-menu" id="nav-menu">
-                    <li><a href="#home" class="nav-link active" data-zh="首頁" data-en="Home">首頁</a></li>
-                    <li><a href="pages/about.html" class="nav-link" data-zh="關於我" data-en="About">關於我</a></li>
-                    <li><a href="pages/skills.html" class="nav-link" data-zh="技能" data-en="Skills">技能</a></li>
-                    <li><a href="pages/experience.html" class="nav-link" data-zh="經歷" data-en="Experience">經歷</a></li>
-                    <li><a href="pages/projects.html" class="nav-link" data-zh="作品集" data-en="Projects">作品集</a></li>
-                    <li><a href="pages/education.html" class="nav-link" data-zh="學歷" data-en="Education">學歷</a></li>
-                    <li><a href="pages/typing-game.html" class="nav-link" data-zh="小遊戲" data-en="Typing Game">小遊戲</a></li>
-                    <li><a href="pages/achievements.html" class="nav-link" data-zh="成就徽章" data-en="Achievements">成就徽章</a></li>
-                    <li><a href="pages/lab.html" class="nav-link nav-lab" data-zh="🧪 功能實驗室" data-en="🧪 Feature Lab">🧪 功能實驗室</a></li>
-                    <li><a href="pages/admin.html" class="nav-link nav-admin" data-zh="⚙️ 管理後台" data-en="⚙️ Admin Panel">⚙️ 管理後台</a></li>
-                    <li><a href="#contact" class="nav-link" data-zh="聯絡我" data-en="Contact">聯絡我</a></li>
-                </ul>
+        <!-- 導航欄 -->
+        <nav class="navbar" id="navbar">
+            <div class="container">
+                <div class="nav-wrapper">
+                    <a href="#home" class="logo">
+                        <span class="logo-text">My Portfolio</span>
+                    </a>
+                    <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="切換選單">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <ul class="nav-menu" id="nav-menu">
+                        <li><a href="#home" class="nav-link active" data-zh="首頁" data-en="Home">首頁</a></li>
+                        <li><a href="pages/about.html" class="nav-link" data-zh="關於我" data-en="About">關於我</a></li>
+                        <li><a href="pages/skills.html" class="nav-link" data-zh="技能" data-en="Skills">技能</a></li>
+                        <li><a href="pages/experience.html" class="nav-link" data-zh="經歷" data-en="Experience">經歷</a>
+                        </li>
+                        <li><a href="pages/projects.html" class="nav-link" data-zh="作品集" data-en="Projects">作品集</a></li>
+                        <li><a href="pages/education.html" class="nav-link" data-zh="學歷" data-en="Education">學歷</a></li>
+                        <li><a href="pages/mini-games.html" class="nav-link" data-zh="小遊戲" data-en="Mini Games">小遊戲</a>
+                        </li>
+                        <li><a href="pages/joke-generator.html" class="nav-link" data-zh="😄 笑話生成器" data-en="Joke Generator">🎨
+                                像素畫板</a></li>
+                        <li><a href="pages/lab.html" class="nav-link nav-lab" data-zh="🧪 功能實驗室"
+                                data-en="🧪 Feature Lab">🧪 功能實驗室</a></li>
+                        <li><a href="pages/admin.html" class="nav-link nav-admin" data-zh="⚙️ 管理後台"
+                                data-en="⚙️ Admin Panel">⚙️ 管理後台</a></li>
+                        <li><a href="#contact" class="nav-link" data-zh="聯絡我" data-en="Contact">聯絡我</a></li>
+                    </ul>
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
 
-    <main id="main-content">
-    <!-- Hero 區域 -->
-    <section id="home" class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <div class="hero-text">
-                    <h1 class="hero-title">
-                        你好，我是 <span class="highlight">高孟麟</span>
-                    </h1>
-                    <div class="typing-container">
-                        <h2 class="hero-subtitle">
-                            <span class="typing-text"></span>
-                            <span class="cursor">|</span>
-                        </h2>
-                    </div>
-                    <p class="hero-description">
-                        熱愛科技與創新，致力於創造優秀的數位體驗
-                    </p>
-                    <div class="hero-buttons">
-                        <a href="#contact" class="btn btn-primary">
-                            <i class="fas fa-envelope"></i> 聯絡我
-                        </a>
-                        <a href="pages/projects.html" class="btn btn-secondary">
-                            <i class="fas fa-briefcase"></i> 查看作品
-                        </a>
-                    </div>
-                    <div class="social-links">
-                        <a href="https://github.com/jerry98166" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="GitHub">
-                            <i class="fab fa-github"></i>
-                        </a>
-                        <a href="https://www.linkedin.com/in/%E5%AD%9F%E9%BA%9F-%E9%AB%98-b88773191/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="LinkedIn">
-                            <i class="fab fa-linkedin"></i>
-                        </a>
-                        <a href="https://x.com/Jerry59877" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Twitter/X">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="https://www.youtube.com/@%E9%AB%98%E5%AD%9F%E9%BA%9F-u1b" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="YouTube">
-                            <i class="fab fa-youtube"></i>
-                        </a>
-                        <a href="https://www.instagram.com/jerry98166/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Instagram">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="https://www.facebook.com/allen.jerry.357827" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Facebook">
-                            <i class="fab fa-facebook"></i>
-                        </a>
-                        <a href="mailto:11028201@cycu.org.tw" class="social-link" aria-label="Email">
-                            <i class="fas fa-envelope"></i>
-                        </a>
-                    </div>
-                    <!-- 訪客計數器和實時時鐘 -->
-                    <div class="hero-info">
-                        <div class="visitor-counter">
-                            <i class="fas fa-eye"></i>
-                            <span data-zh="訪客數：" data-en="Visitors: ">訪客數：</span>
-                            <span id="visitor-count">0</span>
+        <main id="main-content">
+            <!-- Hero 區域 -->
+            <section id="home" class="hero">
+                <div class="container">
+                    <div class="hero-content">
+                        <div class="hero-text">
+                            <h1 class="hero-title">
+                                你好，我是 <span class="highlight">高孟麟</span>
+                            </h1>
+                            <div class="typing-container">
+                                <h2 class="hero-subtitle">
+                                    <span class="typing-text"></span>
+                                    <span class="cursor">|</span>
+                                </h2>
+                            </div>
+                            <p class="hero-description">
+                                熱愛科技與創新，致力於創造優秀的數位體驗
+                            </p>
+                            <div class="hero-buttons">
+                                <a href="#contact" class="btn btn-primary">
+                                    <i class="fas fa-envelope"></i> 聯絡我
+                                </a>
+                                <a href="pages/projects.html" class="btn btn-secondary">
+                                    <i class="fas fa-briefcase"></i> 查看作品
+                                </a>
+                            </div>
+                            <div class="social-links">
+                                <a href="https://github.com/jerry98166" target="_blank" rel="noopener noreferrer"
+                                    class="social-link" aria-label="GitHub">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                                <a href="https://www.linkedin.com/in/%E5%AD%9F%E9%BA%9F-%E9%AB%98-b88773191/"
+                                    target="_blank" rel="noopener noreferrer" class="social-link" aria-label="LinkedIn">
+                                    <i class="fab fa-linkedin"></i>
+                                </a>
+                                <a href="https://x.com/Jerry59877" target="_blank" rel="noopener noreferrer"
+                                    class="social-link" aria-label="Twitter/X">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                                <a href="https://www.youtube.com/@%E9%AB%98%E5%AD%9F%E9%BA%9F-u1b" target="_blank"
+                                    rel="noopener noreferrer" class="social-link" aria-label="YouTube">
+                                    <i class="fab fa-youtube"></i>
+                                </a>
+                                <a href="https://www.instagram.com/jerry98166/" target="_blank"
+                                    rel="noopener noreferrer" class="social-link" aria-label="Instagram">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                                <a href="https://www.facebook.com/allen.jerry.357827" target="_blank"
+                                    rel="noopener noreferrer" class="social-link" aria-label="Facebook">
+                                    <i class="fab fa-facebook"></i>
+                                </a>
+                                <a href="mailto:11028201@cycu.org.tw" class="social-link" aria-label="Email">
+                                    <i class="fas fa-envelope"></i>
+                                </a>
+                            </div>
+                            <!-- 訪客計數器和實時時鐘 -->
+                            <div class="hero-info">
+                                <div class="visitor-counter">
+                                    <i class="fas fa-eye"></i>
+                                    <span data-zh="訪客數：" data-en="Visitors: ">訪客數：</span>
+                                    <span id="visitor-count">0</span>
+                                </div>
+                                <div class="live-clock">
+                                    <i class="fas fa-clock"></i>
+                                    <span id="clock-time">00:00:00</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="live-clock">
-                            <i class="fas fa-clock"></i>
-                            <span id="clock-time">00:00:00</span>
+                        <div class="hero-image">
+                            <div class="image-wrapper">
+                                <picture>
+                                    <source srcset="images/profile.webp" type="image/webp">
+                                    <img src="images/profile.jpg" alt="高孟麟的個人照片 - 全端工程師" class="profile-image"
+                                        width="600" height="800" loading="eager" decoding="async" fetchpriority="high">
+                                </picture>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="hero-image">
-                    <div class="image-wrapper">
-                        <picture>
-                            <source srcset="images/profile.webp" type="image/webp">
-                            <img src="images/profile.jpg" alt="高孟麟的個人照片 - 全端工程師" class="profile-image" width="600" height="800" loading="eager" decoding="async" fetchpriority="high">
-                        </picture>
-                    </div>
+                <div class="scroll-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </div>
-            </div>
-        </div>
-        <div class="scroll-indicator">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-    </section>
+            </section>
 
-    <!-- 聯絡我 -->
-    <section id="contact" class="contact section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">聯絡我</h2>
-                <div class="section-divider"></div>
-                <p class="section-description">有任何想法或合作機會？歡迎與我聯繫！</p>
-            </div>
-            <div class="contact-content">
-                <div class="contact-info">
-                    <h3 class="contact-subtitle">聯絡資訊</h3>
-                    <p class="contact-text">
-                        我很樂意與您討論新的專案或機會。請隨時透過以下方式與我聯繫。
-                    </p>
-                    <div class="contact-details">
-                        <div class="contact-item">
-                            <div class="contact-icon">
-                                <i class="fas fa-envelope"></i>
-                            </div>
-                            <div class="contact-text-info">
-                                <h4>Email</h4>
-                                <a href="mailto:11028201@cycu.org.tw">11028201@cycu.org.tw</a>
-                            </div>
-                        </div>
-                        <div class="contact-item">
-                            <div class="contact-icon">
-                                <i class="fas fa-map-marker-alt"></i>
-                            </div>
-                            <div class="contact-text-info">
-                                <h4>地點</h4>
-                                <p>台北市，台灣</p>
-                            </div>
-                        </div>
-                        <div class="contact-item">
-                            <div class="contact-icon">
-                                <i class="fas fa-clock"></i>
-                            </div>
-                            <div class="contact-text-info">
-                                <h4>工作時間</h4>
-                                <p>週一至週五 9:00 - 18:00</p>
-                            </div>
-                        </div>
+            <!-- 聯絡我 -->
+            <section id="contact" class="contact section">
+                <div class="container">
+                    <div class="section-header">
+                        <h2 class="section-title">聯絡我</h2>
+                        <div class="section-divider"></div>
+                        <p class="section-description">有任何想法或合作機會？歡迎與我聯繫！</p>
                     </div>
-                    <div class="contact-social">
-                        <h4>社群媒體</h4>
-                        <div class="social-links">
-                            <a href="https://github.com/jerry98166" target="_blank" rel="noopener noreferrer" class="social-link" title="GitHub">
-                                <i class="fab fa-github"></i>
-                            </a>
-                            <a href="https://www.linkedin.com/in/%E5%AD%9F%E9%BA%9F-%E9%AB%98-b88773191/" target="_blank" rel="noopener noreferrer" class="social-link" title="LinkedIn">
-                                <i class="fab fa-linkedin"></i>
-                            </a>
-                            <a href="https://x.com/Jerry59877" target="_blank" rel="noopener noreferrer" class="social-link" title="X (Twitter)">
+                    <div class="contact-content">
+                        <div class="contact-info">
+                            <h3 class="contact-subtitle">聯絡資訊</h3>
+                            <p class="contact-text">
+                                我很樂意與您討論新的專案或機會。請隨時透過以下方式與我聯繫。
+                            </p>
+                            <div class="contact-details">
+                                <div class="contact-item">
+                                    <div class="contact-icon">
+                                        <i class="fas fa-envelope"></i>
+                                    </div>
+                                    <div class="contact-text-info">
+                                        <h4>Email</h4>
+                                        <a href="mailto:11028201@cycu.org.tw">11028201@cycu.org.tw</a>
+                                    </div>
+                                </div>
+                                <div class="contact-item">
+                                    <div class="contact-icon">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                    </div>
+                                    <div class="contact-text-info">
+                                        <h4>地點</h4>
+                                        <p>台北市，台灣</p>
+                                    </div>
+                                </div>
+                                <div class="contact-item">
+                                    <div class="contact-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div class="contact-text-info">
+                                        <h4>工作時間</h4>
+                                        <p>週一至週五 9:00 - 18:00</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="contact-social">
+                                <h4>社群媒體</h4>
+                                <div class="social-links">
+                                    <a href="https://github.com/jerry98166" target="_blank" rel="noopener noreferrer"
+                                        class="social-link" title="GitHub">
+                                        <i class="fab fa-github"></i>
+                                    </a>
+                                    <a href="https://www.linkedin.com/in/%E5%AD%9F%E9%BA%9F-%E9%AB%98-b88773191/"
+                                        target="_blank" rel="noopener noreferrer" class="social-link" title="LinkedIn">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                    <a href="https://x.com/Jerry59877" target="_blank" rel="noopener noreferrer"
+                                        class="social-link" title="X (Twitter)">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                    <a href="https://www.youtube.com/@%E9%AB%98%E5%AD%9F%E9%BA%9F-u1b" target="_blank"
+                                        rel="noopener noreferrer" class="social-link" title="YouTube">
+                                        <i class="fab fa-youtube"></i>
+                                    </a>
+                                    <a href="https://www.instagram.com/jerry98166/" target="_blank"
+                                        rel="noopener noreferrer" class="social-link" title="Instagram">
+                                        <i class="fab fa-instagram"></i>
+                                    </a>
+                                    <a href="https://www.facebook.com/allen.jerry.357827" target="_blank"
+                                        rel="noopener noreferrer" class="social-link" title="Facebook">
+                                        <i class="fab fa-facebook"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <form class="contact-form" id="contact-form">
+                            <h3 class="form-title">發送訊息</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="name">姓名 *</label>
+                                    <input type="text" id="name" name="name" required>
+                                    <span class="error-message"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Email *</label>
+                                    <input type="email" id="email" name="email" required>
+                                    <span class="error-message"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="subject">主題 *</label>
+                                <input type="text" id="subject" name="subject" required>
+                                <span class="error-message"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="message">訊息 *</label>
+                                <textarea id="message" name="message" rows="5" required></textarea>
+                                <span class="error-message"></span>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-submit">
+                                <span class="btn-text">發送訊息</span>
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                            <div class="form-message"></div>
+                        </form>
+                    </div>
+                    <!-- 社交分享按鈕 -->
+                    <div class="social-share-section">
+                        <h3 class="share-title" data-zh="分享本頁面" data-en="Share This Page">分享本頁面</h3>
+                        <div class="share-buttons">
+                            <button class="share-btn facebook" data-share="facebook">
+                                <i class="fab fa-facebook-f"></i>
+                                <span data-zh="Facebook" data-en="Facebook">Facebook</span>
+                            </button>
+                            <button class="share-btn twitter" data-share="twitter">
                                 <i class="fab fa-twitter"></i>
-                            </a>
-                            <a href="https://www.youtube.com/@%E9%AB%98%E5%AD%9F%E9%BA%9F-u1b" target="_blank" rel="noopener noreferrer" class="social-link" title="YouTube">
-                                <i class="fab fa-youtube"></i>
-                            </a>
-                            <a href="https://www.instagram.com/jerry98166/" target="_blank" rel="noopener noreferrer" class="social-link" title="Instagram">
-                                <i class="fab fa-instagram"></i>
-                            </a>
-                            <a href="https://www.facebook.com/allen.jerry.357827" target="_blank" rel="noopener noreferrer" class="social-link" title="Facebook">
-                                <i class="fab fa-facebook"></i>
-                            </a>
+                                <span data-zh="Twitter" data-en="Twitter">Twitter</span>
+                            </button>
+                            <button class="share-btn linkedin" data-share="linkedin">
+                                <i class="fab fa-linkedin-in"></i>
+                                <span data-zh="LinkedIn" data-en="LinkedIn">LinkedIn</span>
+                            </button>
+                            <button class="share-btn whatsapp" data-share="whatsapp">
+                                <i class="fab fa-whatsapp"></i>
+                                <span data-zh="WhatsApp" data-en="WhatsApp">WhatsApp</span>
+                            </button>
+                            <button class="share-btn copy-link" data-share="copy-link">
+                                <i class="fas fa-link"></i>
+                                <span data-zh="複製連結" data-en="Copy Link">複製連結</span>
+                            </button>
                         </div>
                     </div>
                 </div>
+            </section>
 
-                <form class="contact-form" id="contact-form">
-                    <h3 class="form-title">發送訊息</h3>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="name">姓名 *</label>
-                            <input type="text" id="name" name="name" required>
-                            <span class="error-message"></span>
+            <!-- AI 聊天機器人面板 -->
+            <div id="chatbot-panel" class="chatbot-panel">
+                <div class="chatbot-header">
+                    <div class="chatbot-title">
+                        <i class="fas fa-robot"></i>
+                        <span data-zh="AI 助手" data-en="AI Assistant">AI 助手</span>
+                    </div>
+                    <div class="chatbot-actions">
+                        <button class="chatbot-minimize" aria-label="最小化">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <button class="chatbot-close" aria-label="關閉">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="chatbot-body">
+                    <div class="chatbot-messages" id="chatbot-messages">
+                        <div class="chat-message bot-message">
+                            <div class="message-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="message-content">
+                                <p data-zh="您好！我是 AI 助手。您想了解關於高孟麟的什麼資訊呢？"
+                                    data-en="Hello! I'm the AI assistant. What would you like to know about Menglin?">
+                                    您好！我是 AI 助手。您想了解關於高孟麟的什麼資訊呢？</p>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="email">Email *</label>
-                            <input type="email" id="email" name="email" required>
-                            <span class="error-message"></span>
-                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="subject">主題 *</label>
-                        <input type="text" id="subject" name="subject" required>
-                        <span class="error-message"></span>
+                    <div class="chatbot-quick-questions">
+                        <button class="quick-question" data-question="技能">技能專長</button>
+                        <button class="quick-question" data-question="經歷">工作經歷</button>
+                        <button class="quick-question" data-question="專案">專案作品</button>
+                        <button class="quick-question" data-question="聯絡">聯絡方式</button>
                     </div>
-                    <div class="form-group">
-                        <label for="message">訊息 *</label>
-                        <textarea id="message" name="message" rows="5" required></textarea>
-                        <span class="error-message"></span>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-submit">
-                        <span class="btn-text">發送訊息</span>
+                </div>
+                <div class="chatbot-footer">
+                    <input type="text" id="chatbot-input" placeholder="輸入您的問題..." data-zh-placeholder="輸入您的問題..."
+                        data-en-placeholder="Ask me anything...">
+                    <button id="chatbot-send" class="btn-send">
                         <i class="fas fa-paper-plane"></i>
                     </button>
-                    <div class="form-message"></div>
-                </form>
-            </div>
-            <!-- 社交分享按鈕 -->
-            <div class="social-share-section">
-                <h3 class="share-title" data-zh="分享本頁面" data-en="Share This Page">分享本頁面</h3>
-                <div class="share-buttons">
-                    <button class="share-btn facebook" data-share="facebook">
-                        <i class="fab fa-facebook-f"></i>
-                        <span data-zh="Facebook" data-en="Facebook">Facebook</span>
-                    </button>
-                    <button class="share-btn twitter" data-share="twitter">
-                        <i class="fab fa-twitter"></i>
-                        <span data-zh="Twitter" data-en="Twitter">Twitter</span>
-                    </button>
-                    <button class="share-btn linkedin" data-share="linkedin">
-                        <i class="fab fa-linkedin-in"></i>
-                        <span data-zh="LinkedIn" data-en="LinkedIn">LinkedIn</span>
-                    </button>
-                    <button class="share-btn whatsapp" data-share="whatsapp">
-                        <i class="fab fa-whatsapp"></i>
-                        <span data-zh="WhatsApp" data-en="WhatsApp">WhatsApp</span>
-                    </button>
-                    <button class="share-btn copy-link" data-share="copy-link">
-                        <i class="fas fa-link"></i>
-                        <span data-zh="複製連結" data-en="Copy Link">複製連結</span>
-                    </button>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- AI 聊天機器人面板 -->
-    <div id="chatbot-panel" class="chatbot-panel">
-        <div class="chatbot-header">
-            <div class="chatbot-title">
-                <i class="fas fa-robot"></i>
-                <span data-zh="AI 助手" data-en="AI Assistant">AI 助手</span>
-            </div>
-            <div class="chatbot-actions">
-                <button class="chatbot-minimize" aria-label="最小化">
-                    <i class="fas fa-minus"></i>
-                </button>
-                <button class="chatbot-close" aria-label="關閉">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        </div>
-        <div class="chatbot-body">
-            <div class="chatbot-messages" id="chatbot-messages">
-                <div class="chat-message bot-message">
-                    <div class="message-avatar">
-                        <i class="fas fa-robot"></i>
+            <!-- 互動終端機面板 -->
+            <div id="terminal-panel" class="terminal-panel">
+                <div class="terminal-header">
+                    <div class="terminal-title">
+                        <i class="fas fa-terminal"></i>
+                        <span>Terminal v1.0.0</span>
                     </div>
-                    <div class="message-content">
-                        <p data-zh="您好！我是 AI 助手。您想了解關於高孟麟的什麼資訊呢？" data-en="Hello! I'm the AI assistant. What would you like to know about Menglin?">您好！我是 AI 助手。您想了解關於高孟麟的什麼資訊呢？</p>
-                    </div>
-                </div>
-            </div>
-            <div class="chatbot-quick-questions">
-                <button class="quick-question" data-question="技能">技能專長</button>
-                <button class="quick-question" data-question="經歷">工作經歷</button>
-                <button class="quick-question" data-question="專案">專案作品</button>
-                <button class="quick-question" data-question="聯絡">聯絡方式</button>
-            </div>
-        </div>
-        <div class="chatbot-footer">
-            <input type="text" id="chatbot-input" placeholder="輸入您的問題..." data-zh-placeholder="輸入您的問題..." data-en-placeholder="Ask me anything...">
-            <button id="chatbot-send" class="btn-send">
-                <i class="fas fa-paper-plane"></i>
-            </button>
-        </div>
-    </div>
-
-    <!-- 互動終端機面板 -->
-    <div id="terminal-panel" class="terminal-panel">
-        <div class="terminal-header">
-            <div class="terminal-title">
-                <i class="fas fa-terminal"></i>
-                <span>Terminal v1.0.0</span>
-            </div>
-            <div class="terminal-actions">
-                <button class="terminal-minimize" aria-label="最小化">
-                    <i class="fas fa-minus"></i>
-                </button>
-                <button class="terminal-close" aria-label="關閉">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        </div>
-        <div class="terminal-body" id="terminal-body">
-            <div class="terminal-output">
-                <div class="terminal-line">Welcome to Portfolio Terminal v1.0.0</div>
-                <div class="terminal-line">Type 'help' for available commands.</div>
-                <div class="terminal-line">────────────────────────────────────────</div>
-            </div>
-        </div>
-        <div class="terminal-footer">
-            <span class="terminal-prompt">visitor@portfolio:~$</span>
-            <input type="text" id="terminal-input" class="terminal-input" autofocus>
-        </div>
-    </div>
-
-    </main>
-
-    <!-- 頁尾 -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3 class="footer-title">關於本站</h3>
-                    <p class="footer-text">
-                        這是一個展示我個人技能、經驗和作品的網站。
-                        希望透過這個平台與更多人分享交流。
-                    </p>
-                    <div class="footer-social">
-                        <a href="https://github.com/jerry98166" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="GitHub">
-                            <i class="fab fa-github"></i>
-                        </a>
-                        <a href="https://www.linkedin.com/in/%E5%AD%9F%E9%BA%9F-%E9%AB%98-b88773191/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="LinkedIn">
-                            <i class="fab fa-linkedin"></i>
-                        </a>
-                        <a href="https://x.com/Jerry59877" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="X (Twitter)">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="mailto:11028201@cycu.org.tw" class="social-link" aria-label="Email">
-                            <i class="fas fa-envelope"></i>
-                        </a>
-                    </div>
-                </div>
-                <div class="footer-section">
-                    <h3 class="footer-title">快速連結</h3>
-                    <ul class="footer-links">
-                        <li><a href="#home">首頁</a></li>
-                        <li><a href="pages/about.html">關於我</a></li>
-                        <li><a href="pages/skills.html">技能</a></li>
-                        <li><a href="pages/projects.html">作品集</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3 class="footer-title">服務項目</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">網站開發</a></li>
-                        <li><a href="#">應用程式開發</a></li>
-                        <li><a href="#">UI/UX 設計</a></li>
-                        <li><a href="#">技術諮詢</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3 class="footer-title">訂閱電子報</h3>
-                    <p class="footer-text">
-                        訂閱以獲取最新的技術文章和專案更新
-                    </p>
-                    <form class="newsletter-form">
-                        <input type="email" placeholder="輸入您的 Email" required>
-                        <button type="submit">
-                            <i class="fas fa-paper-plane"></i>
+                    <div class="terminal-actions">
+                        <button class="terminal-minimize" aria-label="最小化">
+                            <i class="fas fa-minus"></i>
                         </button>
-                    </form>
+                        <button class="terminal-close" aria-label="關閉">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="terminal-body" id="terminal-body">
+                    <div class="terminal-output">
+                        <div class="terminal-line">Welcome to Portfolio Terminal v1.0.0</div>
+                        <div class="terminal-line">Type 'help' for available commands.</div>
+                        <div class="terminal-line">────────────────────────────────────────</div>
+                    </div>
+                </div>
+                <div class="terminal-footer">
+                    <span class="terminal-prompt">visitor@portfolio:~$</span>
+                    <input type="text" id="terminal-input" class="terminal-input" autofocus>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; <span id="current-year">2026</span> 高孟麟. All rights reserved.</p>
-                <p>Made with <i class="fas fa-heart"></i> and <i class="fas fa-coffee"></i></p>
+
+        </main>
+
+        <!-- 頁尾 -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h3 class="footer-title">關於本站</h3>
+                        <p class="footer-text">
+                            這是一個展示我個人技能、經驗和作品的網站。
+                            希望透過這個平台與更多人分享交流。
+                        </p>
+                        <div class="footer-social">
+                            <a href="https://github.com/jerry98166" target="_blank" rel="noopener noreferrer"
+                                class="social-link" aria-label="GitHub">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="https://www.linkedin.com/in/%E5%AD%9F%E9%BA%9F-%E9%AB%98-b88773191/"
+                                target="_blank" rel="noopener noreferrer" class="social-link" aria-label="LinkedIn">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                            <a href="https://x.com/Jerry59877" target="_blank" rel="noopener noreferrer"
+                                class="social-link" aria-label="X (Twitter)">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="mailto:11028201@cycu.org.tw" class="social-link" aria-label="Email">
+                                <i class="fas fa-envelope"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="footer-section">
+                        <h3 class="footer-title">快速連結</h3>
+                        <ul class="footer-links">
+                            <li><a href="#home">首頁</a></li>
+                            <li><a href="pages/about.html">關於我</a></li>
+                            <li><a href="pages/skills.html">技能</a></li>
+                            <li><a href="pages/projects.html">作品集</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h3 class="footer-title">服務項目</h3>
+                        <ul class="footer-links">
+                            <li><a href="#">網站開發</a></li>
+                            <li><a href="#">應用程式開發</a></li>
+                            <li><a href="#">UI/UX 設計</a></li>
+                            <li><a href="#">技術諮詢</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h3 class="footer-title">訂閱電子報</h3>
+                        <p class="footer-text">
+                            訂閱以獲取最新的技術文章和專案更新
+                        </p>
+                        <form class="newsletter-form">
+                            <input type="email" placeholder="輸入您的 Email" required>
+                            <button type="submit">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; <span id="current-year">2026</span> 高孟麟. All rights reserved.</p>
+                    <p>Made with <i class="fas fa-heart"></i> and <i class="fas fa-coffee"></i></p>
+                </div>
             </div>
-        </div>
-    </footer>
+        </footer>
 
     </div>
     <script defer src="assets/js/performance-optimization.js"></script>
@@ -549,4 +558,5 @@
     <script defer src="assets/js/security-hardening.js"></script>
     <script defer src="assets/js/ux-enhancement.js"></script>
 </body>
+
 </html>

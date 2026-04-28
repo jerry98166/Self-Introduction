@@ -57,7 +57,7 @@ Self-Introduction/
 │   ├── projects.html              - 項目展示
 │   ├── achievements.html          - 成就頁面
 │   ├── privacy.html               - 隱私政策
-│   ├── typing-game.html           - 打字遊戲
+│   ├── typing-game.html           - 小遊戲
 │   └── about.html                 - 關於頁面
 │
 ├── ⚡ 功能頁面（features/ - 64+ 功能）
