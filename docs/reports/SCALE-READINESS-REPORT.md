@@ -1,6 +1,6 @@
 # SCALE READINESS REPORT
 
-Generated: 2026-04-26T18:44:06.538Z
+Generated: 2026-06-24T13:20:21.572Z
 
 ## Summary
 
@@ -16,19 +16,19 @@ Generated: 2026-04-26T18:44:06.538Z
 - Image files: 8
 - docs files: 14
 - Feature pages: 64
-- Inline onclick handlers: 252
-- CSS !important count: 186
+- Inline onclick handlers: 253
+- CSS !important count: 181
 
 ## Largest Files
 
-- assets/css/styles.css: 100.36 KB
-- assets/js/script.js: 83.40 KB
-- pages/projects.html: 46.02 KB
+- assets/css/styles.css: 104.86 KB
+- assets/js/script.js: 76.66 KB
 - temp/nav-snippet.html: 41.16 KB
-- projects/cycu-guide.html: 31.34 KB
+- pages/projects.html: 40.80 KB
+- index.html: 32.71 KB
+- projects/cycu-guide.html: 31.38 KB
 - pages/admin.html: 30.83 KB
-- pages/typing-game.html: 29.52 KB
-- index.html: 29.29 KB
+- pages/mini-games.html: 30.33 KB
 - assets/js/feature-navigator.js: 29.21 KB
 - features/shader-art.html: 27.78 KB
 
@@ -38,7 +38,7 @@ Generated: 2026-04-26T18:44:06.538Z
 
 ## Warnings
 
-- Inline onclick handlers are high (252).
+- Inline onclick handlers are high (253).
 
 ## Recommended Next Actions
 

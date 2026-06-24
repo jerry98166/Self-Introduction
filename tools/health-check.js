@@ -429,23 +429,3 @@ function main() {
 
 main();
 
-htmlResult.missing.length > 0 ||
-    featureResult.unmatchedIds.length > 0 ||
-    (!featureResult.dynamicNavigation && featureResult.missingInLabIds.length > 0) ||
-    featurePageResult.missingPages.length > 0 ||
-    unsafeHtmlFindings.length > 0 ||
-    securityIncludeResult.missing.length > 0 ||
-    dangerousProtocolFindings.length > 0 ||
-    cspStrengthResult.missingDirectives.length > 0 ||
-    cspStrengthResult.disallowedTokens.length > 0 ||
-    false;
-if (hasError) {
-    process.exitCode = 1;
-    console.log('\nResult: FAILED');
-    return;
-}
-
-console.log('\nResult: PASSED');
-
-
-main();
